@@ -1,54 +1,304 @@
-<!-- work.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clarifyd | Work</title>
-  <meta name="description" content="Examples of delivery and training outcomes." />
+  <meta name="description" content="Showpiece work: live-feeling data science project visuals, delivered as a static site." />
   <style>
-    :root{--bg0:#070A12;--bg1:#0B1022;--text:#F2F4FF;--muted:rgba(242,244,255,.72);--radius:22px;--max:1160px;--shadow:0 24px 80px rgba(0,0,0,.55);--a:#7C3AED;--b:#22D3EE;--y:#FDE047;--c:#A3FFB0;}
-    *{box-sizing:border-box}html,body{margin:0;padding:0}
-    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
-      background:radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
-      radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
-      radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
-      linear-gradient(180deg,var(--bg0),var(--bg1));overflow-x:hidden}
+    :root{
+      --bg0:#070A12; --bg1:#0B1022; --text:#F2F4FF; --muted:rgba(242,244,255,.72);
+      --radius:22px; --max:1160px; --shadow:0 24px 80px rgba(0,0,0,.55);
+      --a:#7C3AED; --b:#22D3EE; --y:#FDE047; --c:#A3FFB0;
+      --card: rgba(255,255,255,.05);
+      --line: rgba(255,255,255,.12);
+      --soft: rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
     a{color:inherit}
     .container{max-width:var(--max);margin:0 auto;padding:0 22px}
-    .muted{color:var(--muted)} .tiny{font-size:12px;color:rgba(242,244,255,.62)}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    /* Parallax background layers */
     .parallax-layer{position:fixed;inset:-18vh -18vw;pointer-events:none;z-index:0;will-change:transform}
-    .layer-a{background:radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);filter:blur(14px);opacity:.9}
-    .layer-b{background:radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);filter:blur(18px);opacity:.65}
-    .layer-c{background:radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);filter:blur(26px);opacity:.45}
-    .bg-grid{position:fixed;inset:0;pointer-events:none;opacity:.20;z-index:1;background-image:linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);background-size:64px 64px;mask-image:radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0))}
+    .layer-a{
+      background:
+        radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);
+      filter: blur(14px); opacity:.9;
+    }
+    .layer-b{
+      background:
+        radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),
+        radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);
+      filter: blur(18px); opacity:.65;
+    }
+    .layer-c{
+      background: radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
+      filter: blur(26px); opacity:.45;
+    }
+    .bg-grid{
+      position:fixed; inset:0; pointer-events:none; opacity:.20; z-index:1;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:64px 64px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+    }
     main{position:relative;z-index:2}
-    header{position:sticky;top:0;z-index:30;background:rgba(7,10,18,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px)}
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:30;
+      background:rgba(7,10,18,.55);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+    }
     .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
     .brand{display:flex;align-items:center;gap:10px;font-weight:720;letter-spacing:.2px;text-decoration:none}
-    .mark{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--a),var(--b),var(--y));box-shadow:0 0 28px rgba(124,58,237,.45)}
+    .mark{
+      width:14px;height:14px;border-radius:5px;
+      background: linear-gradient(135deg,var(--a),var(--b),var(--y));
+      box-shadow: 0 0 28px rgba(124,58,237,.45);
+    }
     .menu{display:flex;gap:18px;align-items:center}
-    .menu a{text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);padding:10px 10px;border-radius:999px;transition:background .2s,color .2s}
+    .menu a{
+      text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);
+      padding:10px 10px;border-radius:999px;transition:background .2s,color .2s;
+    }
     .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
     .pill{padding:10px 14px!important;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);box-shadow:0 10px 30px rgba(0,0,0,.35)}
-    .hero{padding:72px 0 26px}
-    .kicker{display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:999px;font-size:13px;color:rgba(242,244,255,.78)}
-    .spark{width:8px;height:8px;border-radius:999px;background:var(--y);box-shadow:0 0 0 0 rgba(253,224,71,.35);animation:spark 2s ease-in-out infinite}
-    @keyframes spark{0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}}
-    h1{font-size:44px;letter-spacing:-1px;line-height:1.06;margin:14px 0 10px}
-    .grad{background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .lead{max-width:72ch;color:rgba(242,244,255,.74);margin:0}
-    .section{padding:44px 0}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .panel{border-radius:var(--radius);border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);box-shadow:0 18px 60px rgba(0,0,0,.35);padding:18px}
-    .panel:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
-    .tag{font-size:12px;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:rgba(242,244,255,.74);white-space:nowrap}
-    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+
+    /* Hero */
+    .hero{padding:72px 0 22px}
+    .kicker{
+      display:inline-flex;gap:10px;align-items:center;
+      padding:8px 12px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);border-radius:999px;
+      font-size:13px;color:rgba(242,244,255,.78);
+    }
+    .spark{
+      width:8px;height:8px;border-radius:999px;background:var(--y);
+      box-shadow:0 0 0 0 rgba(253,224,71,.35);
+      animation:spark 2s ease-in-out infinite;
+    }
+    @keyframes spark{
+      0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}
+      70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}
+      100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}
+    }
+    h1{font-size:46px;letter-spacing:-1px;line-height:1.06;margin:14px 0 10px}
+    .grad{
+      background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--c));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .lead{max-width:80ch;color:rgba(242,244,255,.74);margin:0}
+
+    /* Layout */
+    .section{padding:34px 0 48px}
+    .grid{display:grid;grid-template-columns: 1.35fr .65fr; gap:16px; align-items:start}
+    .panel{
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: var(--card);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+    }
+    .panel.pad{padding:18px}
+    .panel-header{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+      padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.10);
+    }
+    .title{font-weight:750;letter-spacing:.2px}
+    .tag{
+      font-size:12px;padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      color:rgba(242,244,255,.74);
+      white-space:nowrap;
+    }
+
+    /* “Live project” canvas (SVG to stay light) */
+    .board{
+      position:relative;
+      padding: 14px 14px 16px;
+    }
+    .board-top{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-bottom: 10px;
+    }
+    .runbar{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+    }
+    .dot{
+      width:9px;height:9px;border-radius:99px;background: rgba(34,211,238,.95);
+      box-shadow: 0 0 18px rgba(34,211,238,.22);
+      animation: blink 1.6s ease-in-out infinite;
+    }
+    @keyframes blink{0%,100%{opacity:.5}50%{opacity:1}}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text); text-decoration:none;
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .btn.primary{background:linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));border-color:transparent}
+
+    .metrics{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .metric{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      border-radius: 16px;
+      padding: 10px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .metric::before{
+      content:"";
+      position:absolute; inset:-50px -80px;
+      background: radial-gradient(closest-side at 20% 20%, rgba(253,224,71,.10), transparent 68%);
+      opacity:.85;
+      pointer-events:none;
+    }
+    .metric .k{font-size:12px;color:rgba(242,244,255,.68)}
+    .metric .v{font-size:18px;font-weight:800;letter-spacing:-.2px;margin-top:2px}
+    .metric .sub{font-size:12px;color:rgba(242,244,255,.62);margin-top:2px}
+
+    .viz-row{display:grid;grid-template-columns: 1.25fr .75fr; gap: 12px}
+    .svg-wrap{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      border-radius: 18px;
+      padding: 10px;
+      overflow:hidden;
+      position:relative;
+    }
+    .svg-wrap::after{
+      content:"";
+      position:absolute; left:0; right:0; bottom:0; height: 120px;
+      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.22));
+      pointer-events:none;
+    }
+    svg{width:100%;height:auto;display:block}
+
+    /* Confusion matrix */
+    .cm{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .cell{
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 10px 10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .cell .h{font-size:11px;color:rgba(242,244,255,.62)}
+    .cell .n{font-size:18px;font-weight:800;margin-top:2px}
+    .bar{
+      position:absolute;left:0;bottom:0;height:4px;width:0%;
+      background: linear-gradient(90deg, rgba(34,211,238,.8), rgba(253,224,71,.8));
+      opacity:.8;
+    }
+
+    /* Side panels */
+    .side{display:grid;gap:16px}
+    .list{display:grid;gap:10px;margin-top:12px}
+    .item{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      border-radius: 16px;
+      padding: 12px 12px;
+      display:flex; justify-content:space-between; gap: 10px;
+    }
+    .badge{
+      font-size:12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.74);
+      white-space: nowrap;
+    }
+    .status{
+      display:flex; align-items:center; gap:8px; color: rgba(242,244,255,.72);
+      font-size: 13px;
+    }
+    .status .s{
+      width:8px;height:8px;border-radius:99px;background: rgba(163,255,176,.9);
+      box-shadow: 0 0 18px rgba(163,255,176,.18);
+    }
+
+    /* Terminal-like feed */
+    .terminal{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 18px;
+      padding: 12px;
+      height: 220px;
+      overflow:hidden;
+      position:relative;
+    }
+    .terminal::before{
+      content:"";
+      position:absolute; inset:-80px -120px;
+      background: radial-gradient(closest-side at 20% 20%, rgba(124,58,237,.18), transparent 68%);
+      opacity:.75;
+      pointer-events:none;
+    }
+    .log{position:relative;display:grid;gap:8px}
+    .line{display:flex;gap:10px;align-items:flex-start}
+    .ts{color:rgba(242,244,255,.48);min-width:62px}
+    .msg{color:rgba(242,244,255,.78)}
+    .hl{color:rgba(253,224,71,.86)}
+
+    /* reveal */
     .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
     .reveal.is-visible{opacity:1;transform:translateY(0)}
-    footer{padding:26px 0 38px}
-    @media (max-width: 980px){h1{font-size:38px}.grid{grid-template-columns:1fr}.menu{gap:10px}.menu a{padding:10px 8px}}
-    @media (prefers-reduced-motion: reduce){.reveal{transition:none!important}.spark{animation:none!important}}
+
+    footer{padding:26px 0 38px;border-top:1px solid rgba(255,255,255,.10)}
+
+    @media (max-width: 1040px){
+      .grid{grid-template-columns:1fr}
+      .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .viz-row{grid-template-columns:1fr}
+      h1{font-size:40px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .reveal{transition:none!important}
+      .spark,.dot{animation:none!important}
+    }
   </style>
 </head>
 <body>
@@ -71,52 +321,195 @@
   <main>
     <section class="hero">
       <div class="container reveal">
-        <div class="kicker"><span class="spark"></span> Delivery + enablement</div>
-        <h1>Selected <span class="grad">work</span>.</h1>
-        <p class="lead">A few example patterns and outcomes. (Replace with your real case studies when ready.)</p>
+        <div class="kicker"><span class="spark"></span> Showpiece: simulated live delivery</div>
+        <h1>A <span class="grad">live</span>-feeling DS project run.</h1>
+        <p class="lead">Static site, client-side animation. No tracking. No server calls. Just a clean “in-flight” view of an experiment moving towards deployment quality.</p>
       </div>
     </section>
 
     <section class="section">
-      <div class="container">
-        <div class="grid">
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">Forecasting pipeline</h3>
-                <div class="muted">Batch + monitoring with alerting.</div>
-              </div>
-              <div class="tag">ML</div>
+      <div class="container grid">
+        <!-- Main live board -->
+        <section class="panel reveal" aria-label="Live project board">
+          <div class="panel-header">
+            <div>
+              <div class="title">Experiment run — <span class="mono" id="runId">run_7f3a</span></div>
+              <div class="tiny">Pipeline: ingest → clean → train → validate → deploy → monitor</div>
             </div>
-            <p class="muted" style="margin:12px 0 0;">Reusable pipeline with evaluation, backtesting, and clear ownership.</p>
+            <div class="tag"><span class="mono" id="epochTag">epoch 1</span></div>
           </div>
 
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">RAG knowledge assistant</h3>
-                <div class="muted">Evals, cost control, safety checks.</div>
+          <div class="board">
+            <div class="board-top">
+              <div class="runbar">
+                <span class="dot" aria-hidden="true"></span>
+                <div class="mono tiny">status: <span class="hl" id="status">training</span></div>
+                <div class="mono tiny">seed: <span id="seed">42</span></div>
+                <div class="mono tiny">samples: <span id="samples">1,240,000</span></div>
               </div>
-              <div class="tag">LLM</div>
-            </div>
-            <p class="muted" style="margin:12px 0 0;">Retrieval + guardrails with measurable quality improvements.</p>
-          </div>
 
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">Team uplift</h3>
-                <div class="muted">Workshops + code reviews + templates.</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn" id="pauseBtn" type="button">Pause</button>
+                <button class="btn primary" id="restartBtn" type="button">Restart run</button>
               </div>
-              <div class="tag">Training</div>
             </div>
-            <p class="muted" style="margin:12px 0 0;">Practical patterns adopted into day-to-day delivery.</p>
+
+            <div class="metrics" aria-label="Metrics">
+              <div class="metric">
+                <div class="k">Loss</div>
+                <div class="v mono" id="loss">1.214</div>
+                <div class="sub mono">↓ converging</div>
+              </div>
+              <div class="metric">
+                <div class="k">AUC</div>
+                <div class="v mono" id="auc">0.612</div>
+                <div class="sub mono">↑ improving</div>
+              </div>
+              <div class="metric">
+                <div class="k">Accuracy</div>
+                <div class="v mono" id="acc">0.684</div>
+                <div class="sub mono">↑ stabilising</div>
+              </div>
+              <div class="metric">
+                <div class="k">Drift</div>
+                <div class="v mono" id="drift">0.18</div>
+                <div class="sub mono">monitoring</div>
+              </div>
+            </div>
+
+            <div class="viz-row">
+              <div class="svg-wrap" aria-label="Live training curve">
+                <svg viewBox="0 0 720 260" role="img" aria-label="Training curves">
+                  <defs>
+                    <linearGradient id="gLine" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="rgba(124,58,237,0.95)"/>
+                      <stop offset="0.55" stop-color="rgba(34,211,238,0.95)"/>
+                      <stop offset="1" stop-color="rgba(253,224,71,0.95)"/>
+                    </linearGradient>
+                    <linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="rgba(34,211,238,0.20)"/>
+                      <stop offset="1" stop-color="rgba(34,211,238,0)"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- grid -->
+                  <g opacity="0.18">
+                    <path d="M40 30 H700 M40 80 H700 M40 130 H700 M40 180 H700 M40 230 H700" stroke="white" stroke-width="1"/>
+                    <path d="M100 20 V240 M200 20 V240 M300 20 V240 M400 20 V240 M500 20 V240 M600 20 V240" stroke="white" stroke-width="1"/>
+                  </g>
+
+                  <!-- axes -->
+                  <path d="M40 240 H700" stroke="rgba(255,255,255,0.25)"/>
+                  <path d="M40 20 V240" stroke="rgba(255,255,255,0.25)"/>
+
+                  <!-- animated fill + line -->
+                  <path id="area" d="" fill="url(#gFill)" opacity="0.9"></path>
+                  <path id="curve" d="" fill="none" stroke="url(#gLine)" stroke-width="3" stroke-linecap="round"></path>
+
+                  <!-- marker -->
+                  <circle id="marker" cx="0" cy="0" r="6" fill="rgba(253,224,71,0.95)" opacity="0.9"></circle>
+
+                  <text x="42" y="18" class="mono" font-size="12" fill="rgba(242,244,255,0.70)">live metric trend</text>
+                </svg>
+              </div>
+
+              <div class="svg-wrap" aria-label="Validation view">
+                <div class="tiny mono" style="padding:2px 2px 10px;color:rgba(242,244,255,.72)">confusion matrix (updates as AUC improves)</div>
+                <div class="cm">
+                  <div class="cell">
+                    <div class="h mono">TP</div>
+                    <div class="n mono" id="tp">482</div>
+                    <div class="bar" id="tpb"></div>
+                  </div>
+                  <div class="cell">
+                    <div class="h mono">FP</div>
+                    <div class="n mono" id="fp">171</div>
+                    <div class="bar" id="fpb"></div>
+                  </div>
+                  <div class="cell">
+                    <div class="h mono">FN</div>
+                    <div class="n mono" id="fn">139</div>
+                    <div class="bar" id="fnb"></div>
+                  </div>
+                  <div class="cell">
+                    <div class="h mono">TN</div>
+                    <div class="n mono" id="tn">611</div>
+                    <div class="bar" id="tnb"></div>
+                  </div>
+                </div>
+
+                <div class="tiny mono" style="padding:12px 2px 0;color:rgba(242,244,255,.70)">
+                  validation gate: <span class="hl" id="gate">pending</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <!-- Side: “project components” -->
+        <aside class="side">
+          <section class="panel pad reveal" aria-label="Artifacts">
+            <div class="title">Artifacts</div>
+            <div class="muted" style="margin-top:6px">Outputs you’d expect in a real delivery.</div>
+
+            <div class="list">
+              <div class="item">
+                <div>
+                  <div style="font-weight:700">Feature pipeline</div>
+                  <div class="tiny mono">transform.py • schema.yaml</div>
+                </div>
+                <span class="badge">built</span>
+              </div>
+              <div class="item">
+                <div>
+                  <div style="font-weight:700">Model registry</div>
+                  <div class="tiny mono">model:v3.2 • tags:prod</div>
+                </div>
+                <span class="badge">ready</span>
+              </div>
+              <div class="item">
+                <div>
+                  <div style="font-weight:700">Eval suite</div>
+                  <div class="tiny mono">auc • drift • slice checks</div>
+                </div>
+                <span class="badge">running</span>
+              </div>
+              <div class="item">
+                <div>
+                  <div style="font-weight:700">Deployment</div>
+                  <div class="tiny mono">blue/green • rollback</div>
+                </div>
+                <span class="badge" id="deployBadge">pending</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel pad reveal" aria-label="RAG retrieval">
+            <div class="top" style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div>
+                <div class="title">RAG retrieval</div>
+                <div class="tiny muted">Simulated: retrieved context updates.</div>
+              </div>
+              <div class="tag mono">top-k=4</div>
+            </div>
+
+            <div class="terminal" style="margin-top:12px">
+              <div class="log" id="ragLog"></div>
+            </div>
+          </section>
+
+          <section class="panel pad reveal" aria-label="Pipeline events">
+            <div class="title">Pipeline events</div>
+            <div class="tiny muted" style="margin-top:6px">Streaming log (simulated).</div>
+            <div class="terminal" style="margin-top:12px">
+              <div class="log" id="pipeLog"></div>
+            </div>
+          </section>
+        </aside>
       </div>
     </section>
 
-    <footer class="section alt" style="border-top:1px solid rgba(255,255,255,.10);">
+    <footer>
       <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:18px;">
         <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
         <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
@@ -129,17 +522,296 @@
   </main>
 
   <script>
+    // Year
     document.getElementById('year').textContent = new Date().getFullYear();
-    const items=document.querySelectorAll('.reveal');
-    const io=new IntersectionObserver((entries)=>{for(const e of entries){if(e.isIntersecting){e.target.classList.add('is-visible');io.unobserve(e.target)}}},{threshold:.12});
-    items.forEach(el=>io.observe(el));
-    const layers=Array.from(document.querySelectorAll('[data-parallax]'));
-    let latestY=0,ticking=false;
-    function apply(){const y=latestY;for(const el of layers){const s=parseFloat(el.getAttribute('data-parallax')||'0.1');el.style.transform=`translate3d(0, ${-y*s}px, 0)`}ticking=false}
-    function onScroll(){latestY=window.scrollY||0;if(!ticking){requestAnimationFrame(apply);ticking=true}}
+
+    // Reveal
+    const revealItems = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+      for (const e of entries){
+        if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      }
+    },{threshold:.12});
+    revealItems.forEach(el=>io.observe(el));
+
+    // Parallax
+    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let latestY=0, ticking=false;
+    function applyParallax(){
+      const y = latestY;
+      for (const el of layers){
+        const s = parseFloat(el.getAttribute('data-parallax')||'0.1');
+        el.style.transform = `translate3d(0, ${-y*s}px, 0)`;
+      }
+      ticking=false;
+    }
+    function onScroll(){
+      latestY = window.scrollY || 0;
+      if (!ticking){ requestAnimationFrame(applyParallax); ticking=true; }
+    }
     window.addEventListener('scroll', onScroll, {passive:true});
     window.addEventListener('resize', onScroll);
     onScroll();
+
+    // ======= Live “run” simulation (no network) =======
+    const el = (id)=>document.getElementById(id);
+
+    const lossEl = el('loss');
+    const aucEl = el('auc');
+    const accEl = el('acc');
+    const driftEl = el('drift');
+    const epochEl = el('epochTag');
+    const statusEl = el('status');
+    const gateEl = el('gate');
+    const deployBadge = el('deployBadge');
+
+    const tpEl = el('tp'), fpEl = el('fp'), fnEl = el('fn'), tnEl = el('tn');
+    const bars = { tp: el('tpb'), fp: el('fpb'), fn: el('fnb'), tn: el('tnb') };
+
+    const curve = el('curve');
+    const area = el('area');
+    const marker = el('marker');
+
+    const ragLog = el('ragLog');
+    const pipeLog = el('pipeLog');
+
+    const pauseBtn = el('pauseBtn');
+    const restartBtn = el('restartBtn');
+
+    let paused = false;
+
+    // deterministic-ish seed label
+    el('runId').textContent = 'run_' + Math.random().toString(16).slice(2,6);
+    el('seed').textContent = String(10 + Math.floor(Math.random()*90));
+
+    function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function easeInOut(t){ return t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+
+    // Generate a smooth “training curve” path from samples
+    const samples = 64;
+    const pts = Array.from({length:samples}, (_,i)=>({x:i/(samples-1), y:0.8}));
+
+    function buildPath(values){
+      // values: array in [0..1] mapped to chart coords
+      const X0=40, Y0=20, W=660, H=220;
+      let d = '';
+      for (let i=0;i<values.length;i++){
+        const x = X0 + (i/(values.length-1))*W;
+        const y = Y0 + (1-values[i])*H;
+        d += (i===0 ? `M ${x.toFixed(2)} ${y.toFixed(2)}` : ` L ${x.toFixed(2)} ${y.toFixed(2)}`);
+      }
+      return d;
+    }
+
+    function buildArea(values){
+      const X0=40, Y0=20, W=660, H=220;
+      let d = '';
+      for (let i=0;i<values.length;i++){
+        const x = X0 + (i/(values.length-1))*W;
+        const y = Y0 + (1-values[i])*H;
+        d += (i===0 ? `M ${x.toFixed(2)} ${y.toFixed(2)}` : ` L ${x.toFixed(2)} ${y.toFixed(2)}`);
+      }
+      d += ` L ${X0+W} ${Y0+H} L ${X0} ${Y0+H} Z`;
+      return d;
+    }
+
+    // Logs
+    function ts(){
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mm = String(d.getMinutes()).padStart(2,'0');
+      const ss = String(d.getSeconds()).padStart(2,'0');
+      return `${hh}:${mm}:${ss}`;
+    }
+    function addLog(container, message, highlight=false){
+      const line = document.createElement('div');
+      line.className = 'line mono';
+      const t = document.createElement('div'); t.className='ts'; t.textContent=ts();
+      const m = document.createElement('div'); m.className='msg';
+      if (highlight) m.innerHTML = message; else m.textContent = message;
+      line.appendChild(t); line.appendChild(m);
+      container.appendChild(line);
+
+      // cap lines
+      while (container.children.length > 10) container.removeChild(container.firstChild);
+    }
+
+    // RAG doc snippets (simulated)
+    const docs = [
+      "Retrieved: policy_handbook_v2.pdf (score 0.78)",
+      "Retrieved: onboarding_playbook.md (score 0.74)",
+      "Retrieved: incident_runbook.yaml (score 0.72)",
+      "Retrieved: customer_terms_2025.docx (score 0.69)",
+      "Retrieved: pricing_matrix.csv (score 0.66)",
+      "Retrieved: architecture_overview.png (score 0.64)",
+    ];
+
+    const pipeEvents = [
+      "ingest: streaming batch received (32k rows)",
+      "clean: schema enforced + null handling",
+      "train: gradient step applied",
+      "validate: slice checks passed",
+      "deploy: staging rollout started",
+      "monitor: drift window updated",
+    ];
+
+    // Main loop state
+    let start = performance.now();
+    let epoch = 1;
+
+    function resetRun(){
+      start = performance.now();
+      epoch = 1;
+      statusEl.textContent = "training";
+      gateEl.textContent = "pending";
+      deployBadge.textContent = "pending";
+      deployBadge.style.opacity = "1";
+      ragLog.innerHTML = "";
+      pipeLog.innerHTML = "";
+      addLog(pipeLog, "pipeline: run started");
+      addLog(ragLog, docs[Math.floor(Math.random()*docs.length)]);
+    }
+
+    pauseBtn.addEventListener('click', ()=>{
+      paused = !paused;
+      pauseBtn.textContent = paused ? "Resume" : "Pause";
+    });
+    restartBtn.addEventListener('click', ()=>{
+      paused = false;
+      pauseBtn.textContent = "Pause";
+      resetRun();
+    });
+
+    resetRun();
+
+    // Update confusion matrix based on quality q in [0..1]
+    function updateCM(q){
+      // total fixed-ish
+      const total = 1400;
+      const tp = Math.round(lerp(420, 640, q));
+      const fp = Math.round(lerp(210, 85, q));
+      const fn = Math.round(lerp(190, 90, q));
+      const tn = total - tp - fp - fn;
+
+      tpEl.textContent = tp;
+      fpEl.textContent = fp;
+      fnEl.textContent = fn;
+      tnEl.textContent = tn;
+
+      // bars visualise "goodness"
+      bars.tp.style.width = `${clamp(20 + q*80, 0, 100)}%`;
+      bars.fp.style.width = `${clamp(20 + (1-q)*80, 0, 100)}%`;
+      bars.fn.style.width = `${clamp(20 + (1-q)*80, 0, 100)}%`;
+      bars.tn.style.width = `${clamp(20 + q*80, 0, 100)}%`;
+    }
+
+    // periodic logs
+    let nextPipe = 0, nextRag = 0;
+
+    function tick(t){
+      if (!paused){
+        const dt = t - start;
+
+        // cycle through states
+        // 0-6s training, 6-9s validating, 9-12s deploy, 12-16s monitor then loop epoch
+        const cycle = 16000;
+        const p = (dt % cycle) / cycle;
+
+        // derive a quality q that improves with epoch + within-cycle
+        const within = easeInOut(clamp((dt % cycle) / (cycle*0.85), 0, 1));
+        const epochBoost = clamp((epoch-1) * 0.06, 0, 0.30);
+        const q = clamp(0.12 + within*0.78 + epochBoost, 0, 1);
+
+        // metrics
+        const loss = clamp(1.28 - q*0.95 + Math.sin(t/420)*0.02, 0.18, 1.35);
+        const auc  = clamp(0.58 + q*0.40 + Math.sin(t/650)*0.01, 0.50, 0.999);
+        const acc  = clamp(0.62 + q*0.30 + Math.sin(t/700)*0.008, 0.50, 0.999);
+
+        // drift goes down then wobbles
+        const drift = clamp(0.28 - q*0.18 + Math.abs(Math.sin(t/1800))*0.05, 0.02, 0.35);
+
+        lossEl.textContent = loss.toFixed(3);
+        aucEl.textContent = auc.toFixed(3);
+        accEl.textContent = acc.toFixed(3);
+        driftEl.textContent = drift.toFixed(2);
+
+        // epoch
+        epochEl.textContent = `epoch ${epoch}`;
+
+        // set status based on p
+        let status = "training";
+        if (p > 0.38 && p <= 0.56) status = "validating";
+        else if (p > 0.56 && p <= 0.72) status = "deploying";
+        else if (p > 0.72) status = "monitoring";
+        statusEl.textContent = status;
+
+        // gate
+        if (auc > 0.84 && loss < 0.42) {
+          gateEl.textContent = "pass";
+          gateEl.style.color = "rgba(163,255,176,.9)";
+          deployBadge.textContent = (status === "deploying" || status === "monitoring") ? "shipped" : "ready";
+        } else {
+          gateEl.textContent = "pending";
+          gateEl.style.color = "rgba(253,224,71,.86)";
+          deployBadge.textContent = "pending";
+        }
+
+        // Update training curve points (use auc as the “curve value” for show)
+        for (let i=0;i<pts.length;i++){
+          const u = i/(pts.length-1);
+          // shape: starts noisy then smooths; approaches 1 as q improves
+          const noiseAmp = (1 - q) * 0.10;
+          const wave = Math.sin((t/600) + u*6) * noiseAmp + Math.cos((t/950) + u*3) * noiseAmp*0.7;
+          const base = clamp(0.20 + q*0.75 - (1-u)*0.08 + wave, 0.02, 0.98);
+          pts[i].y = lerp(pts[i].y, base, 0.12);
+        }
+        const values = pts.map(p=>p.y);
+        curve.setAttribute('d', buildPath(values));
+        area.setAttribute('d', buildArea(values));
+
+        // marker at “current” progress
+        const idx = Math.floor(clamp((dt % cycle) / cycle, 0, 0.999) * (pts.length-1));
+        const X0=40, Y0=20, W=660, H=220;
+        const mx = X0 + (idx/(pts.length-1))*W;
+        const my = Y0 + (1-values[idx])*H;
+        marker.setAttribute('cx', mx.toFixed(2));
+        marker.setAttribute('cy', my.toFixed(2));
+
+        // confusion matrix follows q
+        updateCM(q);
+
+        // logs cadence
+        if (t > nextPipe){
+          nextPipe = t + 1200 + Math.random()*800;
+          const msg = pipeEvents[Math.floor(Math.random()*pipeEvents.length)];
+          addLog(pipeLog, msg + (Math.random()<0.18 ? " <span class='hl'>(anomaly spike)</span>" : ""), Math.random()<0.18);
+        }
+        if (t > nextRag){
+          nextRag = t + 1600 + Math.random()*900;
+          addLog(ragLog, docs[Math.floor(Math.random()*docs.length)]);
+        }
+
+        // epoch bump on cycle wrap
+        if ((dt % cycle) < 18) {
+          // when we wrap around, increment once
+          if (!tick._wrapped){
+            epoch = Math.min(epoch+1, 9);
+            tick._wrapped = true;
+            addLog(pipeLog, `epoch advanced → ${epoch}`, true);
+          }
+        } else {
+          tick._wrapped = false;
+        }
+      }
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Safety self-check
+    console.assert(!!curve && !!area && !!marker, 'SVG paths missing');
+    console.assert(!!ragLog && !!pipeLog, 'Log containers missing');
   </script>
 </body>
 </html>
