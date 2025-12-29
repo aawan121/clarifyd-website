@@ -165,7 +165,7 @@
       background: rgba(255,255,255,.05);
     }
 
-    /* Visual card */
+    /* Visual showpiece */
     .visual{
       position: relative;
       border-radius: calc(var(--radius) + 6px);
@@ -175,6 +175,8 @@
       overflow:hidden;
       transform: translate3d(0,0,0);
       will-change: transform;
+      user-select:none;
+      touch-action:none;
     }
     .visual::before{
       content:"";
@@ -188,22 +190,18 @@
       pointer-events:none;
     }
     #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
+    .visual-wide{ width: 100%; min-height: 620px; }
 
-    .visual-wide{
-      width: 100%;
-      min-height: 620px;
-    }
-
-    /* overlay UI (minimal) */
+    /* overlay UI */
     .visual-ui{ position:absolute; inset:0; padding: 14px; pointer-events:none }
     .visual-ui > *{ pointer-events:auto }
     .visual-ui::after{
       content:"";
-      position:absolute; left:0; right:0; bottom:0; height: 130px;
+      position:absolute; left:0; right:0; bottom:0; height: 140px;
       background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
       pointer-events:none;
     }
-    .mini-head{ position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap: 10px }
+    .mini-head{ position:relative; z-index:2; display:flex; align-items:flex-start; justify-content:space-between; gap: 10px }
     .badge{
       font-size:12px;
       padding: 8px 10px;
@@ -211,6 +209,23 @@
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.20);
       color: rgba(242,244,255,.78);
+      max-width: 56ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .commentary{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.72);
+      max-width: 52ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: .92;
     }
 
     .stage{
@@ -282,13 +297,14 @@
     .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease }
     .reveal.is-visible{ opacity: 1; transform: translateY(0) }
 
-    /* responsive */
     @media (max-width: 980px){
       h1{ font-size: 44px }
       .grid-2{ grid-template-columns: 1fr }
       .menu{ gap: 10px }
       .menu a{ padding: 10px 8px }
       .visual-wide{ min-height: 520px; }
+      .badge{ max-width: 40ch; }
+      .commentary{ max-width: 40ch; }
     }
     @media (prefers-reduced-motion: reduce){
       .pulse{ animation: none !important }
@@ -342,12 +358,16 @@
     <!-- Full-width showpiece animation -->
     <section class="section" style="padding-top: 10px;">
       <div class="container">
-        <div class="visual visual-wide reveal" data-tilt aria-label="Data science visual">
+        <div class="visual visual-wide reveal" id="vizHost" data-tilt aria-label="MLOps showpiece visual">
           <canvas id="viz"></canvas>
+
           <div class="visual-ui">
             <div class="mini-head">
-              <div class="badge">MLOps cycle</div>
-              <div class="badge" id="mode">Ingest</div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+                <div class="badge">MLOps cycle</div>
+                <div class="badge" id="mode">Ingest</div>
+              </div>
+              <div class="commentary" id="commentary">Streaming signals into a usable dataset.</div>
             </div>
 
             <div class="stage" aria-label="Stages">
@@ -375,7 +395,7 @@
             <div class="top">
               <div>
                 <h3 style="margin:0 0 6px;">Training</h3>
-                <div class="muted">Data science, MLOps, LLMs.</div>
+                <div class="muted">Traditional DS, MLOps, LLMs.</div>
               </div>
               <div class="tag">Capability</div>
             </div>
@@ -423,11 +443,11 @@
   </main>
 
   <script>
-    // ============ Small helpers ============
+    // ========= helpers =========
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-    // Reveal on scroll
+    // Reveal
     const revealItems = document.querySelectorAll('.reveal');
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
@@ -458,7 +478,7 @@
     window.addEventListener('resize', onScroll);
     onScroll();
 
-    // Tilt on hero card (now applied to the wide visual)
+    // Tilt on showpiece
     const tiltCard = document.querySelector('[data-tilt]');
     if (tiltCard) {
       let raf = null;
@@ -469,9 +489,9 @@
         const py = (e.clientY - r.top) / r.height - 0.5;
         if (raf) cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => {
-          const rx = (-py * 5.2).toFixed(2);
-          const ry = (px * 7.2).toFixed(2);
-          tiltCard.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+          const rx = (-py * 4.2).toFixed(2);
+          const ry = (px * 6.2).toFixed(2);
+          tiltCard.style.transform = `perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg)`;
         });
       });
       tiltCard.addEventListener('mouseleave', () => {
@@ -479,16 +499,26 @@
       });
     }
 
-    // ============ Showpiece animation (static-friendly, no libs) ============
+    // ========= showpiece animation =========
+    const host = document.getElementById('vizHost');
     const canvas = document.getElementById('viz');
     const ctx = canvas ? canvas.getContext('2d') : null;
 
     const stageEls = Array.from(document.querySelectorAll('.pilltag'));
     const modeEl = document.getElementById('mode');
+    const commentaryEl = document.getElementById('commentary');
 
     const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
+    const COMMENTS = [
+      "Streaming signals into a usable dataset.",
+      "Cleaning & segregation: noise out, structure in.",
+      "Fitting a model: signal sharpens into structure.",
+      "Validation: uncertainty collapses as quality improves.",
+      "Deployment: model lands in the real world.",
+      "Monitoring: drift watch, performance stays healthy."
+    ];
 
-    // hover preview does NOT stop auto-cycle; click locks for 5s
+    // Hover preview does NOT stop auto-cycle; click locks for 5s
     let hoverStage = null;
     let lockedStage = null;
     let lockedUntil = 0;
@@ -500,6 +530,7 @@
         el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
       });
       if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
+      if (commentaryEl) commentaryEl.textContent = COMMENTS[i] || "";
     }
 
     function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
@@ -526,10 +557,10 @@
       });
     });
 
-    // ---- particle system ----
+    // ---- particles ----
     const points = [];
-    const N = 1400;          // slightly higher for the bigger canvas
-    const links = 200;
+    const N = 1400;
+    const links = 220;
 
     let W=0,H=0,DPR=1;
     function resizeCanvas(){
@@ -543,22 +574,21 @@
     }
 
     function randn(){
-      let u = 0, v = 0;
-      while(u === 0) u = Math.random();
-      while(v === 0) v = Math.random();
-      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+      let u=0,v=0;
+      while(u===0) u=Math.random();
+      while(v===0) v=Math.random();
+      return Math.sqrt(-2.0*Math.log(u))*Math.cos(2.0*Math.PI*v);
     }
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
 
-    function lerp(a,b,t){ return a + (b-a)*t; }
-    function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
-
-    // Point cloud for the word CLARIFYD
+    // word targets
     function buildWordTargets(text){
       const oc = document.createElement('canvas');
       const octx = oc.getContext('2d');
       const scale = Math.min(2, DPR);
 
-      oc.width = Math.floor(W * 0.94 * scale);
+      oc.width  = Math.floor(W * 0.94 * scale);
       oc.height = Math.floor(H * 0.62 * scale);
 
       octx.clearRect(0,0,oc.width, oc.height);
@@ -574,14 +604,13 @@
       const coords = [];
       const step = Math.max(3, Math.floor(6 * scale));
 
-      for (let y=0; y<oc.height; y+=step){
-        for (let x=0; x<oc.width; x+=step){
-          const idx = (y*oc.width + x) * 4;
-          if (img[idx+3] > 10) coords.push({x, y});
+      for (let y=0;y<oc.height;y+=step){
+        for (let x=0;x<oc.width;x+=step){
+          const idx=(y*oc.width+x)*4;
+          if (img[idx+3] > 10) coords.push({x,y});
         }
       }
 
-      // Fit targets into a safe on-canvas box (padding avoids clipping)
       const padX = W * 0.12;
       const padY = H * 0.26;
 
@@ -603,43 +632,51 @@
       }));
     }
 
-    // Timing
+    // timing
     const stageDur = 2400;
-    function autoStageIndex(t){
-      return Math.floor((t / stageDur) % STAGES.length);
-    }
-    function easeInOut(t){
-      return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
-    }
-    function stageMix(t){
-      const local = (t % stageDur) / stageDur;
-      return easeInOut(local);
-    }
-    function validateProgress(t){
-      const local = (t % stageDur) / stageDur;
-      return easeInOut(local);
-    }
+    function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
+    function easeInOut(t){ return t<0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+    function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
+    function validateProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+    function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+
     function aucValue(t){
       const p = validateProgress(t);
       const wiggle = Math.sin(t/260) * 0.01;
       return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
+    }
+    function lossValue(t){
+      // looks like a decreasing loss
+      const p = trainProgress(t);
+      const wiggle = Math.sin(t/240) * 0.015;
+      return clamp(1.25 - 0.85*p + wiggle, 0.18, 1.35);
     }
 
     function colorFor(c, a){
       if (c===0) return `rgba(124,58,237,${a})`;
       if (c===1) return `rgba(34,211,238,${a})`;
       if (c===2) return `rgba(253,224,71,${a})`;
-      if (c===4) return `rgba(255,90,90,${a})`;   // outliers
-      return `rgba(163,255,176,${a})`;            // key
+      if (c===4) return `rgba(255,90,90,${a})`;
+      return `rgba(163,255,176,${a})`;
     }
 
-    // Interactivity: steer key point
+    // Cursor-follow key point (attach to HOST so overlay doesn't block)
     let mx = 0.5, my = 0.5;
-    function onMove(e){
-      if (!canvas) return;
-      const r = canvas.getBoundingClientRect();
-      mx = clamp((e.clientX - r.left)/r.width, 0, 1);
-      my = clamp((e.clientY - r.top)/r.height, 0, 1);
+    function updatePointer(clientX, clientY){
+      if (!host) return;
+      const r = host.getBoundingClientRect();
+      mx = clamp((clientX - r.left) / r.width, 0, 1);
+      my = clamp((clientY - r.top) / r.height, 0, 1);
+    }
+    if (host){
+      host.addEventListener('pointermove', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
+      host.addEventListener('pointerdown', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
+      host.addEventListener('touchstart', (e) => {
+        const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
+      }, { passive:true });
+      host.addEventListener('touchmove', (e) => {
+        const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
+      }, { passive:true });
     }
 
     let wordTargets = [];
@@ -665,10 +702,10 @@
           train:  {x:0,y:0},
           validate:{x:0,y:0},
           deploy: {x:0,y:0},
-          monitor: {x:0,y:0},
+          monitor:{x:0,y:0},
           earth: null,
           out: false,
-          seed: Math.random()*1000
+          seed: Math.random()*1000,
         });
       }
 
@@ -683,7 +720,7 @@
         p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
       }
 
-      // Clean: segregate into 3 lanes by grp, quarantine outliers
+      // Clean: segregate + quarantine
       const cy = H*0.56;
       const ry = H*0.24;
       const laneX = [W*0.32, W*0.50, W*0.68];
@@ -691,7 +728,6 @@
       for (let i=0;i<N;i++){
         const p = points[i];
         p.out = Math.abs(p.f) > 0.92;
-
         if (p.out) {
           p.clean.x = W*0.88 + randn()*W*0.012;
           p.clean.y = H*0.26 + Math.random()*H*0.56;
@@ -703,9 +739,7 @@
 
       // Train: CLARIFYD
       wordTargets = buildWordTargets('CLARIFYD');
-      if (wordTargets.length < 120) {
-        wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
-      }
+      if (wordTargets.length < 120) wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
       for (let i=0;i<N;i++){
         const p = points[i];
         const t = wordTargets[i % wordTargets.length];
@@ -721,7 +755,7 @@
         p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
       }
 
-      // Deploy: sphere coordinates (Earth)
+      // Deploy: Earth sphere
       const earthCx = W*0.70;
       const earthCy = H*0.56;
       const earthR  = Math.min(W,H)*0.24;
@@ -767,23 +801,17 @@
     }
 
     function drawEarth(t){
-      const cx = W*0.70;
-      const cy = H*0.56;
-      const r  = Math.min(W,H)*0.24;
+      const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
 
       const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
       g.addColorStop(0, 'rgba(34,211,238,0.16)');
       g.addColorStop(1, 'rgba(34,211,238,0.03)');
       ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r+2, 0, Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
 
       ctx.strokeStyle = 'rgba(255,255,255,0.12)';
       ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI*2);
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
 
       // meridians
       const rot = (t/1400) % (Math.PI*2);
@@ -814,9 +842,7 @@
       const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
       const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
       ctx.fillStyle = 'rgba(253,224,71,0.75)';
-      ctx.beginPath();
-      ctx.arc(qx, qy, 2.8, 0, Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(qx, qy, 2.8, 0, Math.PI*2); ctx.fill();
     }
 
     function drawValidateOverlay(t){
@@ -824,8 +850,7 @@
       const p = validateProgress(t);
       const auc = aucValue(t);
 
-      const x = W*0.72, y = H*0.16;
-      const w = W*0.22, h = 12;
+      const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
 
       ctx.fillStyle = 'rgba(0,0,0,0.22)';
       ctx.fillRect(x, y, w, h);
@@ -844,6 +869,43 @@
       ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
       ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
       ctx.fillText(auc.toFixed(3), x + 38, y - 6);
+    }
+
+    // NEW: Train overlay distinct from Validate
+    function drawTrainOverlay(t){
+      const p = trainProgress(t);
+      const loss = lossValue(t);
+
+      const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
+
+      // bar background
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
+      ctx.fillRect(x, y, w, h);
+
+      // decreasing bar (loss goes down) -> show "fit" increasing
+      const fit = clamp(1 - (loss - 0.18) / (1.35 - 0.18), 0, 1);
+      ctx.fillStyle = `rgba(124,58,237,${0.35 + 0.35*p})`;
+      ctx.fillRect(x, y, w*fit, h);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+      ctx.strokeRect(x, y, w, h);
+
+      ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.fillStyle = 'rgba(242,244,255,0.78)';
+      ctx.fillText('Loss', x, y - 6);
+
+      ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.fillStyle = `rgba(253,224,71,${0.55 + 0.30*p})`;
+      ctx.fillText(loss.toFixed(3), x + 42, y - 6);
+
+      // subtle "weight update" ripple around the word center
+      const cx = W*0.50, cy = H*0.50;
+      const rr = (Math.min(W,H)*0.10) * (0.6 + 0.6*(1-p));
+      ctx.strokeStyle = `rgba(34,211,238,${0.10 + 0.12*(1-p)})`;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rr + (Math.sin(t/220)*6), 0, Math.PI*2);
+      ctx.stroke();
     }
 
     function effectiveStage(t){
@@ -865,11 +927,9 @@
       ctx.clearRect(0,0,W,H);
       drawVignette();
 
-      // Deploy: rotate the globe and point targets
+      // Deploy: rotate earth targets
       if (si === 4) {
-        const cx = W*0.70;
-        const cy = H*0.56;
-        const r  = Math.min(W,H)*0.24;
+        const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
         const rot = (t/1400) % (Math.PI*2);
         for (let i=0;i<points.length;i++){
           const p = points[i];
@@ -881,6 +941,9 @@
         }
         drawEarth(t);
       }
+
+      // overlays
+      if (si === 2) drawTrainOverlay(t);
       if (si === 3) drawValidateOverlay(t);
 
       // update particles
@@ -895,7 +958,29 @@
 
         let target = targetForStage(p, si);
 
-        // Validate: start noisy, then clarify into CLARIFYD as AUC improves
+        // TRAIN: spiral-in + damped oscillation that settles (distinct from validate)
+        if (si === 2) {
+          const tp = trainProgress(t);
+          const cx = W*0.50, cy = H*0.50;
+
+          // swirl fades out as training converges
+          const swirl = (1 - tp);
+          const ang = (t/520) + p.seed*0.002 + (p.cls*1.7);
+          const rad = (Math.min(W,H) * 0.08) * swirl;
+
+          // orbit toward target while fitting
+          const ox = Math.cos(ang) * rad;
+          const oy = Math.sin(ang) * rad;
+
+          // small jitter early, fades out
+          const j = (1 - tp) * Math.min(W,H) * 0.010;
+          const jx = Math.sin(t/120 + p.seed) * j;
+          const jy = Math.cos(t/140 + p.seed*1.21) * j;
+
+          target = { x: p.train.x + ox + jx, y: p.train.y + oy + jy };
+        }
+
+        // VALIDATE: noisy -> clarify into CLARIFYD as AUC improves
         if (si === 3) {
           const vp = validateProgress(t);
           const base = {
@@ -908,7 +993,7 @@
           target = { x: base.x + jx, y: base.y + jy };
         }
 
-        // Ingest: stream → clean (smooth position blending)
+        // Ingest: stream -> clean (smooth position blend)
         if (si === 0) {
           const into = targetForStage(p, 1);
           const tx = lerp(target.x, into.x, mix);
@@ -921,26 +1006,26 @@
         }
       }
 
-      // key datapoint steer
+      // key datapoint follows cursor (more direct, smoother)
       const kp = points[0];
-      const steerX = W * (0.15 + mx*0.70);
-      const steerY = H * (0.18 + my*0.70);
-      kp.x = lerp(kp.x, steerX, 0.10);
-      kp.y = lerp(kp.y, steerY, 0.10);
+      const steerX = W * (0.08 + mx*0.84);
+      const steerY = H * (0.08 + my*0.84);
+      kp.x = lerp(kp.x, steerX, 0.16);
+      kp.y = lerp(kp.y, steerY, 0.16);
 
-      // connections when forming structure
+      // connections: stronger in Train (fitting) and stabilize in Validate
       if (si === 2 || si === 3) {
         ctx.lineWidth = 1;
+        const strength = (si === 2) ? (0.65 + 0.35*trainProgress(t)) : validateProgress(t);
         for (let i=0;i<links;i++){
           const a = points[(i*7) % points.length];
           const b = points[(i*19 + 33) % points.length];
           if (a.alpha < 0.15 || b.alpha < 0.15) continue;
           const dx = a.x-b.x, dy = a.y-b.y;
           const d2 = dx*dx + dy*dy;
-          if (d2 < 190*190){
+          if (d2 < 200*200){
             const d = Math.sqrt(d2);
-            const vp = (si === 3) ? validateProgress(t) : 1;
-            const alpha = (1 - d/190) * 0.20 * vp;
+            const alpha = (1 - d/200) * 0.20 * strength;
             ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x,a.y);
@@ -950,7 +1035,7 @@
         }
       }
 
-      // draw points (with smooth Ingest→Clean colour blend)
+      // draw points (smooth Ingest->Clean colour blend)
       for (let i=0;i<points.length;i++){
         const p = points[i];
         if (p.alpha < 0.03) continue;
@@ -965,7 +1050,7 @@
         else cls = p.cls;
 
         const a = (isKey ? 0.95 : 0.72) * p.alpha;
-        const r = isKey ? 2.6 : 1.2;
+        const r = isKey ? 2.7 : 1.25;
 
         const blendToClean = (si === 0) ? mix : 0;
         const baseCls = p.cls;
@@ -996,7 +1081,7 @@
         }
       }
 
-      // stage overlays
+      // stage overlays (minimal)
       if (si === 0) {
         ctx.strokeStyle = 'rgba(255,255,255,0.10)';
         ctx.lineWidth = 1;
@@ -1017,7 +1102,6 @@
       }
 
       if (si === 1) {
-        // filter window + segregation lanes + quarantine bin
         ctx.strokeStyle = 'rgba(34,211,238,0.16)';
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -1048,7 +1132,7 @@
 
       // key point halo
       ctx.strokeStyle = 'rgba(163,255,176,0.35)';
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 1.7;
       ctx.beginPath();
       ctx.arc(kp.x, kp.y, 26, -Math.PI*0.15, Math.PI*0.35);
       ctx.stroke();
@@ -1056,18 +1140,19 @@
       requestAnimationFrame(draw);
     }
 
-    // ============ self-test ============
+    // self-test
     function selfTest(){
+      console.assert(!!host, 'viz host missing');
       console.assert(!!canvas, 'Canvas #viz missing');
       console.assert(stageEls.length === 6, 'Expected 6 stage pills');
       console.assert(!!modeEl, 'Mode badge missing');
+      console.assert(!!commentaryEl, 'Commentary missing');
     }
 
     window.addEventListener('resize', () => {
       resizeCanvas();
       initParticles();
     });
-    if (canvas) canvas.addEventListener('mousemove', onMove);
 
     selfTest();
     initParticles();
