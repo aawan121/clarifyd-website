@@ -4,9 +4,296 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clarifyd | Data Science & AI</title>
-  <meta name="description" content="Clarifyd: Data science delivery and training." />
-  <link rel="stylesheet" href="./assets/style.css" />
+  <meta name="description" content="Clarifyd: data science training and contract delivery." />
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --text:#F2F4FF;
+      --muted: rgba(242,244,255,.72);
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 22px;
+      --max: 1160px;
+      --accentA: #7C3AED; /* purple */
+      --accentB: #22D3EE; /* cyan */
+      --accentC: #A3FFB0; /* mint */
+      --accentY: #FDE047; /* yellow */
+      --glowA: rgba(124,58,237,.45);
+    }
+    *{ box-sizing:border-box }
+    html,body{ margin:0; padding:0 }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+    a{ color: inherit }
+    .container{ max-width:var(--max); margin:0 auto; padding:0 22px }
+    .muted{ color: var(--muted) }
+    .tiny{ font-size: 12px; color: rgba(242,244,255,.62) }
+
+    /* Parallax background layers */
+    .parallax-layer{ position: fixed; inset: -18vh -18vw; pointer-events: none; z-index: 0; transform: translate3d(0,0,0); will-change: transform; opacity: .9; }
+    .layer-a{
+      background:
+        radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);
+      filter: blur(14px);
+    }
+    .layer-b{
+      background:
+        radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),
+        radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);
+      filter: blur(18px);
+      opacity: .65;
+    }
+    .layer-c{
+      background:
+        radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
+      filter: blur(26px);
+      opacity: .45;
+    }
+    .bg-grid{
+      position: fixed; inset: 0; pointer-events: none; opacity: .20;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+      z-index: 1;
+    }
+
+    main{ position: relative; z-index: 2 }
+
+    /* header */
+    .site-header{
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(7,10,18,.55);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0 }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight: 720; letter-spacing: .2px; text-decoration:none }
+    .mark{
+      width: 14px; height: 14px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--accentA), var(--accentB), var(--accentY));
+      box-shadow: 0 0 28px var(--glowA);
+    }
+    .menu{ display:flex; gap: 18px; align-items:center }
+    .menu a{
+      text-decoration: none;
+      font-size: 14px;
+      color: rgba(242,244,255,.72);
+      padding: 10px 10px;
+      border-radius: 999px;
+      transition: background .2s ease, color .2s ease;
+    }
+    .menu a:hover{ color: var(--text); background: rgba(255,255,255,.06) }
+    .pill{
+      padding: 10px 14px !important;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    /* hero */
+    .hero{ padding: 78px 0 34px }
+    .hero-grid{ display:grid; grid-template-columns: 1.18fr .82fr; gap: 26px; align-items: start }
+
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      font-size: 13px;
+      color: rgba(242,244,255,.78);
+    }
+    .pulse{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: var(--accentB);
+      box-shadow: 0 0 0 0 rgba(34,211,238,.55);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%{ box-shadow: 0 0 0 0 rgba(34,211,238,.55) }
+      70%{ box-shadow: 0 0 0 12px rgba(34,211,238,0) }
+      100%{ box-shadow: 0 0 0 0 rgba(34,211,238,0) }
+    }
+
+    h1{ font-size: 54px; line-height: 1.05; letter-spacing: -1.2px; margin: 18px 0 12px }
+    .gradient-text{
+      background: linear-gradient(90deg, var(--accentA), var(--accentB), var(--accentY), var(--accentC));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .lead{ font-size: 18px; color: rgba(242,244,255,.74); max-width: 58ch; margin: 0 0 16px }
+
+    .cta{ display:flex; gap: 12px; flex-wrap: wrap; align-items:center; margin-top: 10px }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      text-decoration:none;
+      color: var(--text);
+      box-shadow: 0 16px 50px rgba(0,0,0,.38);
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));
+      border-color: transparent;
+      box-shadow: 0 22px 90px rgba(124,58,237,.25), 0 20px 70px rgba(34,211,238,.18);
+    }
+
+    .trust{ display:flex; gap:10px; flex-wrap: wrap; margin-top: 16px }
+    .chip{
+      font-size: 13px;
+      color: rgba(242,244,255,.72);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+
+    /* Visual card */
+    .visual{
+      position: relative;
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 24px 80px rgba(0,0,0,.55);
+      overflow:hidden;
+      min-height: 460px;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+    }
+    .visual::before{
+      content:"";
+      position:absolute; inset:-120px -160px;
+      background:
+        radial-gradient(closest-side at 40% 30%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(closest-side at 70% 55%, rgba(34,211,238,.26), transparent 62%),
+        radial-gradient(closest-side at 55% 80%, rgba(253,224,71,.14), transparent 60%);
+      filter: blur(14px);
+      opacity: .95;
+      pointer-events:none;
+    }
+    #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
+
+    /* overlay UI (minimal) */
+    .visual-ui{ position:absolute; inset:0; padding: 14px; pointer-events:none }
+    .visual-ui > *{ pointer-events:auto }
+    .visual-ui::after{
+      content:"";
+      position:absolute; left:0; right:0; bottom:0; height: 120px;
+      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
+      pointer-events:none;
+    }
+    .mini-head{ position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap: 10px }
+    .badge{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: rgba(242,244,255,.78);
+    }
+
+    .stage{
+      position:absolute; left:14px; right:14px; bottom:14px; z-index:2;
+      display:flex; gap:8px; flex-wrap:wrap; padding: 10px;
+      border-radius: 16px; border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10); backdrop-filter: blur(10px);
+    }
+    .pilltag{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(242,244,255,.76);
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .pilltag:hover{ background: rgba(255,255,255,.08) }
+    .pilltag:focus{ outline: 2px solid rgba(253,224,71,.22); outline-offset: 2px }
+    .dot{ width:8px; height:8px; border-radius:999px; background: rgba(242,244,255,.28) }
+    .pilltag.active{ border-color: rgba(253,224,71,.35); background: rgba(253,224,71,.08) }
+    .pilltag.active .dot{ background: var(--accentY); box-shadow: 0 0 24px rgba(253,224,71,.35) }
+    .pilltag.locked{ border-color: rgba(34,211,238,.35); background: rgba(34,211,238,.08) }
+    .pilltag.locked .dot{ background: rgba(34,211,238,.95); box-shadow: 0 0 24px rgba(34,211,238,.35) }
+
+    /* sections */
+    .section{ padding: 56px 0 }
+    .section.alt{
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(800px 500px at 85% 30%, rgba(34,211,238,.14), transparent 58%),
+        radial-gradient(700px 500px at 55% 80%, rgba(253,224,71,.08), transparent 60%),
+        rgba(255,255,255,.02);
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap: 14px; margin-bottom: 18px }
+    .section-head h2{ margin:0; font-size: 34px; letter-spacing: -.5px }
+    .grid-2{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px }
+
+    .panel{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      padding: 20px;
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+    }
+    .cardlink{ text-decoration:none; display:block }
+    .panel:hover{ border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06) }
+
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap: 12px }
+    .tag{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.74);
+      white-space: nowrap;
+    }
+
+    /* reveal */
+    .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease }
+    .reveal.is-visible{ opacity: 1; transform: translateY(0) }
+
+    /* responsive */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr }
+      h1{ font-size: 44px }
+      .grid-2{ grid-template-columns: 1fr }
+      .menu{ gap: 10px }
+      .menu a{ padding: 10px 8px }
+      .visual{ min-height: 420px }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .pulse{ animation: none !important }
+      .reveal{ transition:none !important }
+    }
+  </style>
 </head>
+
 <body>
   <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
   <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
@@ -15,14 +302,14 @@
 
   <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="./index.html" aria-label="Clarifyd home">
+      <a class="brand" href="/">
         <span class="mark" aria-hidden="true"></span>
         <span>Clarifyd</span>
       </a>
       <nav class="menu" aria-label="Primary">
-        <a href="./services.html">Services</a>
-        <a href="./work.html">Work</a>
-        <a href="./contact.html" class="pill">Contact</a>
+        <a href="/services.html">Services</a>
+        <a href="/work.html">Work</a>
+        <a href="/contact.html" class="pill">Contact</a>
       </nav>
     </div>
   </header>
@@ -31,14 +318,14 @@
     <section class="hero">
       <div class="container hero-grid">
         <div class="reveal">
-          <div class="kicker"><span class="pulse" aria-hidden="true"></span> Data Science • ML • LLMs</div>
-          <h1>Clarity in <span class="gradient-text">data</span>. Confidence in <span class="gradient-text">delivery</span>.</h1>
-          <p class="lead">Training + contract delivery for teams that want results.</p>
+          <div class="kicker"><span class="pulse" aria-hidden="true"></span> Data Science • ML • MLOps • LLMs</div>
+          <h1>Make data <span class="gradient-text">useful</span>.<br/>Ship models with <span class="gradient-text">confidence</span>.</h1>
+          <p class="lead">Training and contract delivery—built for real-world deployment, not demos.</p>
 
           <div class="cta">
-            <a class="btn primary" href="./contact.html">Enquire</a>
-            <a class="btn" href="./services.html">Services</a>
-            <a class="btn" href="./work.html">Work</a>
+            <a class="btn primary" href="/contact.html">Enquire</a>
+            <a class="btn" href="/services.html">Services</a>
+            <a class="btn" href="/work.html">Work</a>
           </div>
 
           <div class="trust">
@@ -47,41 +334,21 @@
           </div>
         </div>
 
-        <aside class="visual reveal parallax-card" data-tilt aria-label="Animated data visual">
-          <canvas id="net"></canvas>
+        <aside class="visual reveal" data-tilt aria-label="Data science visual">
+          <canvas id="viz"></canvas>
           <div class="visual-ui">
             <div class="mini-head">
-              <div class="badge">Live preview</div>
-              <div class="badge">Latency <span id="lat">18</span>ms</div>
+              <div class="badge">MLOps cycle</div>
+              <div class="badge" id="mode">Ingest</div>
             </div>
 
-            <div class="metric-grid">
-              <div class="metric">
-                <div class="label">Signal</div>
-                <div class="value"><span id="score">0.91</span></div>
-                <div class="bars" aria-hidden="true">
-                  <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                </div>
-              </div>
-              <div class="metric">
-                <div class="label">Delivery</div>
-                <div class="value">Milestones</div>
-                <div class="tiny" style="margin-top:6px;">Docs • handover • roadmap</div>
-              </div>
-            </div>
-
-            <div class="sparkline" aria-hidden="true">
-              <svg viewBox="0 0 600 120" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="grad" x1="0" x2="1" y1="0" y2="0">
-                    <stop offset="0" stop-color="#7C3AED"/>
-                    <stop offset="0.45" stop-color="#22D3EE"/>
-                    <stop offset="0.72" stop-color="#FDE047"/>
-                    <stop offset="1" stop-color="#A3FFB0"/>
-                  </linearGradient>
-                </defs>
-                <path d="M0,82 C70,20 140,110 210,62 C280,18 350,106 420,58 C490,14 540,88 600,36" />
-              </svg>
+            <div class="stage" aria-label="Stages">
+              <div class="pilltag" role="button" tabindex="0" data-stage="0" aria-label="Ingest"><span class="dot"></span>Ingest</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="1" aria-label="Clean"><span class="dot"></span>Clean</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="2" aria-label="Train"><span class="dot"></span>Train</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="3" aria-label="Validate"><span class="dot"></span>Validate</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="4" aria-label="Deploy"><span class="dot"></span>Deploy</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="5" aria-label="Monitor"><span class="dot"></span>Monitor</div>
             </div>
           </div>
         </aside>
@@ -90,44 +357,733 @@
 
     <section class="section alt">
       <div class="container">
+        <div class="section-head reveal">
+          <h2>Two services</h2>
+          <p class="muted">Capability uplift or project delivery—same standard: measurable outcomes.</p>
+        </div>
+
         <div class="grid-2">
-          <a class="panel cardlink reveal parallax-panel" data-parallax-section="0.06" href="./training.html">
+          <a class="panel cardlink reveal" href="/training.html">
             <div class="top">
               <div>
-                <h3>Training</h3>
+                <h3 style="margin:0 0 6px;">Training</h3>
                 <div class="muted">Data science, MLOps, LLMs.</div>
               </div>
-              <span class="tag">Capability</span>
+              <div class="tag">Capability</div>
             </div>
-            <div class="muted">Workshops. Mentoring. Practical templates.</div>
+            <div class="muted" style="margin-top:12px;">Workshops • mentoring • templates</div>
           </a>
 
-          <a class="panel cardlink reveal parallax-panel" data-parallax-section="0.08" href="./delivery.html">
+          <a class="panel cardlink reveal" href="/delivery.html">
             <div class="top">
               <div>
-                <h3>Delivery</h3>
-                <div class="muted">Contract projects end-to-end.</div>
+                <h3 style="margin:0 0 6px;">Delivery</h3>
+                <div class="muted">Contracts and builds.</div>
               </div>
-              <span class="tag">Delivery</span>
+              <div class="tag">Delivery</div>
             </div>
-            <div class="muted">Analytics, forecasting, LLM prototypes.</div>
+            <div class="muted" style="margin-top:12px;">Forecasting • analytics • LLM prototypes</div>
           </a>
         </div>
       </div>
     </section>
 
-    <footer class="footer">
-      <div class="container footer-grid">
-        <a class="brand" href="./index.html"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
-        <div class="footer-links">
-          <a href="./privacy.html">Privacy</a>
-          <a href="mailto:hello@clarifyd.co.uk">Email</a>
+    <section class="section">
+      <div class="container">
+        <div class="panel reveal">
+          <div class="top" style="align-items:center;">
+            <div>
+              <h3 style="margin:0 0 6px;">Fast start</h3>
+              <div class="muted">Clear scope → short milestones → clean handover.</div>
+            </div>
+            <a class="btn" href="/contact.html">Get started</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="section alt" style="padding:26px 0 38px;">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
+        <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
+          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
           <span class="tiny">© <span id="year"></span></span>
         </div>
       </div>
     </footer>
   </main>
 
-  <script src="./assets/script.js"></script>
+  <script>
+    // ============ Small helpers ============
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+    // Reveal on scroll
+    const revealItems = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          io.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.12 });
+    revealItems.forEach(el => io.observe(el));
+
+    // Parallax background layers
+    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let latestY = 0, ticking = false;
+    function applyParallax(){
+      const y = latestY;
+      for (const el of layers) {
+        const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
+        el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
+      }
+      ticking = false;
+    }
+    function onScroll(){
+      latestY = window.scrollY || 0;
+      if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+
+    // Tilt on hero card
+    const tiltCard = document.querySelector('[data-tilt]');
+    if (tiltCard) {
+      let raf = null;
+      tiltCard.addEventListener('mousemove', (e) => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const r = tiltCard.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const rx = (-py * 6).toFixed(2);
+          const ry = (px * 8).toFixed(2);
+          tiltCard.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        });
+      });
+      tiltCard.addEventListener('mouseleave', () => {
+        tiltCard.style.transform = 'translate3d(0,0,0)';
+      });
+    }
+
+    // ============ Showpiece animation (static-friendly, no libs) ============
+    const canvas = document.getElementById('viz');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+
+    const stageEls = Array.from(document.querySelectorAll('.pilltag'));
+    const modeEl = document.getElementById('mode');
+
+    const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
+
+    // hover preview does NOT stop auto-cycle; click locks for 5s
+    let hoverStage = null;
+    let lockedStage = null;
+    let lockedUntil = 0;
+
+    function setStageUI(i){
+      stageEls.forEach(el => {
+        const idx = Number(el.dataset.stage);
+        el.classList.toggle('active', idx === i);
+        el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
+      });
+      if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
+    }
+
+    function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
+
+    stageEls.forEach(el => {
+      const i = Number(el.dataset.stage);
+
+      el.addEventListener('mouseenter', () => { hoverStage = i; });
+      el.addEventListener('mouseleave', () => { hoverStage = null; });
+      el.addEventListener('focus', () => { hoverStage = i; });
+      el.addEventListener('blur', () => { hoverStage = null; });
+
+      el.addEventListener('click', () => {
+        lockedStage = i;
+        lockedUntil = nowMs() + 5000;
+        setStageUI(i);
+      });
+
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+
+    // ---- particle system ----
+    const points = [];
+    const N = 1200;
+    const links = 160;
+
+    let W=0,H=0,DPR=1;
+    function resizeCanvas(){
+      if (!canvas || !ctx) return;
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.floor(W * DPR);
+      canvas.height = Math.floor(H * DPR);
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+
+    function randn(){
+      let u = 0, v = 0;
+      while(u === 0) u = Math.random();
+      while(v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+
+    // Point cloud for the word CLARIFYD
+    function buildWordTargets(text){
+      const oc = document.createElement('canvas');
+      const octx = oc.getContext('2d');
+      const scale = Math.min(2, DPR);
+
+      oc.width = Math.floor(W * 0.92 * scale);
+      oc.height = Math.floor(H * 0.46 * scale);
+
+      octx.clearRect(0,0,oc.width, oc.height);
+
+      const base = Math.floor(oc.height * 0.62);
+      octx.font = `800 ${base}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
+      octx.textBaseline = 'middle';
+      octx.textAlign = 'center';
+      octx.fillStyle = '#000';
+      octx.fillText(text, oc.width/2, oc.height/2);
+
+      const img = octx.getImageData(0,0,oc.width, oc.height).data;
+      const coords = [];
+      const step = Math.max(3, Math.floor(6 * scale));
+
+      for (let y=0; y<oc.height; y+=step){
+        for (let x=0; x<oc.width; x+=step){
+          const idx = (y*oc.width + x) * 4;
+          if (img[idx+3] > 10) coords.push({x, y});
+        }
+      }
+
+      const sx = (W*0.86) / oc.width;
+      const sy = (H*0.36) / oc.height;
+      const s = Math.min(sx, sy);
+      const ox = W*0.50;
+      const oy = H*0.48;
+
+      for (let i=coords.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [coords[i], coords[j]] = [coords[j], coords[i]];
+      }
+
+      return coords.map(p => ({
+        x: ox + (p.x - oc.width/2) * (s/scale),
+        y: oy + (p.y - oc.height/2) * (s/scale)
+      }));
+    }
+
+    // Timing
+    const stageDur = 2200;
+    function autoStageIndex(t){
+      return Math.floor((t / stageDur) % STAGES.length);
+    }
+    function easeInOut(t){
+      return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
+    }
+    function stageMix(t){
+      const local = (t % stageDur) / stageDur;
+      return easeInOut(local);
+    }
+
+    function validateProgress(t){
+      const local = (t % stageDur) / stageDur;
+      return easeInOut(local);
+    }
+    function aucValue(t){
+      const p = validateProgress(t);
+      const wiggle = Math.sin(t/260) * 0.01;
+      return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
+    }
+
+    function colorFor(c, a){
+      if (c===0) return `rgba(124,58,237,${a})`;
+      if (c===1) return `rgba(34,211,238,${a})`;
+      if (c===2) return `rgba(253,224,71,${a})`;
+      if (c===4) return `rgba(255,90,90,${a})`;   // outliers
+      return `rgba(163,255,176,${a})`;            // key
+    }
+
+    // Interactivity: steer key point
+    let mx = 0.5, my = 0.5;
+    function onMove(e){
+      if (!canvas) return;
+      const r = canvas.getBoundingClientRect();
+      mx = clamp((e.clientX - r.left)/r.width, 0, 1);
+      my = clamp((e.clientY - r.top)/r.height, 0, 1);
+    }
+
+    let wordTargets = [];
+
+    function initParticles(){
+      if (!canvas || !ctx) return;
+      resizeCanvas();
+      points.length = 0;
+
+      for (let i=0;i<N;i++){
+        const f = clamp(randn()*0.70, -1, 1);
+        const grp = (f < -0.25) ? 0 : (f > 0.25 ? 2 : 1);
+        points.push({
+          x: W*0.5 + randn()*W*0.20,
+          y: H*0.56 + randn()*H*0.16,
+          vx: (Math.random()-.5)*0.18,
+          vy: (Math.random()-.5)*0.18,
+          alpha: 1,
+          cls: i%3,
+          f, grp,
+          ingest: {x:0,y:0},
+          clean:  {x:0,y:0},
+          train:  {x:0,y:0},
+          validate:{x:0,y:0},
+          deploy: {x:0,y:0},
+          monitor: {x:0,y:0},
+          earth: null,
+          out: false,
+          seed: Math.random()*1000
+        });
+      }
+
+      // key datapoint
+      points[0].cls = 3;
+
+      // Ingest: stream from left
+      for (let i=0;i<N;i++){
+        const p = points[i];
+        const lane = (i % 9) / 8;
+        p.ingest.x = -W*0.15 + Math.random()*W*0.08;
+        p.ingest.y = H*0.18 + lane * H*0.64 + randn()*H*0.01;
+      }
+
+      // Clean: segregate into 3 lanes by grp, quarantine outliers
+      const cy = H*0.56;
+      const ry = H*0.22;
+      const laneX = [W*0.34, W*0.52, W*0.70];
+
+      for (let i=0;i<N;i++){
+        const p = points[i];
+        p.out = Math.abs(p.f) > 0.92;
+
+        if (p.out) {
+          p.clean.x = W*0.90 + randn()*W*0.012;
+          p.clean.y = H*0.30 + Math.random()*H*0.48;
+        } else {
+          p.clean.x = laneX[p.grp] + randn()*W*0.020;
+          p.clean.y = cy + randn()*ry*0.42;
+        }
+      }
+
+      // Train: CLARIFYD
+      wordTargets = buildWordTargets('CLARIFYD');
+      if (wordTargets.length < 120) {
+        wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
+      }
+      for (let i=0;i<N;i++){
+        const p = points[i];
+        const t = wordTargets[i % wordTargets.length];
+        p.train.x = t.x + randn()*1.2;
+        p.train.y = t.y + randn()*1.2;
+      }
+
+      // Validate: slight split
+      for (let i=0;i<N;i++){
+        const p = points[i];
+        const left = (i % 2 === 0);
+        p.validate.x = p.train.x + (left ? -W*0.04 : W*0.04);
+        p.validate.y = p.train.y + (left ? -H*0.02 : H*0.02);
+      }
+
+      // Deploy: sphere coordinates (Earth)
+      const earthCx = W*0.72;
+      const earthCy = H*0.56;
+      const earthR  = Math.min(W,H)*0.22;
+
+      for (let i=0;i<N;i++){
+        const p = points[i];
+        const u = (i + 0.5) / N;
+        const v = (i * 0.6180339887) % 1;
+        const lat = Math.acos(1 - 2*u) - Math.PI/2;
+        const lon = v * Math.PI * 2;
+        p.earth = { lat, lon };
+        p.deploy.x = earthCx + Math.cos(lat)*Math.cos(lon) * earthR;
+        p.deploy.y = earthCy + Math.sin(lat) * earthR;
+      }
+
+      // Monitor: wave
+      for (let i=0;i<N;i++){
+        const p = points[i];
+        const u = i/(N-1);
+        p.monitor.x = W*0.12 + u * W*0.76;
+        p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.09) + (randn()*H*0.02);
+      }
+    }
+
+    function targetForStage(p, s){
+      switch(s){
+        case 0: return p.ingest;
+        case 1: return p.clean;
+        case 2: return p.train;
+        case 3: return p.validate;
+        case 4: return p.deploy;
+        case 5: return p.monitor;
+        default: return p.clean;
+      }
+    }
+
+    function drawVignette(){
+      const g = ctx.createRadialGradient(W*0.55, H*0.38, 50, W*0.55, H*0.55, Math.max(W,H));
+      g.addColorStop(0, 'rgba(0,0,0,0)');
+      g.addColorStop(1, 'rgba(0,0,0,.35)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,W,H);
+    }
+
+    function drawEarth(t){
+      const cx = W*0.72;
+      const cy = H*0.56;
+      const r  = Math.min(W,H)*0.22;
+
+      const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
+      g.addColorStop(0, 'rgba(34,211,238,0.16)');
+      g.addColorStop(1, 'rgba(34,211,238,0.03)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r+2, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.stroke();
+
+      // meridians
+      const rot = (t/1400) % (Math.PI*2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      for (let k=0;k<5;k++){
+        const a = (k/5)*Math.PI*2 + rot;
+        ctx.beginPath();
+        for (let s=0;s<=64;s++){
+          const th = (s/64)*Math.PI*2;
+          const x = cx + Math.cos(th)*Math.cos(a) * r;
+          const y = cy + Math.sin(th) * r;
+          if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      }
+
+      // deployment arc into globe
+      const sx = W*0.24, sy = H*0.46;
+      const ex = cx - r*0.65, ey = cy - r*0.15;
+      ctx.strokeStyle = 'rgba(253,224,71,0.14)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.quadraticCurveTo((sx+ex)/2, sy - r*0.9, ex, ey);
+      ctx.stroke();
+
+      const tt = (t/1200) % 1;
+      const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
+      const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
+      ctx.fillStyle = 'rgba(253,224,71,0.75)';
+      ctx.beginPath();
+      ctx.arc(qx, qy, 2.6, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    function drawValidateOverlay(t){
+      const s = (Math.sin(t/900)+1)/2;
+      const p = validateProgress(t);
+      const auc = aucValue(t);
+
+      const x = W*0.70, y = H*0.18;
+      const w = W*0.24, h = 12;
+
+      // bar background
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
+      ctx.fillRect(x, y, w, h);
+
+      // bar fill (improves over time)
+      const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
+      ctx.fillStyle = 'rgba(34,211,238,0.55)';
+      ctx.fillRect(x, y, w*v, h);
+
+      // outline
+      ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+      ctx.strokeRect(x, y, w, h);
+
+      // AUC label
+      ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.fillStyle = 'rgba(242,244,255,0.78)';
+      ctx.fillText('AUC', x, y - 6);
+
+      ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
+      ctx.fillText(auc.toFixed(3), x + 38, y - 6);
+
+      // minimal caption
+      ctx.font = '500 11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.fillStyle = `rgba(242,244,255,${0.40 + 0.22*p})`;
+      ctx.fillText('signal clarifies as validation improves', x, y + 28);
+    }
+
+    function effectiveStage(t){
+      const now = nowMs();
+      if (lockedStage !== null && now >= lockedUntil) lockedStage = null;
+      const auto = autoStageIndex(t);
+      if (lockedStage !== null) return lockedStage;
+      if (hoverStage !== null) return hoverStage;
+      return auto;
+    }
+
+    function draw(t){
+      if (!canvas || !ctx) return;
+
+      const si = effectiveStage(t);
+      const mix = stageMix(t);
+      setStageUI(si);
+
+      ctx.clearRect(0,0,W,H);
+      drawVignette();
+
+      // Deploy: rotate the globe and point targets
+      if (si === 4) {
+        const cx = W*0.72;
+        const cy = H*0.56;
+        const r  = Math.min(W,H)*0.22;
+        const rot = (t/1400) % (Math.PI*2);
+        for (let i=0;i<points.length;i++){
+          const p = points[i];
+          if (!p.earth) continue;
+          const lat = p.earth.lat;
+          const lon = p.earth.lon + rot;
+          p.deploy.x = cx + Math.cos(lat)*Math.cos(lon) * r;
+          p.deploy.y = cy + Math.sin(lat) * r;
+        }
+        drawEarth(t);
+      }
+      if (si === 3) {
+        drawValidateOverlay(t);
+      }
+
+      // update particles
+      for (let i=0;i<points.length;i++){
+        const p = points[i];
+
+        if (si !== 0) { p.x += p.vx; p.y += p.vy; }
+
+        // fade out outliers during Clean
+        if (si === 1) p.alpha = lerp(p.alpha, p.out ? 0.0 : 1.0, 0.07);
+        else p.alpha = lerp(p.alpha, 1.0, 0.04);
+
+        let target = targetForStage(p, si);
+
+        // Validate: start noisy, then clarify into CLARIFYD as AUC improves
+        if (si === 3) {
+          const vp = validateProgress(t);
+          const base = {
+            x: lerp(p.validate.x, p.train.x, vp),
+            y: lerp(p.validate.y, p.train.y, vp)
+          };
+
+          const amp = (1 - vp) * Math.min(W, H) * 0.030;
+          const jx = Math.sin(t/120 + p.seed) * amp;
+          const jy = Math.cos(t/140 + p.seed*1.31) * amp;
+
+          target = { x: base.x + jx, y: base.y + jy };
+        }
+
+        // ingest: stream → clean
+        if (si === 0) {
+          const into = targetForStage(p, 1);
+          const tx = lerp(target.x, into.x, mix);
+          const ty = lerp(target.y, into.y, mix);
+          p.x = lerp(p.x, tx, 0.08);
+          p.y = lerp(p.y, ty, 0.08);
+        } else {
+          p.x = lerp(p.x, target.x, 0.06);
+          p.y = lerp(p.y, target.y, 0.06);
+        }
+      }
+
+      // key datapoint steer
+      const kp = points[0];
+      const steerX = W * (0.15 + mx*0.70);
+      const steerY = H * (0.20 + my*0.65);
+      kp.x = lerp(kp.x, steerX, 0.10);
+      kp.y = lerp(kp.y, steerY, 0.10);
+
+      // connections when forming structure
+      if (si === 2 || si === 3) {
+        ctx.lineWidth = 1;
+        for (let i=0;i<links;i++){
+          const a = points[(i*7) % points.length];
+          const b = points[(i*19 + 33) % points.length];
+          if (a.alpha < 0.15 || b.alpha < 0.15) continue;
+          const dx = a.x-b.x, dy = a.y-b.y;
+          const d2 = dx*dx + dy*dy;
+          if (d2 < 180*180){
+            const d = Math.sqrt(d2);
+            const vp = (si === 3) ? validateProgress(t) : 1;
+            const alpha = (1 - d/180) * 0.20 * vp;
+            ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(b.x,b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // draw points (with smooth Ingest→Clean colour blend)
+      for (let i=0;i<points.length;i++){
+        const p = points[i];
+        if (p.alpha < 0.03) continue;
+
+        const isKey = (i===0);
+        const isOut = (si === 1) && p.out;
+
+        let cls;
+        if (isKey) cls = 3;
+        else if (isOut) cls = 4;
+        else if (si === 1) cls = p.grp;
+        else cls = p.cls;
+
+        const a = (isKey ? 0.95 : 0.72) * p.alpha;
+        const r = isKey ? 2.4 : 1.15;
+
+        const blendToClean = (si === 0) ? mix : 0;
+        const baseCls = p.cls;
+        const cleanCls = p.grp;
+
+        const glowA = (isKey ? 0.18 : 0.07) * p.alpha;
+
+        if (!isKey && si === 0) {
+          ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+          ctx.fill();
+
+          ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = colorFor(cls, glowA);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+        if (!isKey && si === 0) {
+          ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+          ctx.fill();
+
+          ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = colorFor(cls, a);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+
+      // stage overlays
+      if (si === 0) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+        ctx.lineWidth = 1;
+        for (let k=0;k<6;k++){
+          const y = H*(0.22 + k*0.12);
+          ctx.beginPath();
+          ctx.moveTo(W*0.06, y);
+          ctx.lineTo(W*0.28, y);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(W*0.28, y);
+          ctx.lineTo(W*0.26, y-4);
+          ctx.lineTo(W*0.26, y+4);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(255,255,255,0.10)';
+          ctx.fill();
+        }
+      }
+
+      if (si === 1) {
+        ctx.strokeStyle = 'rgba(34,211,238,0.16)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(W*0.52, H*0.56, W*0.30, H*0.22, 0, 0, Math.PI*2);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        for (const lx of [W*0.34, W*0.52, W*0.70]) {
+          ctx.beginPath();
+          ctx.moveTo(lx, H*0.30);
+          ctx.lineTo(lx, H*0.82);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'rgba(255,90,90,0.18)';
+        ctx.strokeRect(W*0.86, H*0.28, W*0.10, H*0.52);
+      }
+
+      if (si === 5) {
+        const x = W*(0.12 + ((t/1200)%1)*0.76);
+        ctx.strokeStyle = 'rgba(253,224,71,0.10)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, H*0.38);
+        ctx.lineTo(x, H*0.78);
+        ctx.stroke();
+      }
+
+      // key point halo
+      ctx.strokeStyle = 'rgba(163,255,176,0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(kp.x, kp.y, 26, -Math.PI*0.15, Math.PI*0.35);
+      ctx.stroke();
+
+      requestAnimationFrame(draw);
+    }
+
+    // ============ self-test (lightweight) ============
+    function selfTest(){
+      console.assert(!!canvas, 'Canvas #viz missing');
+      console.assert(stageEls.length === 6, 'Expected 6 stage pills');
+      console.assert(!!modeEl, 'Mode badge missing');
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      initParticles();
+    });
+    if (canvas) canvas.addEventListener('mousemove', onMove);
+
+    selfTest();
+    initParticles();
+    requestAnimationFrame(draw);
+  </script>
 </body>
 </html>
