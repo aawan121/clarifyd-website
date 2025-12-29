@@ -173,7 +173,7 @@
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
       box-shadow: 0 24px 80px rgba(0,0,0,.55);
       overflow:hidden;
-      min-height: 460px;
+      min-height: 520px;
       transform: translate3d(0,0,0);
       will-change: transform;
     }
@@ -285,7 +285,7 @@
       .grid-2{ grid-template-columns: 1fr }
       .menu{ gap: 10px }
       .menu a{ padding: 10px 8px }
-      .visual{ min-height: 420px }
+      .visual{ min-height: 460px }
     }
     @media (prefers-reduced-motion: reduce){
       .pulse{ animation: none !important }
@@ -550,12 +550,12 @@
       const octx = oc.getContext('2d');
       const scale = Math.min(2, DPR);
 
-      oc.width = Math.floor(W * 0.92 * scale);
-      oc.height = Math.floor(H * 0.46 * scale);
+      oc.width = Math.floor(W * 0.94 * scale);
+      oc.height = Math.floor(H * 0.56 * scale);
 
       octx.clearRect(0,0,oc.width, oc.height);
 
-      const base = Math.floor(oc.height * 0.62);
+      const base = Math.floor(oc.height * 0.58);
       octx.font = `800 ${base}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
       octx.textBaseline = 'middle';
       octx.textAlign = 'center';
@@ -573,11 +573,16 @@
         }
       }
 
-      const sx = (W*0.86) / oc.width;
-      const sy = (H*0.36) / oc.height;
-      const s = Math.min(sx, sy);
-      const ox = W*0.50;
-      const oy = H*0.48;
+      const padX = W * 0.08;
+      const padY = H * 0.16;
+
+      const sx = (W - padX*2) / oc.width;
+      const sy = (H - padY*2) / oc.height;
+      const s  = Math.min(sx, sy);
+
+      const ox = W * 0.50;
+      const oy = H * 0.52;
+
 
       for (let i=coords.length-1;i>0;i--){
         const j = Math.floor(Math.random()*(i+1));
