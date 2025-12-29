@@ -102,8 +102,8 @@
     }
 
     /* hero */
-    .hero{ padding: 78px 0 34px }
-    .hero-grid{ display:grid; grid-template-columns: 1.18fr .82fr; gap: 26px; align-items: start }
+    .hero{ padding: 78px 0 18px }
+    .hero-grid{ display:grid; grid-template-columns: 1fr; gap: 18px; align-items: start }
 
     .kicker{
       display:inline-flex; align-items:center; gap:10px;
@@ -134,7 +134,7 @@
       background-clip: text;
       color: transparent;
     }
-    .lead{ font-size: 18px; color: rgba(242,244,255,.74); max-width: 58ch; margin: 0 0 16px }
+    .lead{ font-size: 18px; color: rgba(242,244,255,.74); max-width: 68ch; margin: 0 0 16px }
 
     .cta{ display:flex; gap: 12px; flex-wrap: wrap; align-items:center; margin-top: 10px }
     .btn{
@@ -171,9 +171,8 @@
       border-radius: calc(var(--radius) + 6px);
       border: 1px solid rgba(255,255,255,.14);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      box-shadow: 0 24px 80px rgba(0,0,0,.55);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      min-height: 520px;
       transform: translate3d(0,0,0);
       will-change: transform;
     }
@@ -190,12 +189,17 @@
     }
     #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
 
+    .visual-wide{
+      width: 100%;
+      min-height: 620px;
+    }
+
     /* overlay UI (minimal) */
     .visual-ui{ position:absolute; inset:0; padding: 14px; pointer-events:none }
     .visual-ui > *{ pointer-events:auto }
     .visual-ui::after{
       content:"";
-      position:absolute; left:0; right:0; bottom:0; height: 120px;
+      position:absolute; left:0; right:0; bottom:0; height: 130px;
       background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
       pointer-events:none;
     }
@@ -280,12 +284,11 @@
 
     /* responsive */
     @media (max-width: 980px){
-      .hero-grid{ grid-template-columns: 1fr }
       h1{ font-size: 44px }
       .grid-2{ grid-template-columns: 1fr }
       .menu{ gap: 10px }
       .menu a{ padding: 10px 8px }
-      .visual{ min-height: 460px }
+      .visual-wide{ min-height: 520px; }
     }
     @media (prefers-reduced-motion: reduce){
       .pulse{ animation: none !important }
@@ -333,8 +336,13 @@
             <div class="chip">hello@clarifyd.co.uk</div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <aside class="visual reveal" data-tilt aria-label="Data science visual">
+    <!-- Full-width showpiece animation -->
+    <section class="section" style="padding-top: 10px;">
+      <div class="container">
+        <div class="visual visual-wide reveal" data-tilt aria-label="Data science visual">
           <canvas id="viz"></canvas>
           <div class="visual-ui">
             <div class="mini-head">
@@ -351,7 +359,7 @@
               <div class="pilltag" role="button" tabindex="0" data-stage="5" aria-label="Monitor"><span class="dot"></span>Monitor</div>
             </div>
           </div>
-        </aside>
+        </div>
       </div>
     </section>
 
@@ -450,7 +458,7 @@
     window.addEventListener('resize', onScroll);
     onScroll();
 
-    // Tilt on hero card
+    // Tilt on hero card (now applied to the wide visual)
     const tiltCard = document.querySelector('[data-tilt]');
     if (tiltCard) {
       let raf = null;
@@ -461,9 +469,9 @@
         const py = (e.clientY - r.top) / r.height - 0.5;
         if (raf) cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => {
-          const rx = (-py * 6).toFixed(2);
-          const ry = (px * 8).toFixed(2);
-          tiltCard.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+          const rx = (-py * 5.2).toFixed(2);
+          const ry = (px * 7.2).toFixed(2);
+          tiltCard.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
         });
       });
       tiltCard.addEventListener('mouseleave', () => {
@@ -520,8 +528,8 @@
 
     // ---- particle system ----
     const points = [];
-    const N = 1200;
-    const links = 160;
+    const N = 1400;          // slightly higher for the bigger canvas
+    const links = 200;
 
     let W=0,H=0,DPR=1;
     function resizeCanvas(){
@@ -551,11 +559,11 @@
       const scale = Math.min(2, DPR);
 
       oc.width = Math.floor(W * 0.94 * scale);
-      oc.height = Math.floor(H * 0.56 * scale);
+      oc.height = Math.floor(H * 0.62 * scale);
 
       octx.clearRect(0,0,oc.width, oc.height);
 
-      const base = Math.floor(oc.height * 0.58);
+      const base = Math.floor(oc.height * 0.56);
       octx.font = `800 ${base}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
       octx.textBaseline = 'middle';
       octx.textAlign = 'center';
@@ -573,16 +581,16 @@
         }
       }
 
-      const padX = W * 0.08;
-      const padY = H * 0.16;
+      // Fit targets into a safe on-canvas box (padding avoids clipping)
+      const padX = W * 0.12;
+      const padY = H * 0.26;
 
       const sx = (W - padX*2) / oc.width;
       const sy = (H - padY*2) / oc.height;
-      const s  = Math.min(sx, sy);
+      const s  = Math.min(sx, sy) * 0.92;
 
-      const ox = W * 0.50;
-      const oy = H * 0.52;
-
+      const ox = W*0.50;
+      const oy = H*0.50;
 
       for (let i=coords.length-1;i>0;i--){
         const j = Math.floor(Math.random()*(i+1));
@@ -596,7 +604,7 @@
     }
 
     // Timing
-    const stageDur = 2200;
+    const stageDur = 2400;
     function autoStageIndex(t){
       return Math.floor((t / stageDur) % STAGES.length);
     }
@@ -607,7 +615,6 @@
       const local = (t % stageDur) / stageDur;
       return easeInOut(local);
     }
-
     function validateProgress(t){
       const local = (t % stageDur) / stageDur;
       return easeInOut(local);
@@ -671,25 +678,25 @@
       // Ingest: stream from left
       for (let i=0;i<N;i++){
         const p = points[i];
-        const lane = (i % 9) / 8;
-        p.ingest.x = -W*0.15 + Math.random()*W*0.08;
-        p.ingest.y = H*0.18 + lane * H*0.64 + randn()*H*0.01;
+        const lane = (i % 10) / 9;
+        p.ingest.x = -W*0.15 + Math.random()*W*0.10;
+        p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
       }
 
       // Clean: segregate into 3 lanes by grp, quarantine outliers
       const cy = H*0.56;
-      const ry = H*0.22;
-      const laneX = [W*0.34, W*0.52, W*0.70];
+      const ry = H*0.24;
+      const laneX = [W*0.32, W*0.50, W*0.68];
 
       for (let i=0;i<N;i++){
         const p = points[i];
         p.out = Math.abs(p.f) > 0.92;
 
         if (p.out) {
-          p.clean.x = W*0.90 + randn()*W*0.012;
-          p.clean.y = H*0.30 + Math.random()*H*0.48;
+          p.clean.x = W*0.88 + randn()*W*0.012;
+          p.clean.y = H*0.26 + Math.random()*H*0.56;
         } else {
-          p.clean.x = laneX[p.grp] + randn()*W*0.020;
+          p.clean.x = laneX[p.grp] + randn()*W*0.022;
           p.clean.y = cy + randn()*ry*0.42;
         }
       }
@@ -710,14 +717,14 @@
       for (let i=0;i<N;i++){
         const p = points[i];
         const left = (i % 2 === 0);
-        p.validate.x = p.train.x + (left ? -W*0.04 : W*0.04);
-        p.validate.y = p.train.y + (left ? -H*0.02 : H*0.02);
+        p.validate.x = p.train.x + (left ? -W*0.05 : W*0.05);
+        p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
       }
 
       // Deploy: sphere coordinates (Earth)
-      const earthCx = W*0.72;
+      const earthCx = W*0.70;
       const earthCy = H*0.56;
-      const earthR  = Math.min(W,H)*0.22;
+      const earthR  = Math.min(W,H)*0.24;
 
       for (let i=0;i<N;i++){
         const p = points[i];
@@ -734,8 +741,8 @@
       for (let i=0;i<N;i++){
         const p = points[i];
         const u = i/(N-1);
-        p.monitor.x = W*0.12 + u * W*0.76;
-        p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.09) + (randn()*H*0.02);
+        p.monitor.x = W*0.10 + u * W*0.80;
+        p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.10) + (randn()*H*0.02);
       }
     }
 
@@ -760,9 +767,9 @@
     }
 
     function drawEarth(t){
-      const cx = W*0.72;
+      const cx = W*0.70;
       const cy = H*0.56;
-      const r  = Math.min(W,H)*0.22;
+      const r  = Math.min(W,H)*0.24;
 
       const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
       g.addColorStop(0, 'rgba(34,211,238,0.16)');
@@ -781,8 +788,8 @@
       // meridians
       const rot = (t/1400) % (Math.PI*2);
       ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-      for (let k=0;k<5;k++){
-        const a = (k/5)*Math.PI*2 + rot;
+      for (let k=0;k<6;k++){
+        const a = (k/6)*Math.PI*2 + rot;
         ctx.beginPath();
         for (let s=0;s<=64;s++){
           const th = (s/64)*Math.PI*2;
@@ -794,7 +801,7 @@
       }
 
       // deployment arc into globe
-      const sx = W*0.24, sy = H*0.46;
+      const sx = W*0.22, sy = H*0.44;
       const ex = cx - r*0.65, ey = cy - r*0.15;
       ctx.strokeStyle = 'rgba(253,224,71,0.14)';
       ctx.lineWidth = 2;
@@ -808,7 +815,7 @@
       const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
       ctx.fillStyle = 'rgba(253,224,71,0.75)';
       ctx.beginPath();
-      ctx.arc(qx, qy, 2.6, 0, Math.PI*2);
+      ctx.arc(qx, qy, 2.8, 0, Math.PI*2);
       ctx.fill();
     }
 
@@ -817,23 +824,19 @@
       const p = validateProgress(t);
       const auc = aucValue(t);
 
-      const x = W*0.70, y = H*0.18;
-      const w = W*0.24, h = 12;
+      const x = W*0.72, y = H*0.16;
+      const w = W*0.22, h = 12;
 
-      // bar background
       ctx.fillStyle = 'rgba(0,0,0,0.22)';
       ctx.fillRect(x, y, w, h);
 
-      // bar fill (improves over time)
       const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
       ctx.fillStyle = 'rgba(34,211,238,0.55)';
       ctx.fillRect(x, y, w*v, h);
 
-      // outline
       ctx.strokeStyle = 'rgba(255,255,255,0.14)';
       ctx.strokeRect(x, y, w, h);
 
-      // AUC label
       ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
       ctx.fillStyle = 'rgba(242,244,255,0.78)';
       ctx.fillText('AUC', x, y - 6);
@@ -841,11 +844,6 @@
       ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
       ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
       ctx.fillText(auc.toFixed(3), x + 38, y - 6);
-
-      // minimal caption
-      ctx.font = '500 11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-      ctx.fillStyle = `rgba(242,244,255,${0.40 + 0.22*p})`;
-      ctx.fillText('signal clarifies as validation improves', x, y + 28);
     }
 
     function effectiveStage(t){
@@ -869,9 +867,9 @@
 
       // Deploy: rotate the globe and point targets
       if (si === 4) {
-        const cx = W*0.72;
+        const cx = W*0.70;
         const cy = H*0.56;
-        const r  = Math.min(W,H)*0.22;
+        const r  = Math.min(W,H)*0.24;
         const rot = (t/1400) % (Math.PI*2);
         for (let i=0;i<points.length;i++){
           const p = points[i];
@@ -883,9 +881,7 @@
         }
         drawEarth(t);
       }
-      if (si === 3) {
-        drawValidateOverlay(t);
-      }
+      if (si === 3) drawValidateOverlay(t);
 
       // update particles
       for (let i=0;i<points.length;i++){
@@ -906,15 +902,13 @@
             x: lerp(p.validate.x, p.train.x, vp),
             y: lerp(p.validate.y, p.train.y, vp)
           };
-
-          const amp = (1 - vp) * Math.min(W, H) * 0.030;
+          const amp = (1 - vp) * Math.min(W, H) * 0.032;
           const jx = Math.sin(t/120 + p.seed) * amp;
           const jy = Math.cos(t/140 + p.seed*1.31) * amp;
-
           target = { x: base.x + jx, y: base.y + jy };
         }
 
-        // ingest: stream → clean
+        // Ingest: stream → clean (smooth position blending)
         if (si === 0) {
           const into = targetForStage(p, 1);
           const tx = lerp(target.x, into.x, mix);
@@ -930,7 +924,7 @@
       // key datapoint steer
       const kp = points[0];
       const steerX = W * (0.15 + mx*0.70);
-      const steerY = H * (0.20 + my*0.65);
+      const steerY = H * (0.18 + my*0.70);
       kp.x = lerp(kp.x, steerX, 0.10);
       kp.y = lerp(kp.y, steerY, 0.10);
 
@@ -943,10 +937,10 @@
           if (a.alpha < 0.15 || b.alpha < 0.15) continue;
           const dx = a.x-b.x, dy = a.y-b.y;
           const d2 = dx*dx + dy*dy;
-          if (d2 < 180*180){
+          if (d2 < 190*190){
             const d = Math.sqrt(d2);
             const vp = (si === 3) ? validateProgress(t) : 1;
-            const alpha = (1 - d/180) * 0.20 * vp;
+            const alpha = (1 - d/190) * 0.20 * vp;
             ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x,a.y);
@@ -971,7 +965,7 @@
         else cls = p.cls;
 
         const a = (isKey ? 0.95 : 0.72) * p.alpha;
-        const r = isKey ? 2.4 : 1.15;
+        const r = isKey ? 2.6 : 1.2;
 
         const blendToClean = (si === 0) ? mix : 0;
         const baseCls = p.cls;
@@ -981,36 +975,24 @@
 
         if (!isKey && si === 0) {
           ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
 
           ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
         } else {
           ctx.fillStyle = colorFor(cls, glowA);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2); ctx.fill();
         }
 
         if (!isKey && si === 0) {
           ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
 
           ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
         } else {
           ctx.fillStyle = colorFor(cls, a);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
         }
       }
 
@@ -1018,16 +1000,16 @@
       if (si === 0) {
         ctx.strokeStyle = 'rgba(255,255,255,0.10)';
         ctx.lineWidth = 1;
-        for (let k=0;k<6;k++){
-          const y = H*(0.22 + k*0.12);
+        for (let k=0;k<7;k++){
+          const y = H*(0.20 + k*0.10);
           ctx.beginPath();
           ctx.moveTo(W*0.06, y);
-          ctx.lineTo(W*0.28, y);
+          ctx.lineTo(W*0.26, y);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(W*0.28, y);
-          ctx.lineTo(W*0.26, y-4);
-          ctx.lineTo(W*0.26, y+4);
+          ctx.moveTo(W*0.26, y);
+          ctx.lineTo(W*0.245, y-4);
+          ctx.lineTo(W*0.245, y+4);
           ctx.closePath();
           ctx.fillStyle = 'rgba(255,255,255,0.10)';
           ctx.fill();
@@ -1035,37 +1017,38 @@
       }
 
       if (si === 1) {
+        // filter window + segregation lanes + quarantine bin
         ctx.strokeStyle = 'rgba(34,211,238,0.16)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.ellipse(W*0.52, H*0.56, W*0.30, H*0.22, 0, 0, Math.PI*2);
+        ctx.ellipse(W*0.50, H*0.56, W*0.32, H*0.24, 0, 0, Math.PI*2);
         ctx.stroke();
 
         ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-        for (const lx of [W*0.34, W*0.52, W*0.70]) {
+        for (const lx of [W*0.32, W*0.50, W*0.68]) {
           ctx.beginPath();
-          ctx.moveTo(lx, H*0.30);
-          ctx.lineTo(lx, H*0.82);
+          ctx.moveTo(lx, H*0.28);
+          ctx.lineTo(lx, H*0.86);
           ctx.stroke();
         }
 
         ctx.strokeStyle = 'rgba(255,90,90,0.18)';
-        ctx.strokeRect(W*0.86, H*0.28, W*0.10, H*0.52);
+        ctx.strokeRect(W*0.84, H*0.24, W*0.12, H*0.62);
       }
 
       if (si === 5) {
-        const x = W*(0.12 + ((t/1200)%1)*0.76);
+        const x = W*(0.10 + ((t/1200)%1)*0.80);
         ctx.strokeStyle = 'rgba(253,224,71,0.10)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(x, H*0.38);
-        ctx.lineTo(x, H*0.78);
+        ctx.moveTo(x, H*0.34);
+        ctx.lineTo(x, H*0.82);
         ctx.stroke();
       }
 
       // key point halo
       ctx.strokeStyle = 'rgba(163,255,176,0.35)';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.6;
       ctx.beginPath();
       ctx.arc(kp.x, kp.y, 26, -Math.PI*0.15, Math.PI*0.35);
       ctx.stroke();
@@ -1073,7 +1056,7 @@
       requestAnimationFrame(draw);
     }
 
-    // ============ self-test (lightweight) ============
+    // ============ self-test ============
     function selfTest(){
       console.assert(!!canvas, 'Canvas #viz missing');
       console.assert(stageEls.length === 6, 'Expected 6 stage pills');
