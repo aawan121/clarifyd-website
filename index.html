@@ -503,6 +503,7 @@
     const host = document.getElementById('vizHost');
     const canvas = document.getElementById('viz');
     const ctx = canvas ? canvas.getContext('2d') : null;
+    const IS_CHROME = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
 
     const stageEls = Array.from(document.querySelectorAll('.pilltag'));
     const modeEl = document.getElementById('mode');
@@ -559,13 +560,15 @@
 
     // ---- particles ----
     const points = [];
-    const N = 1400;
-    const links = 220;
+    const N = (window.innerWidth < 900) ? 800 : 1100;
+    const links = 140;
+    let frame = 0;
+
 
     let W=0,H=0,DPR=1;
     function resizeCanvas(){
       if (!canvas || !ctx) return;
-      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      DPR = Math.min(window.devicePixelRatio || 1, 1.5);
       W = canvas.clientWidth;
       H = canvas.clientHeight;
       canvas.width = Math.floor(W * DPR);
@@ -920,6 +923,7 @@
     function draw(t){
       if (!canvas || !ctx) return;
 
+      frame++;
       const si = effectiveStage(t);
       const mix = stageMix(t);
       setStageUI(si);
@@ -1014,7 +1018,7 @@
       kp.y = lerp(kp.y, steerY, 0.16);
 
       // connections: stronger in Train (fitting) and stabilize in Validate
-      if (si === 2 || si === 3) {
+      if ((si === 2 || si === 3) && (frame % 2 === 0)) {
         ctx.lineWidth = 1;
         const strength = (si === 2) ? (0.65 + 0.35*trainProgress(t)) : validateProgress(t);
         for (let i=0;i<links;i++){
@@ -1058,15 +1062,17 @@
 
         const glowA = (isKey ? 0.18 : 0.07) * p.alpha;
 
-        if (!isKey && si === 0) {
-          ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
-          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+        if (!IS_CHROME) {
+          if (!isKey && si === 0) {
+            ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
+            ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
 
-          ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
-          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
-        } else {
-          ctx.fillStyle = colorFor(cls, glowA);
-          ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
+            ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+          } else {
+            ctx.fillStyle = colorFor(cls, glowA);
+            ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2); ctx.fill();
+          }
         }
 
         if (!isKey && si === 0) {
