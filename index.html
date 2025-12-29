@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clarifyd Ltd | AI Training & Data Science Delivery</title>
+  <meta name="description" content="Clarifyd Ltd provides AI & data science training and delivers data science work on contract. UK-based." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <span>Clarifyd</span>
+      </div>
+      <nav class="menu" aria-label="Primary">
+        <a href="#services">Services</a>
+        <a href="#process">Process</a>
+        <a href="#cases">Work</a>
+        <a href="#contact" class="pill">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="kicker"><span class="pulse" aria-hidden="true"></span> AI & Data Science • Training + Contract Delivery</div>
+          <h1>
+            Make <span class="gradient-text">data</span> behave.
+            Ship <span class="gradient-text">AI</span> that holds up.
+          </h1>
+          <p class="lead">
+            Clarifyd helps teams and founders build capability through training, and delivers data science work on contract.
+            Practical, scoped, and handed over cleanly.
+          </p>
+
+          <div class="cta">
+            <a class="btn primary" href="#contact">Start a project</a>
+            <a class="btn" href="#services">Explore services</a>
+            <a class="btn" href="#cases">See examples</a>
+          </div>
+
+          <div class="trust">
+            <div class="chip">UK company • Clarifyd Ltd</div>
+            <div class="chip">Company No. 16835903</div>
+            <div class="chip">London • Remote-friendly</div>
+          </div>
+        </div>
+
+        <aside class="visual reveal" aria-label="Data science animated visual">
+          <canvas id="net"></canvas>
+          <div class="visual-ui">
+            <div class="mini-head">
+              <div class="badge">Live signal • static site animation</div>
+              <div class="badge">Latency: <span id="lat">18</span>ms</div>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="label">Signal quality</div>
+                <div class="value">↑ <span id="score">0.91</span></div>
+                <div class="bars" aria-hidden="true">
+                  <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+              </div>
+              <div class="metric">
+                <div class="label">Delivery</div>
+                <div class="value">Milestones</div>
+                <div class="tiny" style="margin-top:6px;">Repo • docs • handover • next-step plan</div>
+              </div>
+            </div>
+
+            <div class="sparkline" aria-hidden="true">
+              <svg viewBox="0 0 600 120" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="grad" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stop-color="#7C3AED"/>
+                    <stop offset="0.45" stop-color="#22D3EE"/>
+                    <stop offset="0.72" stop-color="#FDE047"/>
+                    <stop offset="1" stop-color="#A3FFB0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,82 C70,20 140,110 210,62 C280,18 350,106 420,58 C490,14 540,88 600,36" />
+              </svg>
+            </div>
+
+            <div class="tiny">*All animation runs client-side (works on Cloudflare Pages).</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Services</h2>
+            <p class="muted">Two offers. Same philosophy: clarity, measurable outcomes, and clean handover.</p>
+          </div>
+          <div class="tiny">Workshops • Mentoring • Contract delivery</div>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel service reveal">
+            <div class="top">
+              <div>
+                <h3>AI & Data Science Training</h3>
+                <div class="muted">Traditional DS → production ML → modern LLM workflows.</div>
+              </div>
+              <div class="tag">Capability</div>
+            </div>
+            <ul>
+              <li><strong>Core data science</strong>: EDA, feature engineering, modelling, and evaluation that holds up</li>
+              <li><strong>MLOps</strong>: packaging, CI/CD, reproducibility, monitoring, and sensible deployment patterns</li>
+              <li><strong>LLMs</strong>: RAG, prompt/agent patterns, evaluation, and guardrails (practical, not hype)</li>
+              <li><strong>Team enablement</strong>: best practices, templates, and coaching to raise the baseline</li>
+            </ul>
+            <div class="tiny" style="margin-top:12px;">Typical formats: 90–180 minute sessions, or 1–2 day intensives.</div>
+          </article>
+
+          <article class="panel service reveal">
+            <div class="top">
+              <div>
+                <h3>Data Science Delivery & Contracts</h3>
+                <div class="muted">From discovery to production—built for stakeholders, not just notebooks.</div>
+              </div>
+              <div class="tag">Delivery</div>
+            </div>
+            <ul>
+              <li><strong>Insight → decision</strong>: analytics, metrics layers, dashboards, and experimentation</li>
+              <li><strong>Models that ship</strong>: forecasting, classification, ranking, optimisation—benchmarked properly</li>
+              <li><strong>LLM prototypes</strong>: RAG systems with evaluation and safe-by-default guardrails</li>
+              <li><strong>Clean handover</strong>: repo structure, docs, runbooks, and lightweight monitoring</li>
+            </ul>
+            <div class="tiny" style="margin-top:12px;">Outputs: repo + report + handover session + a clear roadmap for what’s next.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="section alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Process</h2>
+            <p class="muted">A simple structure that keeps projects moving and avoids surprise scope.</p>
+          </div>
+          <div class="tiny">Discovery → Proposal → Delivery</div>
+        </div>
+
+        <div class="steps">
+          <div class="step reveal">
+            <div class="num">1</div>
+            <h3 style="margin:0 0 6px;">Discovery</h3>
+            <div class="muted">Map goals, constraints, data access, and success metrics.</div>
+          </div>
+          <div class="step reveal">
+            <div class="num">2</div>
+            <h3 style="margin:0 0 6px;">Scope & contract</h3>
+            <div class="muted">Milestones, deliverables, assumptions, and timelines in plain English.</div>
+          </div>
+          <div class="step reveal">
+            <div class="num">3</div>
+            <h3 style="margin:0 0 6px;">Build, measure, hand over</h3>
+            <div class="muted">Working outputs + documentation + handover so you can maintain and extend.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cases" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Showpiece work</h2>
+            <p class="muted">Swap these with real examples when you’re ready — even anonymised, they build trust fast.</p>
+          </div>
+          <div class="tiny">Forecasting • Insights • LLM prototypes</div>
+        </div>
+
+        <div class="grid-3">
+          <div class="case reveal">
+            <h3 style="margin:0 0 8px;">Forecasting that explains itself</h3>
+            <div class="muted">Transparent evaluation, error analysis, and confidence intervals — not just a single number.</div>
+            <div class="meta">
+              <span class="tag">Time series</span>
+              <span class="tag">Backtesting</span>
+              <span class="tag">Monitoring</span>
+            </div>
+          </div>
+          <div class="case reveal">
+            <h3 style="margin:0 0 8px;">Analytics foundations</h3>
+            <div class="muted">A clean metrics layer + dashboards that align teams and reduce decision noise.</div>
+            <div class="meta">
+              <span class="tag">KPIs</span>
+              <span class="tag">Experimentation</span>
+              <span class="tag">Dashboards</span>
+            </div>
+          </div>
+          <div class="case reveal">
+            <h3 style="margin:0 0 8px;">LLM prototype with evaluation</h3>
+            <div class="muted">Retrieval + guardrails + measurable quality. Build something you can trust.</div>
+            <div class="meta">
+              <span class="tag">RAG</span>
+              <span class="tag">Safety</span>
+              <span class="tag">Metrics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Contact</h2>
+            <p class="muted">Send a short brief — we’ll reply with suggested next steps and a proposed approach.</p>
+          </div>
+          <div class="tiny">hello@clarifyd.co.uk</div>
+        </div>
+
+        <div class="contact">
+          <div class="panel reveal">
+            <h3 style="margin:0 0 10px;">Email</h3>
+            <p style="margin:0 0 10px;"><a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a></p>
+            <div class="copybox">
+              <div class="copyrow">
+                <div>
+                  <div class="tiny">Suggested brief format:</div>
+                  <code id="brief">Goal • Timeline • Data available • Training or Delivery • Success metrics</code>
+                </div>
+                <button class="copybtn" id="copy" type="button">Copy</button>
+              </div>
+            </div>
+            <p class="tiny" style="margin-top:10px;">(On the live site, you can add a static form via Formspree.)</p>
+          </div>
+
+          <div class="panel reveal">
+            <h3 style="margin:0 0 10px;">Company</h3>
+            <p class="muted" style="margin:0;">
+              Clarifyd Ltd (Company No. 16835903)<br/>
+              Registered office: 128 City Road, London, EC1V 2NX, United Kingdom
+            </p>
+            <p class="tiny" style="margin-top:10px;">Public registration details available via Companies House.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></div>
+          <div class="tiny">© <span id="year"></span> Clarifyd Ltd. All rights reserved.</div>
+        </div>
+        <div class="footer-links">
+          <a href="/privacy.html">Privacy</a>
+          <a href="mailto:hello@clarifyd.co.uk">Email</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
