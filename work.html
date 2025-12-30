@@ -1,1655 +1,885 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Clarifyd | Work</title>
-  <meta name="description" content="AbsenceAI showpiece: absence forecasting by site, service line and shift with scheduling prescriptions. Static, client-side, privacy-first." />
-  <style>
-    :root{
-      --bg0:#070A12; --bg1:#0B1022;
-      --text:#F2F4FF; --muted: rgba(242,244,255,.72);
-      --shadow: 0 24px 80px rgba(0,0,0,.55);
-      --radius: 22px; --max: 1220px;
-      --a:#7C3AED; --b:#22D3EE; --m:#A3FFB0; --y:#FDE047; --r:#ff5a5a;
-    }
-    *{ box-sizing:border-box }
-    html,body{ margin:0; padding:0 }
-    body{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color: var(--text);
-      background:
-        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
-        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
-    }
-    a{ color: inherit }
-    .container{ max-width:var(--max); margin:0 auto; padding:0 18px }
-    .muted{ color: var(--muted) }
-    .tiny{ font-size: 12px; color: rgba(242,244,255,.62) }
+<script>
+(() => {
+  'use strict';
 
-    .parallax-layer{ position: fixed; inset: -18vh -18vw; pointer-events:none; z-index:0; will-change: transform; opacity:.9;}
-    .layer-a{ background:
-        radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
-        radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);
-      filter: blur(14px);
-    }
-    .layer-b{ background:
-        radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),
-        radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);
-      filter: blur(18px);
-      opacity: .65;
-    }
-    .layer-c{ background:
-        radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
-      filter: blur(26px);
-      opacity: .45;
-    }
-    .bg-grid{
-      position: fixed; inset: 0; pointer-events: none; opacity: .20;
-      background-image:
-        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 64px 64px;
-      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
-      z-index: 1;
-    }
-    main{ position: relative; z-index:2 }
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-    /* Header */
-    .site-header{
-      position: sticky; top: 0; z-index: 30;
-      background: rgba(7,10,18,.55);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(12px);
+  // Parallax layers
+  const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+  let latestY = 0, ticking = false;
+  function applyParallax(){
+    const y = latestY;
+    for (const el of layers) {
+      const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
+      el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
     }
-    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0; gap: 12px }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight: 760; letter-spacing: .2px; text-decoration:none; white-space:nowrap }
-    .mark{
-      width: 14px; height: 14px; border-radius: 5px;
-      background: linear-gradient(135deg, var(--a), var(--b), var(--y));
-      box-shadow: 0 0 28px rgba(124,58,237,.45);
-    }
-    .menu{ display:flex; gap: 10px; align-items:center; flex-wrap:wrap; justify-content:flex-end }
-    .menu a{
-      text-decoration: none;
-      font-size: 14px;
-      color: rgba(242,244,255,.72);
-      padding: 10px 10px;
-      border-radius: 999px;
-      transition: background .2s ease, color .2s ease;
-    }
-    .menu a:hover{ color: var(--text); background: rgba(255,255,255,.06) }
-    .pill{
-      padding: 10px 14px !important;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
+    ticking = false;
+  }
+  function onScroll(){
+    latestY = window.scrollY || 0;
+    if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
 
-    /* Hero */
-    .hero{ padding: 52px 0 16px }
-    .kicker{
-      display:inline-flex; align-items:center; gap:10px;
-      padding: 8px 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      border-radius: 999px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      font-size: 13px;
-      color: rgba(242,244,255,.78);
-    }
-    .spark{ width:8px; height:8px; border-radius:999px; background: var(--y); box-shadow: 0 0 0 0 rgba(253,224,71,.35); animation: spark 2.0s ease-in-out infinite; }
-    @keyframes spark{ 0%{ box-shadow: 0 0 0 0 rgba(253,224,71,.35) } 70%{ box-shadow: 0 0 0 12px rgba(253,224,71,0) } 100%{ box-shadow: 0 0 0 0 rgba(253,224,71,0) } }
-    h1{ font-size: 44px; line-height: 1.06; letter-spacing: -1px; margin: 16px 0 10px }
-    .grad{
-      background: linear-gradient(90deg, var(--a), var(--b), var(--y), var(--m));
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-    }
-    .lead{ font-size: 16px; color: rgba(242,244,255,.74); max-width: 110ch; margin: 0 0 14px }
+  // Elements
+  const btnRun = document.getElementById('btnRun');
+  const btnDemo = document.getElementById('btnDemo');
+  const btnPause = document.getElementById('btnPause');
 
-    .privacy{
-      display:flex; gap:12px; flex-wrap:wrap; align-items:center;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      box-shadow: 0 18px 60px rgba(0,0,0,.30);
-    }
-    .lock{
-      width: 26px; height: 26px; border-radius: 10px;
-      background: rgba(34,211,238,.12);
-      border: 1px solid rgba(34,211,238,.28);
-      display:grid; place-items:center;
-      flex: 0 0 auto;
-    }
-    .lock svg{ width: 16px; height: 16px; opacity: .9 }
-    .pill2{
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: rgba(242,244,255,.72);
-      white-space: nowrap;
+  const siteEl = document.getElementById('site');
+  const lineEl = document.getElementById('line');
+  const shiftEl = document.getElementById('shift');
+  const hcEl = document.getElementById('hc');
+  const coverEl = document.getElementById('cover');
+  const rateEl = document.getElementById('rate');
+
+  const chipState = document.getElementById('chipState');
+  const chipLive = document.getElementById('chipLive');
+  const chipWarn = document.getElementById('chipWarn');
+  const chipBad  = document.getElementById('chipBad');
+  const rt = document.getElementById('rt');
+  const lg1 = document.getElementById('lg1');
+  const lg2 = document.getElementById('lg2');
+  const crumb = document.getElementById('crumb');
+
+  const kAbs7 = document.getElementById('kAbs7');
+  const kAbsSub = document.getElementById('kAbsSub');
+  const kRiskShifts = document.getElementById('kRiskShifts');
+  const kRiskSub = document.getElementById('kRiskSub');
+  const kAgency = document.getElementById('kAgency');
+  const kOT = document.getElementById('kOT');
+  const kConf = document.getElementById('kConf');
+  const kConfSub = document.getElementById('kConfSub');
+  const kDrift = document.getElementById('kDrift');
+  const kDriftSub = document.getElementById('kDriftSub');
+  const asof = document.getElementById('asof');
+
+  const dAbs = document.getElementById('dAbs');
+  const dRisk = document.getElementById('dRisk');
+  const dAgency = document.getElementById('dAgency');
+  const dOT = document.getElementById('dOT');
+  const dConf = document.getElementById('dConf');
+  const dDrift = document.getElementById('dDrift');
+
+  const ringRisk = document.getElementById('ringRisk');
+  const ringRiskTxt = document.getElementById('ringRiskTxt');
+  const ringConf = document.getElementById('ringConf');
+  const ringConfTxt = document.getElementById('ringConfTxt');
+
+  const nba = document.getElementById('nba');
+  const nbaBadge = document.getElementById('nbaBadge');
+  const feed = document.getElementById('feed');
+  const rowsEl = document.getElementById('rows');
+
+  // Canvases
+  const c1 = document.getElementById('c1');
+  const c2 = document.getElementById('c2');
+  const ctx1 = c1.getContext('2d', { alpha:true });
+  const ctx2 = c2.getContext('2d', { alpha:true });
+
+  // Sparklines
+  const spAbsEl = document.getElementById('spAbs');
+  const spAgencyEl = document.getElementById('spAgency');
+  const spOTEl = document.getElementById('spOT');
+  const spDriftEl = document.getElementById('spDrift');
+
+  const spAbs = spAbsEl.getContext('2d', { alpha:true });
+  const spAgency = spAgencyEl.getContext('2d', { alpha:true });
+  const spOT = spOTEl.getContext('2d', { alpha:true });
+  const spDrift = spDriftEl.getContext('2d', { alpha:true });
+
+  // ---------- small layout guards (prevents “disjointed” look on wrap) ----------
+  // Keeps the topbar right side from exploding width, and prevents chip text from wrapping oddly.
+  (function layoutGuards(){
+    const topbar = document.querySelector('.topbar');
+    if (!topbar) return;
+
+    // prevent buttons/chips from stretching layout on small screens
+    topbar.style.alignItems = 'center';
+
+    // Make right cluster not exceed container width when wrapping
+    const rightCluster = topbar.children && topbar.children[1];
+    if (rightCluster) {
+      rightCluster.style.justifyContent = 'flex-end';
+      rightCluster.style.maxWidth = '50%';
+      rightCluster.style.minWidth = '240px';
     }
 
-    /* Buttons */
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      cursor:pointer;
-      transition: transform .16s ease, background .2s ease, border-color .2s ease;
-      text-decoration:none;
-      user-select:none;
-      font-size: 13px;
-      white-space: nowrap;
+    // keep crumb stable: allow ellipsis instead of wrapping into two rows
+    if (crumb) {
+      crumb.style.maxWidth = '52vw';
+      crumb.style.overflow = 'hidden';
+      crumb.style.textOverflow = 'ellipsis';
+      crumb.style.whiteSpace = 'nowrap';
+      crumb.style.display = 'inline-block';
     }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));
-      border-color: transparent;
-      box-shadow: 0 22px 90px rgba(124,58,237,.14), 0 20px 70px rgba(34,211,238,.10);
+  })();
+
+  // ---------- helpers ----------
+  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function now(){ return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(); }
+
+  // Stable canvas sizing (prevents jitter that can make text feel “misaligned”)
+  function fitCanvas(cv, ctx){
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const r = cv.getBoundingClientRect();
+    const w = Math.max(2, Math.floor(r.width));
+    const h = Math.max(2, Math.floor(r.height));
+    const pw = Math.floor(w * dpr);
+    const ph = Math.floor(h * dpr);
+    if (cv.width !== pw || cv.height !== ph) {
+      cv.width = pw;
+      cv.height = ph;
     }
-
-    /* Work area (left board + right KPIs) */
-    .section{ padding: 10px 0 52px }
-    .workGrid{
-      display:grid;
-      grid-template-columns: 1.35fr .65fr;
-      gap: 14px;
-      align-items: stretch;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w, h };
+  }
+  function fitSmall(ctx, canvasEl){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const r = canvasEl.getBoundingClientRect();
+    const w = Math.max(2, Math.floor(r.width));
+    const h = Math.max(2, Math.floor(r.height));
+    const pw = Math.floor(w * dpr);
+    const ph = Math.floor(h * dpr);
+    if (canvasEl.width !== pw || canvasEl.height !== ph) {
+      canvasEl.width = pw;
+      canvasEl.height = ph;
     }
-    .leftStack{
-      display:grid;
-      grid-template-rows: 1fr auto;
-      gap: 14px;
-      min-height: 720px;
-    }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w, h };
+  }
 
-    .board{
-      border-radius: calc(var(--radius) + 6px);
-      border: 1px solid rgba(255,255,255,.14);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position: relative;
-      min-height: 560px;
-      isolation:isolate;
-    }
-    .board::before{
-      content:"";
-      position:absolute; inset:-120px -160px;
-      background:
-        radial-gradient(closest-side at 40% 30%, rgba(124,58,237,.28), transparent 60%),
-        radial-gradient(closest-side at 70% 55%, rgba(34,211,238,.22), transparent 62%),
-        radial-gradient(closest-side at 55% 80%, rgba(253,224,71,.12), transparent 60%);
-      filter: blur(14px);
-      opacity: .95;
-      pointer-events:none;
-      z-index:0;
-    }
-    .topbar{
-      position:absolute; left:0; right:0; top:0; height: 58px;
-      display:flex; align-items:center; justify-content:space-between; gap: 10px;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.14);
-      backdrop-filter: blur(10px);
-      z-index: 2;
-    }
-    .crumb{ font-size: 12px; color: rgba(242,244,255,.72) }
-    .chip{
-      font-size: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: rgba(242,244,255,.72);
-      white-space:nowrap;
-    }
-    .chip.live{ border-color: rgba(34,211,238,.28); background: rgba(34,211,238,.08); }
-    .chip.warn{ border-color: rgba(253,224,71,.28); background: rgba(253,224,71,.08); }
-    .chip.bad{ border-color: rgba(255,90,90,.28); background: rgba(255,90,90,.08); }
+  function setDelta(el, val){
+    const s = (val>=0 ? '+' : '') + (val).toFixed(1);
+    el.textContent = s;
+    el.classList.remove('up','down','flat');
+    if (Math.abs(val) < 0.2) el.classList.add('flat');
+    else if (val > 0) el.classList.add('down'); // more absences/risk => down
+    else el.classList.add('up');
+  }
+  function setDeltaPct(el, valPct){
+    const s = (valPct>=0 ? '+' : '') + (valPct*100).toFixed(1) + '%';
+    el.textContent = s;
+    el.classList.remove('up','down','flat');
+    if (Math.abs(valPct) < 0.004) el.classList.add('flat');
+    else if (valPct > 0) el.classList.add('down');
+    else el.classList.add('up');
+  }
+  function setRing(el, txtEl, value01){
+    const C = 106.8;
+    const v = clamp(value01, 0, 1);
+    el.style.strokeDashoffset = String(C * (1 - v));
+    txtEl.textContent = Math.round(v*100) + '%';
+  }
 
-    .boardBody{
-      position:absolute; inset:58px 0 0 0;
-      display:grid;
-      grid-template-rows: 1fr 270px;
-      z-index: 1;
-    }
-    .pane{
-      position: relative;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .pane:last-child{ border-bottom: none; }
-    canvas{ width:100%; height:100%; display:block; }
-    .legend{
-      position:absolute; left:12px; bottom:12px; right:12px;
-      display:flex; gap: 8px; flex-wrap:wrap;
-      pointer-events:none;
-    }
+  // ---- Demo dataset (last 14 days rows) ----
+  const demoSites = ['Northgate','Riverside','Kingston'];
+  const demoLines = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
+  const demoShifts = ['Days','Nights','Weekend'];
 
-    .panel{
-      border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      padding: 14px;
-      overflow:hidden;
-    }
-    .panelHead{ display:flex; align-items:flex-start; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
-    .panelHead h3{ margin:0; font-size: 15px; letter-spacing: .2px }
-    .badge{
-      font-size:12px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      color: rgba(242,244,255,.78);
-      white-space: nowrap;
-    }
-
-    .controls{ display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; margin-top: 10px }
-    .field label{ display:block; font-size: 12px; color: rgba(242,244,255,.72); margin: 0 0 6px }
-    .input, select{
-      width:100%;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: rgba(242,244,255,.82);
-      padding: 10px 12px;
-      border-radius: 14px;
-      outline: none;
-    }
-    .actions{ display:flex; gap: 10px; flex-wrap:wrap; align-items:center; margin-top: 12px }
-
-    .tableWrap{
-      margin-top: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      overflow:hidden;
-      background: rgba(0,0,0,.18);
-    }
-    table{
-      width:100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-    th, td{
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      color: rgba(242,244,255,.78);
-      text-align:left;
-      white-space: nowrap;
-    }
-    th{ color: rgba(242,244,255,.62); background: rgba(255,255,255,.04); }
-    tr:last-child td{ border-bottom: none; }
-
-    /* Right column */
-    .rightCol{
-      display:flex;
-      flex-direction: column;
-      gap: 14px;
-      min-height: 720px;
-    }
-
-    /* KPI cards with graphics */
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .kpi{
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      background: rgba(0,0,0,.16);
-      padding: 12px;
-      position: relative;
-      overflow:hidden;
-      min-height: 108px;
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-    }
-    .kpi::before{
-      content:"";
-      position:absolute; inset:-60px -60px;
-      background: radial-gradient(closest-side at 20% 20%, rgba(34,211,238,.12), transparent 65%);
-      opacity:.9;
-      pointer-events:none;
-    }
-    .kpi .meta{ position: relative; min-width: 0; }
-    .kpi .l{ font-size: 12px; color: rgba(242,244,255,.68) }
-    .kpi .v{ font-size: 22px; font-weight: 860; letter-spacing: -.2px; margin-top: 4px }
-    .kpi .s{ font-size: 12px; color: rgba(242,244,255,.60); margin-top: 6px; display:flex; gap: 8px; align-items:center; flex-wrap:wrap }
-
-    .delta{
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: rgba(242,244,255,.72);
-      white-space: nowrap;
-    }
-    .delta.up{ border-color: rgba(163,255,176,.24); background: rgba(163,255,176,.08) }
-    .delta.down{ border-color: rgba(255,90,90,.24); background: rgba(255,90,90,.08) }
-    .delta.flat{ border-color: rgba(253,224,71,.24); background: rgba(253,224,71,.08) }
-
-    .mini{
-      position: relative;
-      width: 92px;
-      height: 54px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      overflow:hidden;
-      align-self: end;
-    }
-    .mini canvas{ width:100%; height:100%; display:block; opacity: .95; }
-    .ring{
-      width: 52px; height: 52px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      display:grid; place-items:center;
-      position: relative;
-      overflow:hidden;
-    }
-    .ring svg{ width: 52px; height: 52px; transform: rotate(-90deg); }
-    .ring .t{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      font-size: 11px;
-      color: rgba(242,244,255,.70);
-      font-weight: 750;
-    }
-
-    /* Prescriptions */
-    .nba{ display:grid; gap: 10px; margin-top: 12px; }
-    .nbaCard{
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      background: rgba(0,0,0,.18);
-      padding: 12px;
-      position: relative;
-      overflow:hidden;
-    }
-    .nbaCard::before{
-      content:"";
-      position:absolute; inset:-60px -60px;
-      background: radial-gradient(closest-side at 20% 20%, rgba(253,224,71,.09), transparent 62%);
-      opacity:.9;
-      pointer-events:none;
-    }
-    .nbaTop{ display:flex; justify-content:space-between; gap: 10px; align-items:center; position: relative; }
-    .nbaTitle{ font-weight: 780 }
-    .nbaBody{ margin-top: 8px; color: rgba(242,244,255,.74); font-size: 13px; line-height: 1.4; position: relative; }
-    .bar{
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      overflow:hidden;
-      margin-top: 10px;
-      position: relative;
-    }
-    .bar > i{
-      display:block; height:100%; width:0%;
-      background: linear-gradient(90deg, rgba(34,211,238,.65), rgba(253,224,71,.55));
-      transition: width .55s ease;
-    }
-    .subNote{
-      margin-top: 14px;
-      color: rgba(242,244,255,.68);
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    /* Alerts feed */
-    .feed{
-      margin-top: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-    }
-    .feedHead{
-      display:flex; justify-content:space-between; align-items:center;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03);
-      color: rgba(242,244,255,.72);
-      font-size: 12px;
-    }
-    .feedList{
-      max-height: 220px;
-      overflow:auto;
-    }
-    .evt{
-      display:flex; gap: 10px; align-items:flex-start;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      font-size: 12px;
-      color: rgba(242,244,255,.74);
-    }
-    .evt:last-child{ border-bottom:none }
-    .sev{
-      width:8px; height:8px; border-radius:999px; margin-top: 6px;
-      background: rgba(163,255,176,.9);
-      box-shadow: 0 0 14px rgba(163,255,176,.18);
-      flex: 0 0 auto;
-    }
-    .sev.y{ background: rgba(253,224,71,.95); box-shadow: 0 0 14px rgba(253,224,71,.16); }
-    .sev.r{ background: rgba(255,90,90,.95); box-shadow: 0 0 14px rgba(255,90,90,.16); }
-    .evt b{ color: rgba(242,244,255,.88) }
-
-    .foot{ padding: 26px 0 38px; }
-
-    @media (max-width: 1100px){
-      .workGrid{ grid-template-columns: 1fr; }
-      .rightCol{ min-height: unset; }
-      .leftStack{ min-height: unset; }
-      .controls{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .boardBody{ grid-template-rows: 360px 270px; }
-      h1{ font-size: 38px }
-    }
-    @media (max-width: 520px){
-      .kpis{ grid-template-columns: 1fr; }
-      .controls{ grid-template-columns: 1fr; }
-      .mini{ width: 100%; height: 56px; }
-      .kpi{ grid-template-columns: 1fr; }
-      .ring{ justify-self: start; }
-      .feedList{ max-height: 180px; }
-    }
-    @media (prefers-reduced-motion: reduce){
-      .spark{ animation:none !important }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
-  <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
-  <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
-
-  <header class="site-header">
-    <div class="container nav">
-      <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
-      <nav class="menu" aria-label="Primary">
-        <a href="/services.html">Services</a>
-        <a href="/work.html" aria-current="page">Work</a>
-        <a href="/contact.html" class="pill">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="container">
-        <div class="kicker"><span class="spark" aria-hidden="true"></span> AbsenceAI: shift scheduling decisions</div>
-        <h1>Forecast absences. Protect cover. <span class="grad">Reduce agency spend</span>.</h1>
-        <p class="lead">
-          A realistic workforce story: predict absences by <strong>site</strong>, <strong>service line</strong> and <strong>shift</strong>,
-          flag at-risk rotas, and generate operational prescriptions that schedulers can act on within minutes.
-        </p>
-
-        <div class="privacy" role="note" aria-label="Privacy notice">
-          <div class="lock" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7.5 10V7.8c0-2.9 2.1-5.3 4.5-5.3s4.5 2.4 4.5 5.3V10" stroke="rgba(242,244,255,.85)" stroke-width="2" stroke-linecap="round"/>
-              <path d="M6.2 10h11.6c.7 0 1.2.5 1.2 1.2v8.1c0 .7-.5 1.2-1.2 1.2H6.2c-.7 0-1.2-.5-1.2-1.2v-8.1c0-.7.5-1.2 1.2-1.2Z" stroke="rgba(242,244,255,.85)" stroke-width="2"/>
-              <path d="M12 14v3" stroke="rgba(253,224,71,.85)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div style="min-width: 260px;">
-            <div><strong>Privacy-first</strong> — your data stays in the browser.</div>
-            <div class="tiny">No uploads. No storage. Refresh clears everything.</div>
-          </div>
-          <div class="pill2">Demo dataset download</div>
-          <div class="pill2">Client-side compute</div>
-          <div class="pill2">Static hosting</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container workGrid">
-        <!-- Left -->
-        <div class="leftStack">
-          <section class="board" aria-label="AbsenceAI dashboard visuals">
-            <div class="topbar">
-              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <span class="crumb" id="crumb">AbsenceAI / Live rota risk</span>
-                <span class="chip" id="chipState">Idle</span>
-                <span class="chip live" id="chipLive">Streaming</span>
-                <span class="chip warn" id="chipWarn" style="display:none;">Risk rising</span>
-                <span class="chip bad" id="chipBad" style="display:none;">Cover alert</span>
-              </div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <span class="chip" id="engineBadge">Engine: simulated (ONNX-ready)</span>
-                <span class="chip" id="rt">—</span>
-                <button class="btn" id="btnPause" type="button">Pause</button>
-              </div>
-            </div>
-
-            <div class="boardBody">
-              <div class="pane">
-                <canvas id="c1"></canvas>
-                <div class="legend">
-                  <span class="chip">7-day forecast by shift</span>
-                  <span class="chip">Confidence band</span>
-                  <span class="chip" id="lg1">—</span>
-                </div>
-              </div>
-              <div class="pane">
-                <canvas id="c2"></canvas>
-                <div class="legend">
-                  <span class="chip">Heatmap: service line × day</span>
-                  <span class="chip">Drift & anomaly</span>
-                  <span class="chip" id="lg2">—</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="panel" aria-label="Dataset & scenario controls">
-            <div class="panelHead">
-              <div>
-                <h3>Demo dataset + scenario controls</h3>
-                <div class="tiny muted">Headcount, historical absences, shift pattern, cover requirement. (No uploads.)</div>
-              </div>
-              <span class="badge" id="demoBadge">Schema: AbsenceAI_demo.csv</span>
-            </div>
-
-            <div class="controls">
-              <div class="field">
-                <label>Site</label>
-                <select id="site" class="input">
-                  <option selected>Northgate</option>
-                  <option>Riverside</option>
-                  <option>Kingston</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Service line</label>
-                <select id="line" class="input">
-                  <option selected>Security</option>
-                  <option>Cleaning</option>
-                  <option>Catering</option>
-                  <option>Maintenance</option>
-                  <option>Reception</option>
-                  <option>Logistics</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Shift</label>
-                <select id="shift" class="input">
-                  <option selected>Days</option>
-                  <option>Nights</option>
-                  <option>Weekend</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Headcount</label>
-                <input id="hc" class="input" type="number" min="8" max="480" value="86" />
-              </div>
-              <div class="field">
-                <label>Cover required / shift</label>
-                <input id="cover" class="input" type="number" min="2" max="180" value="24" />
-              </div>
-              <div class="field">
-                <label>Recent absence rate (%)</label>
-                <input id="rate" class="input" type="number" min="0" max="18" step="0.1" value="6.8" />
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="btn primary" id="btnRun" type="button">Run pipeline</button>
-              <button class="btn" id="btnDemo" type="button">Download demo CSV</button>
-              <span class="tiny muted" id="runNote">Tip: switch to Nights to see scheduling risk.</span>
-            </div>
-
-            <div class="tableWrap" aria-label="Demo dataset preview">
-              <table>
-                <thead>
-                  <tr>
-                    <th>date</th><th>site</th><th>service_line</th><th>shift</th><th>headcount</th><th>cover_required</th><th>absences</th><th>absence_rate</th><th>notes</th>
-                  </tr>
-                </thead>
-                <tbody id="rows"></tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-
-        <!-- Right -->
-        <aside class="rightCol" aria-label="KPIs and prescriptions">
-          <section class="panel">
-            <div class="panelHead">
-              <div>
-                <h3>What the scheduler sees</h3>
-                <div class="tiny muted">Business KPIs → operational decisions.</div>
-              </div>
-              <span class="badge" id="asof">As of —</span>
-            </div>
-
-            <div class="kpis">
-              <div class="kpi">
-                <div class="meta">
-                  <div class="l">Expected absences (7d)</div>
-                  <div class="v" id="kAbs7">—</div>
-                  <div class="s"><span class="delta flat" id="dAbs">—</span><span class="tiny muted" id="kAbsSub">—</span></div>
-                </div>
-                <div class="mini"><canvas id="spAbs"></canvas></div>
-              </div>
-
-              <div class="kpi">
-                <div class="meta">
-                  <div class="l">At-risk shifts</div>
-                  <div class="v" id="kRiskShifts">—</div>
-                  <div class="s"><span class="delta down" id="dRisk">—</span><span class="tiny muted" id="kRiskSub">—</span></div>
-                </div>
-                <div class="ring">
-                  <svg viewBox="0 0 44 44">
-                    <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="6"/>
-                    <circle id="ringRisk" cx="22" cy="22" r="17" fill="none" stroke="rgba(253,224,71,0.70)" stroke-width="6" stroke-linecap="round"
-                            stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
-                  </svg>
-                  <div class="t" id="ringRiskTxt">—</div>
-                </div>
-              </div>
-
-              <div class="kpi">
-                <div class="meta">
-                  <div class="l">Agency shifts needed</div>
-                  <div class="v" id="kAgency">—</div>
-                  <div class="s"><span class="delta down" id="dAgency">—</span><span class="tiny muted">Min cover gap</span></div>
-                </div>
-                <div class="mini"><canvas id="spAgency"></canvas></div>
-              </div>
-
-              <div class="kpi">
-                <div class="meta">
-                  <div class="l">Overtime hours (7d)</div>
-                  <div class="v" id="kOT">—</div>
-                  <div class="s"><span class="delta flat" id="dOT">—</span><span class="tiny muted">If filled internally</span></div>
-                </div>
-                <div class="mini"><canvas id="spOT"></canvas></div>
-              </div>
-
-              <div class="kpi">
-                <div class="meta">
-                  <div class="l">Forecast confidence</div>
-                  <div class="v" id="kConf">—</div>
-                  <div class="s"><span class="delta up" id="dConf">—</span><span class="tiny muted" id="kConfSub">—</span></div>
-                </div>
-                <div class="ring">
-                  <svg viewBox="0 0 44 44">
-                    <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="6"/>
-                    <circle id="ringConf" cx="22" cy="22" r="17" fill="none" stroke="rgba(34,211,238,0.70)" stroke-width="6" stroke-linecap="round"
-                            stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
-                  </svg>
-                  <div class="t" id="ringConfTxt">—</div>
-                </div>
-              </div>
-
-              <div class="kpi">
-                <div class="meta">
-                  <div class="l">Drift score</div>
-                  <div class="v" id="kDrift">—</div>
-                  <div class="s"><span class="delta flat" id="dDrift">—</span><span class="tiny muted" id="kDriftSub">—</span></div>
-                </div>
-                <div class="mini"><canvas id="spDrift"></canvas></div>
-              </div>
-            </div>
-
-            <div class="feed">
-              <div class="feedHead">
-                <span>Live ops feed</span>
-                <span class="tiny muted" id="feedHint">Auto-updating</span>
-              </div>
-              <div class="feedList" id="feed"></div>
-            </div>
-          </section>
-
-          <section class="panel" style="flex:1">
-            <div class="panelHead">
-              <div>
-                <h3>Prescriptions (Next Best Actions)</h3>
-                <div class="tiny muted">Not theory: actions schedulers can execute today.</div>
-              </div>
-              <span class="badge" id="nbaBadge">—</span>
-            </div>
-
-            <div class="nba" id="nba"></div>
-
-            <div class="subNote">
-              <strong>Production swap:</strong> train your forecasting model offline (e.g., gradient boosting / LSTM),
-              export to ONNX, load with <span class="pill2">onnxruntime-web</span>, keep the same UI.
-            </div>
-          </section>
-        </aside>
-      </div>
-    </section>
-
-    <footer class="foot">
-      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
-        <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
-        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
-          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
-          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
-          <span class="tiny">© <span id="year"></span></span>
-        </div>
-      </div>
-    </footer>
-  </main>
-
-  <script>
-  (() => {
-    'use strict';
-
-    const yearEl = document.getElementById('year');
-    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-
-    // Parallax layers
-    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-    let latestY = 0, ticking = false;
-    function applyParallax(){
-      const y = latestY;
-      for (const el of layers) {
-        const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
-        el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
-      }
-      ticking = false;
-    }
-    function onScroll(){
-      latestY = window.scrollY || 0;
-      if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
-    }
-    window.addEventListener('scroll', onScroll, { passive:true });
-    window.addEventListener('resize', onScroll);
-    onScroll();
-
-    // Elements
-    const btnRun = document.getElementById('btnRun');
-    const btnDemo = document.getElementById('btnDemo');
-    const btnPause = document.getElementById('btnPause');
-
-    const siteEl = document.getElementById('site');
-    const lineEl = document.getElementById('line');
-    const shiftEl = document.getElementById('shift');
-    const hcEl = document.getElementById('hc');
-    const coverEl = document.getElementById('cover');
-    const rateEl = document.getElementById('rate');
-
-    const chipState = document.getElementById('chipState');
-    const chipLive = document.getElementById('chipLive');
-    const chipWarn = document.getElementById('chipWarn');
-    const chipBad  = document.getElementById('chipBad');
-    const rt = document.getElementById('rt');
-    const lg1 = document.getElementById('lg1');
-    const lg2 = document.getElementById('lg2');
-    const crumb = document.getElementById('crumb');
-
-    const kAbs7 = document.getElementById('kAbs7');
-    const kAbsSub = document.getElementById('kAbsSub');
-    const kRiskShifts = document.getElementById('kRiskShifts');
-    const kRiskSub = document.getElementById('kRiskSub');
-    const kAgency = document.getElementById('kAgency');
-    const kOT = document.getElementById('kOT');
-    const kConf = document.getElementById('kConf');
-    const kConfSub = document.getElementById('kConfSub');
-    const kDrift = document.getElementById('kDrift');
-    const kDriftSub = document.getElementById('kDriftSub');
-    const asof = document.getElementById('asof');
-
-    const dAbs = document.getElementById('dAbs');
-    const dRisk = document.getElementById('dRisk');
-    const dAgency = document.getElementById('dAgency');
-    const dOT = document.getElementById('dOT');
-    const dConf = document.getElementById('dConf');
-    const dDrift = document.getElementById('dDrift');
-
-    const ringRisk = document.getElementById('ringRisk');
-    const ringRiskTxt = document.getElementById('ringRiskTxt');
-    const ringConf = document.getElementById('ringConf');
-    const ringConfTxt = document.getElementById('ringConfTxt');
-
-    const nba = document.getElementById('nba');
-    const nbaBadge = document.getElementById('nbaBadge');
-
-    const feed = document.getElementById('feed');
-
-    const rowsEl = document.getElementById('rows');
-
-    // Canvases
-    const c1 = document.getElementById('c1');
-    const c2 = document.getElementById('c2');
-    const ctx1 = c1.getContext('2d');
-    const ctx2 = c2.getContext('2d');
-
-    // Sparklines
-    const spAbs = document.getElementById('spAbs').getContext('2d');
-    const spAgency = document.getElementById('spAgency').getContext('2d');
-    const spOT = document.getElementById('spOT').getContext('2d');
-    const spDrift = document.getElementById('spDrift').getContext('2d');
-
-    function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
-    function lerp(a,b,t){ return a+(b-a)*t; }
-    function now(){ return (performance && performance.now) ? performance.now() : Date.now(); }
-
-    function fitCanvas(cv, ctx){
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      const r = cv.getBoundingClientRect();
-      const w = Math.max(2, Math.floor(r.width));
-      const h = Math.max(2, Math.floor(r.height));
-      cv.width = Math.floor(w * dpr);
-      cv.height = Math.floor(h * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      return { w, h };
-    }
-    function fitSmall(ctx, canvasEl){
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const r = canvasEl.getBoundingClientRect();
-      const w = Math.max(2, Math.floor(r.width));
-      const h = Math.max(2, Math.floor(r.height));
-      canvasEl.width = Math.floor(w * dpr);
-      canvasEl.height = Math.floor(h * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      return { w, h };
-    }
-
-    function setDelta(el, val){
-      const s = (val>=0 ? '+' : '') + (val).toFixed(1);
-      el.textContent = s;
-      el.classList.remove('up','down','flat');
-      if (Math.abs(val) < 0.2) el.classList.add('flat');
-      else if (val > 0) el.classList.add('down'); // more absences / more risk => "down"
-      else el.classList.add('up');
-    }
-    function setDeltaPct(el, valPct){
-      const s = (valPct>=0 ? '+' : '') + (valPct*100).toFixed(1) + '%';
-      el.textContent = s;
-      el.classList.remove('up','down','flat');
-      if (Math.abs(valPct) < 0.004) el.classList.add('flat');
-      else if (valPct > 0) el.classList.add('down');
-      else el.classList.add('up');
-    }
-    function setRing(el, txtEl, value01){
-      const C = 106.8;
-      const v = clamp(value01, 0, 1);
-      el.style.strokeDashoffset = String(C * (1 - v));
-      txtEl.textContent = Math.round(v*100) + '%';
-    }
-
-    // ---- Demo dataset (last 14 days rows) ----
-    const demoSites = ['Northgate','Riverside','Kingston'];
-    const demoLines = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
-    const demoShifts = ['Days','Nights','Weekend'];
-
-    function fmtDate(d){
-      const yy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      const dd = String(d.getDate()).padStart(2,'0');
-      return `${yy}-${mm}-${dd}`;
-    }
-
-    function seededNoise(seed){
-      // simple deterministic-ish noise
-      const x = Math.sin(seed*999.13) * 10000;
-      return x - Math.floor(x);
-    }
-
-    function buildDemoRows(){
-      const rows = [];
-      const today = new Date();
-      for (let i=13;i>=0;i--){
-        const d = new Date(today);
-        d.setDate(today.getDate()-i);
-        const date = fmtDate(d);
-        for (let s=0;s<demoSites.length;s++){
-          for (let l=0;l<demoLines.length;l++){
-            for (let sh=0;sh<demoShifts.length;sh++){
-              const baseHc = 50 + l*9 + sh*12 + s*7;
-              const cover = 14 + l*2 + (sh===1?6:0) + (sh===2?3:0);
-              const baseRate = 0.055 + l*0.004 + (sh===1?0.018:0) + (sh===2?0.009:0) + s*0.002;
-              const season = 0.012 * Math.sin((today.getTime()/86400000 + i)/6.2);
-              const n = seededNoise((i+1)*31 + s*7 + l*13 + sh*17);
-              const rate = clamp(baseRate + season + (n-0.5)*0.02, 0.01, 0.18);
-              const abs = Math.max(0, Math.round(baseHc * rate));
-              const notes = (sh===1 && rate>0.09) ? 'Nights trending high' : (rate>0.11 ? 'Spike' : '');
-              rows.push({
-                date, site: demoSites[s], service_line: demoLines[l], shift: demoShifts[sh],
-                headcount: baseHc, cover_required: cover, absences: abs,
-                absence_rate: +(rate*100).toFixed(1), notes
-              });
-            }
+  function fmtDate(d){
+    const yy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${yy}-${mm}-${dd}`;
+  }
+  function seededNoise(seed){
+    const x = Math.sin(seed*999.13) * 10000;
+    return x - Math.floor(x);
+  }
+  function buildDemoRows(){
+    const rows = [];
+    const today = new Date();
+    for (let i=13;i>=0;i--){
+      const d = new Date(today);
+      d.setDate(today.getDate()-i);
+      const date = fmtDate(d);
+      for (let s=0;s<demoSites.length;s++){
+        for (let l=0;l<demoLines.length;l++){
+          for (let sh=0;sh<demoShifts.length;sh++){
+            const baseHc = 50 + l*9 + sh*12 + s*7;
+            const cover = 14 + l*2 + (sh===1?6:0) + (sh===2?3:0);
+            const baseRate = 0.055 + l*0.004 + (sh===1?0.018:0) + (sh===2?0.009:0) + s*0.002;
+            const season = 0.012 * Math.sin((today.getTime()/86400000 + i)/6.2);
+            const n = seededNoise((i+1)*31 + s*7 + l*13 + sh*17);
+            const rate = clamp(baseRate + season + (n-0.5)*0.02, 0.01, 0.18);
+            const abs = Math.max(0, Math.round(baseHc * rate));
+            const notes = (sh===1 && rate>0.09) ? 'Nights trending high' : (rate>0.11 ? 'Spike' : '');
+            rows.push({
+              date, site: demoSites[s], service_line: demoLines[l], shift: demoShifts[sh],
+              headcount: baseHc, cover_required: cover, absences: abs,
+              absence_rate: +(rate*100).toFixed(1), notes
+            });
           }
         }
       }
-      return rows;
     }
+    return rows;
+  }
+  const demoRows = buildDemoRows();
 
-    const demoRows = buildDemoRows();
-
-    function renderTable(){
-      rowsEl.innerHTML = '';
-      demoRows
-        .filter(r => r.site === siteEl.value && r.service_line === lineEl.value)
-        .slice(-6)
-        .forEach(r => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${r.date}</td>
-            <td>${r.site}</td>
-            <td>${r.service_line}</td>
-            <td>${r.shift}</td>
-            <td>${r.headcount}</td>
-            <td>${r.cover_required}</td>
-            <td>${r.absences}</td>
-            <td>${r.absence_rate}%</td>
-            <td>${r.notes || ''}</td>
-          `;
-          rowsEl.appendChild(tr);
-        });
-    }
-
-    function demoCSV(){
-      const header = ['date','site','service_line','shift','headcount','cover_required','absences','absence_rate','notes'].join(',');
-      const rows = demoRows.map(d => [
-        d.date,d.site,d.service_line,d.shift,d.headcount,d.cover_required,d.absences,d.absence_rate,(d.notes||'')
-      ].map(x => String(x).includes(',') ? `"${String(x).replaceAll('"','""')}"` : x).join(','));
-      return [header, ...rows].join('\n');
-    }
-    function downloadText(filename, text){
-      const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 800);
-    }
-    btnDemo.addEventListener('click', () => downloadText('AbsenceAI_demo.csv', demoCSV()));
-
-    // ---- Live model story (forecast + drift + actions) ----
-    let drift = 0.12;
-    let driftTrend = 0.0007;
-
-    // series
-    const abs7Series = [];
-    const agencySeries = [];
-    const otSeries = [];
-    const driftSeries = [];
-    const maxPts = 64;
-
-    // ops feed buffer
-    const feedBuf = [];
-    function pushEvent(sev, html){
-      const t = new Date().toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
-      feedBuf.unshift({ sev, html: `<b>${t}</b> — ${html}` });
-      while (feedBuf.length > 9) feedBuf.pop();
-      renderFeed();
-    }
-    function renderFeed(){
-      feed.innerHTML = '';
-      feedBuf.forEach(e => {
-        const row = document.createElement('div');
-        row.className = 'evt';
-        const dot = document.createElement('span');
-        dot.className = 'sev' + (e.sev==='y'?' y':(e.sev==='r'?' r':''));
-        row.appendChild(dot);
-        const msg = document.createElement('div');
-        msg.innerHTML = e.html;
-        row.appendChild(msg);
-        feed.appendChild(row);
-      });
-    }
-
-    function updateDrift(){
-      const shock = (Math.random() < 0.02) ? (0.06 + Math.random()*0.10) : 0;
-      drift = clamp(drift + driftTrend + (Math.random()-0.5)*0.01 + shock, 0.02, 0.92);
-      if (drift > 0.58) driftTrend = -0.0022;
-      else if (drift < 0.16) driftTrend = 0.0010;
-    }
-
-    function features(){
-      return {
-        site: siteEl.value,
-        line: lineEl.value,
-        shift: shiftEl.value,
-        headcount: Number(hcEl.value||0),
-        cover: Number(coverEl.value||0),
-        ratePct: Number(rateEl.value||0),
-        drift
-      };
-    }
-
-    function shiftMultiplier(shift){
-      if (shift === 'Nights') return 1.22;
-      if (shift === 'Weekend') return 1.10;
-      return 1.0;
-    }
-    function lineMultiplier(line){
-      // small meaningful differences
-      if (line === 'Security') return 1.10;
-      if (line === 'Cleaning') return 1.06;
-      if (line === 'Catering') return 1.03;
-      if (line === 'Maintenance') return 1.08;
-      if (line === 'Reception') return 1.02;
-      if (line === 'Logistics') return 1.07;
-      return 1.0;
-    }
-    function siteMultiplier(site){
-      if (site === 'Northgate') return 1.03;
-      if (site === 'Riverside') return 1.00;
-      if (site === 'Kingston') return 1.05;
-      return 1.0;
-    }
-
-    // Forecast by day for the chosen shift, plus overall operational metrics
-    function predict(f){
-      const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
-
-      // drift reduces confidence and increases variance
-      const varBoost = 1 + f.drift*0.9;
-
-      const mult = shiftMultiplier(f.shift) * lineMultiplier(f.line) * siteMultiplier(f.site);
-
-      // expected absences per day on this service line + shift
-      const dailyExp = f.headcount * baseRate * mult;
-
-      // 7-day forecast with a realistic pattern (weekday/weekend effect + noise)
-      const days = 7;
-      const y = [];
-      for (let i=0;i<days;i++){
-        const dayFactor = 1 + 0.08*Math.sin((Date.now()/86400000 + i)/2.6);
-        const weekendFactor = ((new Date(Date.now()+i*86400000)).getDay() % 6 === 0) ? 1.08 : 1.0;
-        const noise = (Math.random()-0.5) * 0.9 * varBoost;
-        const v = Math.max(0, dailyExp * dayFactor * weekendFactor + noise);
-        y.push(v);
-      }
-
-      const abs7 = y.reduce((a,b)=>a+b,0);
-
-      // cover gap logic: capacity per shift depends on cover required vs (headcount - absences)
-      // model "at-risk shifts" as days where expected absences exceed a threshold relative to cover slack
-      const staffPerShift = Math.max(1, Math.round(f.headcount / 6)); // rough partition for shift allocation
-      const slack = Math.max(1, staffPerShift - f.cover);
-      let riskShifts = 0;
-      let totalGap = 0;
-
-      for (let i=0;i<days;i++){
-        const abs = y[i];
-        const expectedAvailable = staffPerShift - abs;
-        const gap = Math.max(0, f.cover - expectedAvailable);
-        if (gap > Math.max(1, slack*0.35)) riskShifts++;
-        totalGap += gap;
-      }
-
-      // agency vs overtime: if drift high or nights/weekend -> more agency
-      const agencyBias = clamp((f.shift==='Nights'?0.55:0.40) + f.drift*0.25, 0.25, 0.80);
-      const agencyShifts = Math.ceil(totalGap * agencyBias);
-      const otHours = Math.round((totalGap * (1-agencyBias)) * 7.5); // 7.5h per fill
-
-      // confidence
-      const conf = clamp((0.88 - f.drift*0.55) * (1 - Math.abs(baseRate-0.07)*1.8), 0.18, 0.92);
-
-      // bounds for chart band
-      const band = y.map(v => {
-        const half = (0.65 + f.drift*0.6) * (0.55 + (1-conf));
-        return { lo: Math.max(0, v*(1-half)), hi: v*(1+half) };
-      });
-
-      // anomaly trigger (story)
-      const anomaly = (f.shift==='Nights' && f.ratePct > 7.8 && f.drift > 0.32) || (riskShifts >= 4 && f.drift > 0.45);
-
-      return { y, band, abs7, riskShifts, agencyShifts, otHours, conf, drift: f.drift, anomaly };
-    }
-
-    // Prescriptions that feel like scheduler actions
-    function prescriptions(out, f){
-      const items = [];
-      const highRisk = out.riskShifts >= 4;
-      const midRisk = out.riskShifts >= 2;
-      const nights = f.shift === 'Nights';
-      const weekend = f.shift === 'Weekend';
-
-      const coverGapPct = clamp((out.agencyShifts + Math.round(out.otHours/7.5)) / Math.max(1, f.cover*7), 0, 1);
-
-      if (highRisk){
-        items.push({
-          title: 'Activate float pool + redeploy internal cover',
-          body: `Reassign <b>${Math.min(6, Math.ceil(out.riskShifts*1.2))}</b> staff across ${f.line} to protect high-risk days. Prioritise ${nights?'Nights':'peak demand'} shifts.`,
-          lift: 0.16
-        });
-      } else if (midRisk){
-        items.push({
-          title: 'Pre-emptive rota adjustment (targeted)',
-          body: `Stagger starts and move <b>${Math.min(4, Math.ceil(out.riskShifts*0.9))}</b> shifts to reduce cover gaps without overstaffing.`,
-          lift: 0.11
-        });
-      }
-
-      if (out.agencyShifts >= 6){
-        items.push({
-          title: 'Agency booking pack (reduce lead time)',
-          body: `Book <b>${out.agencyShifts}</b> agency shifts now for ${f.site} / ${f.line} / ${f.shift}. Lock rates before demand spikes.`,
-          lift: 0.12
-        });
-      } else if (out.agencyShifts > 0){
-        items.push({
-          title: 'Micro-agency top-up',
-          body: `Book <b>${out.agencyShifts}</b> shifts to plug expected gaps while keeping overtime contained.`,
-          lift: 0.08
-        });
-      }
-
-      if (out.otHours >= 25){
-        items.push({
-          title: 'Overtime guardrails + fatigue check',
-          body: `Cap overtime to avoid fatigue: propose <b>${Math.round(out.otHours*0.65)}</b> OT hours + the rest via agency/float.`,
-          lift: 0.09
-        });
-      }
-
-      if (f.drift > 0.50){
-        items.push({
-          title: 'Drift response: refresh features + retrain window',
-          body: `Pattern shift detected. Trigger a retrain and validate against the last 8 weeks for ${f.site} / ${f.line}.`,
-          lift: 0.10
-        });
-      } else if (f.drift > 0.34){
-        items.push({
-          title: 'Investigate drivers (early warning)',
-          body: `Drift rising: check sick-note policy changes, shift swaps, and recent events impacting ${f.line}.`,
-          lift: 0.07
-        });
-      }
-
-      if (nights || weekend){
-        items.push({
-          title: 'Shift incentive recommendation',
-          body: `Offer a short incentive for ${f.shift} to reduce last-minute absence risk and improve fill rate.`,
-          lift: 0.06
-        });
-      }
-
-      if (items.length < 3){
-        items.push({
-          title: 'Tighten cover requirement assumptions',
-          body: `Validate required cover vs demand; adjust ${f.line} cover requirement for better scheduling efficiency.`,
-          lift: 0.05
-        });
-      }
-
-      items.sort((a,b)=>b.lift-a.lift);
-      return items.slice(0,3);
-    }
-
-    function renderNBA(items){
-      nba.innerHTML = '';
-      items.forEach((it, idx) => {
-        const el = document.createElement('div');
-        el.className = 'nbaCard';
-        const width = Math.round(clamp(it.lift, 0, 0.18)/0.18 * 100);
-        el.innerHTML = `
-          <div class="nbaTop">
-            <div class="nbaTitle">${idx+1}. ${it.title}</div>
-            <span class="badge">Impact ${(it.lift*100).toFixed(0)}%</span>
-          </div>
-          <div class="nbaBody">${it.body}</div>
-          <div class="bar"><i style="width:${width}%"></i></div>
+  function renderTable(){
+    rowsEl.innerHTML = '';
+    demoRows
+      .filter(r => r.site === siteEl.value && r.service_line === lineEl.value)
+      .slice(-6)
+      .forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>${r.site}</td>
+          <td>${r.service_line}</td>
+          <td>${r.shift}</td>
+          <td>${r.headcount}</td>
+          <td>${r.cover_required}</td>
+          <td>${r.absences}</td>
+          <td>${r.absence_rate}%</td>
+          <td>${r.notes || ''}</td>
         `;
-        nba.appendChild(el);
+        rowsEl.appendChild(tr);
+      });
+  }
+
+  function demoCSV(){
+    const header = ['date','site','service_line','shift','headcount','cover_required','absences','absence_rate','notes'].join(',');
+    const rows = demoRows.map(d => [
+      d.date,d.site,d.service_line,d.shift,d.headcount,d.cover_required,d.absences,d.absence_rate,(d.notes||'')
+    ].map(x => String(x).includes(',') ? `"${String(x).replaceAll('"','""')}"` : x).join(','));
+    return [header, ...rows].join('\n');
+  }
+  function downloadText(filename, text){
+    const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 800);
+  }
+  btnDemo.addEventListener('click', () => downloadText('AbsenceAI_demo.csv', demoCSV()));
+
+  // ---- Live model story (forecast + drift + actions) ----
+  let drift = 0.12;
+  let driftTrend = 0.0007;
+
+  const abs7Series = [];
+  const agencySeries = [];
+  const otSeries = [];
+  const driftSeries = [];
+  const maxPts = 64;
+
+  // ops feed buffer
+  const feedBuf = [];
+  function pushEvent(sev, html){
+    const t = new Date().toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+    feedBuf.unshift({ sev, html: `<b>${t}</b> — ${html}` });
+    while (feedBuf.length > 9) feedBuf.pop();
+    renderFeed();
+  }
+  function renderFeed(){
+    feed.innerHTML = '';
+    feedBuf.forEach(e => {
+      const row = document.createElement('div');
+      row.className = 'evt';
+      const dot = document.createElement('span');
+      dot.className = 'sev' + (e.sev==='y'?' y':(e.sev==='r'?' r':''));
+      row.appendChild(dot);
+      const msg = document.createElement('div');
+      msg.style.lineHeight = '1.35';
+      msg.style.minWidth = '0';
+      msg.innerHTML = e.html;
+      row.appendChild(msg);
+      feed.appendChild(row);
+    });
+  }
+
+  function updateDrift(){
+    const shock = (Math.random() < 0.02) ? (0.06 + Math.random()*0.10) : 0;
+    drift = clamp(drift + driftTrend + (Math.random()-0.5)*0.01 + shock, 0.02, 0.92);
+    if (drift > 0.58) driftTrend = -0.0022;
+    else if (drift < 0.16) driftTrend = 0.0010;
+  }
+
+  function features(){
+    return {
+      site: siteEl.value,
+      line: lineEl.value,
+      shift: shiftEl.value,
+      headcount: Number(hcEl.value||0),
+      cover: Number(coverEl.value||0),
+      ratePct: Number(rateEl.value||0),
+      drift
+    };
+  }
+
+  function shiftMultiplier(shift){
+    if (shift === 'Nights') return 1.22;
+    if (shift === 'Weekend') return 1.10;
+    return 1.0;
+  }
+  function lineMultiplier(line){
+    if (line === 'Security') return 1.10;
+    if (line === 'Cleaning') return 1.06;
+    if (line === 'Catering') return 1.03;
+    if (line === 'Maintenance') return 1.08;
+    if (line === 'Reception') return 1.02;
+    if (line === 'Logistics') return 1.07;
+    return 1.0;
+  }
+  function siteMultiplier(site){
+    if (site === 'Northgate') return 1.03;
+    if (site === 'Riverside') return 1.00;
+    if (site === 'Kingston') return 1.05;
+    return 1.0;
+  }
+
+  function predict(f){
+    const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
+    const varBoost = 1 + f.drift*0.9;
+    const mult = shiftMultiplier(f.shift) * lineMultiplier(f.line) * siteMultiplier(f.site);
+    const dailyExp = f.headcount * baseRate * mult;
+
+    const days = 7;
+    const y = [];
+    for (let i=0;i<days;i++){
+      const dayFactor = 1 + 0.08*Math.sin((Date.now()/86400000 + i)/2.6);
+      const weekendFactor = ((new Date(Date.now()+i*86400000)).getDay() % 6 === 0) ? 1.08 : 1.0;
+      const noise = (Math.random()-0.5) * 0.9 * varBoost;
+      const v = Math.max(0, dailyExp * dayFactor * weekendFactor + noise);
+      y.push(v);
+    }
+
+    const abs7 = y.reduce((a,b)=>a+b,0);
+
+    const staffPerShift = Math.max(1, Math.round(f.headcount / 6));
+    const slack = Math.max(1, staffPerShift - f.cover);
+    let riskShifts = 0;
+    let totalGap = 0;
+
+    for (let i=0;i<days;i++){
+      const abs = y[i];
+      const expectedAvailable = staffPerShift - abs;
+      const gap = Math.max(0, f.cover - expectedAvailable);
+      if (gap > Math.max(1, slack*0.35)) riskShifts++;
+      totalGap += gap;
+    }
+
+    const agencyBias = clamp((f.shift==='Nights'?0.55:0.40) + f.drift*0.25, 0.25, 0.80);
+    const agencyShifts = Math.ceil(totalGap * agencyBias);
+    const otHours = Math.round((totalGap * (1-agencyBias)) * 7.5);
+
+    const conf = clamp((0.88 - f.drift*0.55) * (1 - Math.abs(baseRate-0.07)*1.8), 0.18, 0.92);
+
+    const band = y.map(v => {
+      const half = (0.65 + f.drift*0.6) * (0.55 + (1-conf));
+      return { lo: Math.max(0, v*(1-half)), hi: v*(1+half) };
+    });
+
+    const anomaly = (f.shift==='Nights' && f.ratePct > 7.8 && f.drift > 0.32) || (riskShifts >= 4 && f.drift > 0.45);
+
+    return { y, band, abs7, riskShifts, agencyShifts, otHours, conf, drift: f.drift, anomaly };
+  }
+
+  function prescriptions(out, f){
+    const items = [];
+    const highRisk = out.riskShifts >= 4;
+    const midRisk = out.riskShifts >= 2;
+    const nights = f.shift === 'Nights';
+    const weekend = f.shift === 'Weekend';
+
+    if (highRisk){
+      items.push({
+        title: 'Activate float pool + redeploy internal cover',
+        body: `Reassign <b>${Math.min(6, Math.ceil(out.riskShifts*1.2))}</b> staff across ${f.line} to protect high-risk days. Prioritise ${nights?'Nights':'peak demand'} shifts.`,
+        lift: 0.16
+      });
+    } else if (midRisk){
+      items.push({
+        title: 'Pre-emptive rota adjustment (targeted)',
+        body: `Stagger starts and move <b>${Math.min(4, Math.ceil(out.riskShifts*0.9))}</b> shifts to reduce cover gaps without overstaffing.`,
+        lift: 0.11
       });
     }
 
-    // ---- Drawing ----
-    function drawForecast(out){
-      const { w, h } = fitCanvas(c1, ctx1);
-      ctx1.clearRect(0,0,w,h);
+    if (out.agencyShifts >= 6){
+      items.push({
+        title: 'Agency booking pack (reduce lead time)',
+        body: `Book <b>${out.agencyShifts}</b> agency shifts now for ${f.site} / ${f.line} / ${f.shift}. Lock rates before demand spikes.`,
+        lift: 0.12
+      });
+    } else if (out.agencyShifts > 0){
+      items.push({
+        title: 'Micro-agency top-up',
+        body: `Book <b>${out.agencyShifts}</b> shifts to plug expected gaps while keeping overtime contained.`,
+        lift: 0.08
+      });
+    }
 
-      // vignette
-      const g = ctx1.createRadialGradient(w*0.55, h*0.35, 10, w*0.55, h*0.55, Math.max(w,h));
-      g.addColorStop(0, 'rgba(0,0,0,0)');
-      g.addColorStop(1, 'rgba(0,0,0,0.35)');
-      ctx1.fillStyle = g;
-      ctx1.fillRect(0,0,w,h);
+    if (out.otHours >= 25){
+      items.push({
+        title: 'Overtime guardrails + fatigue check',
+        body: `Cap overtime to avoid fatigue: propose <b>${Math.round(out.otHours*0.65)}</b> OT hours + the rest via agency/float.`,
+        lift: 0.09
+      });
+    }
 
-      ctx1.fillStyle = 'rgba(242,244,255,0.78)';
-      ctx1.font = '700 12px ui-sans-serif, system-ui';
-      ctx1.fillText('Absences forecast (next 7 days) — by shift', 12, 18);
+    if (f.drift > 0.50){
+      items.push({
+        title: 'Drift response: refresh features + retrain window',
+        body: `Pattern shift detected. Trigger a retrain and validate against the last 8 weeks for ${f.site} / ${f.line}.`,
+        lift: 0.10
+      });
+    } else if (f.drift > 0.34){
+      items.push({
+        title: 'Investigate drivers (early warning)',
+        body: `Drift rising: check policy changes, shift swaps, and events impacting ${f.line}.`,
+        lift: 0.07
+      });
+    }
 
-      const pad = 14;
-      const top = 34;
-      const boxW = w - pad*2;
-      const boxH = h - top - 20;
+    if (nights || weekend){
+      items.push({
+        title: 'Shift incentive recommendation',
+        body: `Offer a short incentive for ${f.shift} to reduce last-minute absence risk and improve fill rate.`,
+        lift: 0.06
+      });
+    }
 
-      ctx1.strokeStyle = 'rgba(255,255,255,0.10)';
-      ctx1.strokeRect(pad, top, boxW, boxH);
+    while (items.length < 3){
+      items.push({
+        title: 'Validate cover assumptions',
+        body: `Review required cover vs demand. Tune ${f.line} cover requirement to reduce unnecessary agency usage.`,
+        lift: 0.05
+      });
+    }
 
-      // grid
-      ctx1.strokeStyle = 'rgba(255,255,255,0.06)';
-      ctx1.lineWidth = 1;
-      for (let k=0;k<=6;k++){
-        const y = top + (k/6)*boxH;
-        ctx1.beginPath(); ctx1.moveTo(pad, y); ctx1.lineTo(pad+boxW, y); ctx1.stroke();
-      }
+    items.sort((a,b)=>b.lift-a.lift);
+    return items.slice(0,3);
+  }
 
-      const yMax = Math.max(6, ...out.band.map(b=>b.hi));
-      const yMin = 0;
+  function renderNBA(items){
+    nba.innerHTML = '';
+    items.forEach((it, idx) => {
+      const el = document.createElement('div');
+      el.className = 'nbaCard';
+      const width = Math.round(clamp(it.lift, 0, 0.18)/0.18 * 100);
+      el.innerHTML = `
+        <div class="nbaTop">
+          <div class="nbaTitle">${idx+1}. ${it.title}</div>
+          <span class="badge">Impact ${(it.lift*100).toFixed(0)}%</span>
+        </div>
+        <div class="nbaBody">${it.body}</div>
+        <div class="bar"><i style="width:${width}%"></i></div>
+      `;
+      nba.appendChild(el);
+    });
+  }
 
-      const X = i => pad + (i/6)*boxW;
-      const Y = v => top + (1 - (v-yMin)/(yMax-yMin))*boxH;
+  function drawForecast(out){
+    const { w, h } = fitCanvas(c1, ctx1);
+    ctx1.clearRect(0,0,w,h);
 
-      // confidence band
-      ctx1.globalAlpha = 0.9;
-      ctx1.fillStyle = 'rgba(34,211,238,0.10)';
+    const g = ctx1.createRadialGradient(w*0.55, h*0.35, 10, w*0.55, h*0.55, Math.max(w,h));
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx1.fillStyle = g;
+    ctx1.fillRect(0,0,w,h);
+
+    ctx1.fillStyle = 'rgba(242,244,255,0.78)';
+    ctx1.font = '700 12px ui-sans-serif, system-ui';
+    ctx1.fillText('Absences forecast (next 7 days) — by shift', 12, 18);
+
+    const pad = 14;
+    const top = 34;
+    const boxW = w - pad*2;
+    const boxH = h - top - 20;
+
+    ctx1.strokeStyle = 'rgba(255,255,255,0.10)';
+    ctx1.strokeRect(pad, top, boxW, boxH);
+
+    ctx1.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx1.lineWidth = 1;
+    for (let k=0;k<=6;k++){
+      const y = top + (k/6)*boxH;
+      ctx1.beginPath(); ctx1.moveTo(pad, y); ctx1.lineTo(pad+boxW, y); ctx1.stroke();
+    }
+
+    const yMax = Math.max(6, ...out.band.map(b=>b.hi));
+    const yMin = 0;
+    const X = i => pad + (i/6)*boxW;
+    const Y = v => top + (1 - (v-yMin)/(yMax-yMin))*boxH;
+
+    ctx1.globalAlpha = 0.9;
+    ctx1.fillStyle = 'rgba(34,211,238,0.10)';
+    ctx1.beginPath();
+    ctx1.moveTo(X(0), Y(out.band[0].hi));
+    for (let i=1;i<7;i++) ctx1.lineTo(X(i), Y(out.band[i].hi));
+    for (let i=6;i>=0;i--) ctx1.lineTo(X(i), Y(out.band[i].lo));
+    ctx1.closePath();
+    ctx1.fill();
+    ctx1.globalAlpha = 1;
+
+    ctx1.strokeStyle = 'rgba(253,224,71,0.78)';
+    ctx1.lineWidth = 2.3;
+    ctx1.beginPath();
+    for (let i=0;i<7;i++){
+      const x = X(i), y = Y(out.y[i]);
+      if (i===0) ctx1.moveTo(x,y); else ctx1.lineTo(x,y);
+    }
+    ctx1.stroke();
+
+    for (let i=0;i<7;i++){
+      ctx1.fillStyle = 'rgba(253,224,71,0.80)';
       ctx1.beginPath();
-      ctx1.moveTo(X(0), Y(out.band[0].hi));
-      for (let i=1;i<7;i++) ctx1.lineTo(X(i), Y(out.band[i].hi));
-      for (let i=6;i>=0;i--) ctx1.lineTo(X(i), Y(out.band[i].lo));
-      ctx1.closePath();
+      ctx1.arc(X(i), Y(out.y[i]), 3.0, 0, Math.PI*2);
       ctx1.fill();
-      ctx1.globalAlpha = 1;
-
-      // forecast line
-      ctx1.strokeStyle = 'rgba(253,224,71,0.78)';
-      ctx1.lineWidth = 2.3;
-      ctx1.beginPath();
-      for (let i=0;i<7;i++){
-        const x = X(i), y = Y(out.y[i]);
-        if (i===0) ctx1.moveTo(x,y); else ctx1.lineTo(x,y);
-      }
-      ctx1.stroke();
-
-      // points
-      for (let i=0;i<7;i++){
-        ctx1.fillStyle = 'rgba(253,224,71,0.80)';
-        ctx1.beginPath();
-        ctx1.arc(X(i), Y(out.y[i]), 3.0, 0, Math.PI*2);
-        ctx1.fill();
-      }
-
-      // axis labels
-      ctx1.fillStyle = 'rgba(242,244,255,0.60)';
-      ctx1.font = '600 11px ui-sans-serif, system-ui';
-      for (let i=0;i<7;i++){
-        const d = new Date(Date.now()+i*86400000);
-        const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
-        ctx1.fillText(lbl, X(i)-12, top+boxH+14);
-      }
-
-      // summary tag inside chart
-      ctx1.fillStyle = 'rgba(242,244,255,0.70)';
-      ctx1.font = '700 12px ui-sans-serif, system-ui';
-      const s = `${out.abs7.toFixed(1)} absences / 7d • ${out.riskShifts} at-risk shifts`;
-      ctx1.fillText(s, pad+10, top+18);
     }
 
-    function drawHeatmap(out, f){
-      const { w, h } = fitCanvas(c2, ctx2);
-      ctx2.clearRect(0,0,w,h);
+    ctx1.fillStyle = 'rgba(242,244,255,0.60)';
+    ctx1.font = '600 11px ui-sans-serif, system-ui';
+    for (let i=0;i<7;i++){
+      const d = new Date(Date.now()+i*86400000);
+      const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
+      ctx1.fillText(lbl, X(i)-12, top+boxH+14);
+    }
 
-      // vignette
-      const g = ctx2.createRadialGradient(w*0.60, h*0.30, 10, w*0.55, h*0.55, Math.max(w,h));
-      g.addColorStop(0, 'rgba(0,0,0,0)');
-      g.addColorStop(1, 'rgba(0,0,0,0.35)');
-      ctx2.fillStyle = g;
-      ctx2.fillRect(0,0,w,h);
+    ctx1.fillStyle = 'rgba(242,244,255,0.70)';
+    ctx1.font = '700 12px ui-sans-serif, system-ui';
+    const s = `${out.abs7.toFixed(1)} absences / 7d • ${out.riskShifts} at-risk shifts`;
+    ctx1.fillText(s, pad+10, top+18);
+  }
 
-      ctx2.fillStyle = 'rgba(242,244,255,0.78)';
-      ctx2.font = '700 12px ui-sans-serif, system-ui';
-      ctx2.fillText('Service-line heatmap (expected absences)', 12, 18);
+  function drawHeatmap(out, f){
+    const { w, h } = fitCanvas(c2, ctx2);
+    ctx2.clearRect(0,0,w,h);
 
-      const pad = 14;
-      const top = 34;
-      const boxW = w - pad*2;
-      const boxH = h - top - 18;
+    const g = ctx2.createRadialGradient(w*0.60, h*0.30, 10, w*0.55, h*0.55, Math.max(w,h));
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx2.fillStyle = g;
+    ctx2.fillRect(0,0,w,h);
 
-      ctx2.strokeStyle = 'rgba(255,255,255,0.10)';
-      ctx2.strokeRect(pad, top, boxW, boxH);
+    ctx2.fillStyle = 'rgba(242,244,255,0.78)';
+    ctx2.font = '700 12px ui-sans-serif, system-ui';
+    ctx2.fillText('Service-line heatmap (expected absences)', 12, 18);
 
-      const cols = 7;
-      const rows = 6; // service lines
-      const cw = boxW / cols;
-      const rh = boxH / rows;
+    const pad = 14;
+    const top = 34;
+    const boxW = w - pad*2;
+    const boxH = h - top - 18;
 
-      // build expected matrix for all lines (same site/shift, different line)
-      const lineOrder = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
-      const maxV = 10 + (f.headcount/30);
-      for (let r=0;r<rows;r++){
-        for (let c=0;c<cols;c++){
-          const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
-          const mult = shiftMultiplier(f.shift) * lineMultiplier(lineOrder[r]) * siteMultiplier(f.site);
-          const dayFactor = 1 + 0.06*Math.sin((Date.now()/86400000 + c)/2.3);
-          const v = (f.headcount/ (lineOrder[r]===f.line ? 1.0 : 1.15)) * baseRate * mult * dayFactor;
-          const heat = clamp(v / maxV, 0, 1);
+    ctx2.strokeStyle = 'rgba(255,255,255,0.10)';
+    ctx2.strokeRect(pad, top, boxW, boxH);
 
-          // color blend (mint -> yellow -> red) but done via rgba
-          let col = `rgba(163,255,176,${0.08 + 0.22*heat})`;
-          if (heat > 0.55) col = `rgba(253,224,71,${0.10 + 0.26*heat})`;
-          if (heat > 0.78) col = `rgba(255,90,90,${0.10 + 0.28*heat})`;
+    const cols = 7;
+    const rows = 6;
+    const cw = boxW / cols;
+    const rh = boxH / rows;
 
-          ctx2.fillStyle = col;
-          ctx2.fillRect(pad + c*cw + 2, top + r*rh + 2, cw - 4, rh - 4);
-        }
-      }
+    const lineOrder = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
+    const maxV = 10 + (f.headcount/30);
 
-      // labels
-      ctx2.fillStyle = 'rgba(242,244,255,0.62)';
-      ctx2.font = '600 11px ui-sans-serif, system-ui';
+    for (let r=0;r<rows;r++){
       for (let c=0;c<cols;c++){
-        const d = new Date(Date.now()+c*86400000);
-        const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
-        ctx2.fillText(lbl, pad + c*cw + 8, top-6);
-      }
-      for (let r=0;r<rows;r++){
-        const lbl = lineOrder[r];
-        ctx2.fillText(lbl, 12, top + r*rh + 18);
-      }
+        const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
+        const mult = shiftMultiplier(f.shift) * lineMultiplier(lineOrder[r]) * siteMultiplier(f.site);
+        const dayFactor = 1 + 0.06*Math.sin((Date.now()/86400000 + c)/2.3);
+        const v = (f.headcount / (lineOrder[r]===f.line ? 1.0 : 1.15)) * baseRate * mult * dayFactor;
+        const heat = clamp(v / maxV, 0, 1);
 
-      // drift bar (top-right)
-      const x = w*0.74, y = 10, bw = w*0.23, bh = 10;
-      ctx2.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx2.fillRect(x, y, bw, bh);
+        let col = `rgba(163,255,176,${0.08 + 0.22*heat})`;
+        if (heat > 0.55) col = `rgba(253,224,71,${0.10 + 0.26*heat})`;
+        if (heat > 0.78) col = `rgba(255,90,90,${0.10 + 0.28*heat})`;
 
-      let col = 'rgba(163,255,176,0.55)';
-      if (f.drift > 0.35) col = 'rgba(253,224,71,0.55)';
-      if (f.drift > 0.55) col = 'rgba(255,90,90,0.55)';
-      ctx2.fillStyle = col;
-      ctx2.fillRect(x, y, bw*f.drift, bh);
-
-      ctx2.strokeStyle = 'rgba(255,255,255,0.14)';
-      ctx2.strokeRect(x, y, bw, bh);
-
-      ctx2.fillStyle = 'rgba(242,244,255,0.70)';
-      ctx2.font = '700 11px ui-sans-serif, system-ui';
-      ctx2.fillText('Drift', x, y + bh + 14);
-
-      // anomaly marker
-      if (out.anomaly){
-        ctx2.fillStyle = 'rgba(255,90,90,0.85)';
-        ctx2.font = '800 12px ui-sans-serif, system-ui';
-        ctx2.fillText('Anomaly detected', x, y + bh + 30);
+        ctx2.fillStyle = col;
+        ctx2.fillRect(pad + c*cw + 2, top + r*rh + 2, cw - 4, rh - 4);
       }
     }
 
-    function drawSpark(ctx, canvasEl, series, stroke, fill){
-      const { w, h } = fitSmall(ctx, canvasEl);
-      ctx.clearRect(0,0,w,h);
-
-      const g = ctx.createRadialGradient(w*0.35, h*0.20, 8, w*0.55, h*0.55, Math.max(w,h));
-      g.addColorStop(0, 'rgba(255,255,255,0.05)');
-      g.addColorStop(1, 'rgba(0,0,0,0.20)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,w,h);
-
-      if (series.length < 2) return;
-
-      const min = Math.min(...series);
-      const max = Math.max(...series);
-      const pad = 6;
-      const X = i => pad + (i/(series.length-1))*(w - pad*2);
-      const Y = v => pad + (1 - (v-min)/Math.max(1e-6, (max-min)))*(h - pad*2);
-
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (let i=0;i<series.length;i++){
-        const x = X(i), y = Y(series[i]);
-        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      }
-      ctx.stroke();
-
-      ctx.globalAlpha = 0.22;
-      ctx.fillStyle = fill;
-      ctx.beginPath();
-      ctx.moveTo(X(0), h-pad);
-      for (let i=0;i<series.length;i++) ctx.lineTo(X(i), Y(series[i]));
-      ctx.lineTo(X(series.length-1), h-pad);
-      ctx.closePath();
-      ctx.fill();
-      ctx.globalAlpha = 1;
+    ctx2.fillStyle = 'rgba(242,244,255,0.62)';
+    ctx2.font = '600 11px ui-sans-serif, system-ui';
+    for (let c=0;c<cols;c++){
+      const d = new Date(Date.now()+c*86400000);
+      const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
+      ctx2.fillText(lbl, pad + c*cw + 8, top-6);
+    }
+    for (let r=0;r<rows;r++){
+      ctx2.fillText(lineOrder[r], 12, top + r*rh + 18);
     }
 
-    // ---- UI update ----
-    function setAsOf(){
-      const dt = new Date();
-      const s = dt.toLocaleString(undefined, { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
-      asof.textContent = 'As of ' + s;
+    const x = w*0.74, y = 10, bw = w*0.23, bh = 10;
+    ctx2.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx2.fillRect(x, y, bw, bh);
+
+    let col = 'rgba(163,255,176,0.55)';
+    if (f.drift > 0.35) col = 'rgba(253,224,71,0.55)';
+    if (f.drift > 0.55) col = 'rgba(255,90,90,0.55)';
+    ctx2.fillStyle = col;
+    ctx2.fillRect(x, y, bw*f.drift, bh);
+
+    ctx2.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx2.strokeRect(x, y, bw, bh);
+
+    ctx2.fillStyle = 'rgba(242,244,255,0.70)';
+    ctx2.font = '700 11px ui-sans-serif, system-ui';
+    ctx2.fillText('Drift', x, y + bh + 14);
+
+    if (out.anomaly){
+      ctx2.fillStyle = 'rgba(255,90,90,0.85)';
+      ctx2.font = '800 12px ui-sans-serif, system-ui';
+      ctx2.fillText('Anomaly detected', x, y + bh + 30);
+    }
+  }
+
+  function drawSpark(ctx, canvasEl, series, stroke, fill){
+    const { w, h } = fitSmall(ctx, canvasEl);
+    ctx.clearRect(0,0,w,h);
+
+    const g = ctx.createRadialGradient(w*0.35, h*0.20, 8, w*0.55, h*0.55, Math.max(w,h));
+    g.addColorStop(0, 'rgba(255,255,255,0.05)');
+    g.addColorStop(1, 'rgba(0,0,0,0.20)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+
+    if (series.length < 2) return;
+
+    const min = Math.min(...series);
+    const max = Math.max(...series);
+    const pad = 6;
+    const X = i => pad + (i/(series.length-1))*(w - pad*2);
+    const Y = v => pad + (1 - (v-min)/Math.max(1e-6, (max-min)))*(h - pad*2);
+
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i=0;i<series.length;i++){
+      const x = X(i), y = Y(series[i]);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    ctx.moveTo(X(0), h-pad);
+    for (let i=0;i<series.length;i++) ctx.lineTo(X(i), Y(series[i]));
+    ctx.lineTo(X(series.length-1), h-pad);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function setAsOf(){
+    const dt = new Date();
+    const s = dt.toLocaleString(undefined, { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    asof.textContent = 'As of ' + s;
+  }
+
+  function driftUI(){
+    kDrift.textContent = (drift*100).toFixed(0) + '%';
+    if (drift < 0.35){
+      kDriftSub.textContent = 'Stable';
+      chipWarn.style.display = 'none'; chipBad.style.display = 'none';
+      lg2.textContent = 'Stable';
+    } else if (drift < 0.55){
+      kDriftSub.textContent = 'Investigate shift';
+      chipWarn.style.display = ''; chipBad.style.display = 'none';
+      lg2.textContent = 'Rising';
+    } else {
+      kDriftSub.textContent = 'Alert: retrain recommended';
+      chipWarn.style.display = 'none'; chipBad.style.display = '';
+      lg2.textContent = 'Critical';
+    }
+  }
+
+  function setStateText(){
+    crumb.textContent = `AbsenceAI / ${siteEl.value} / ${lineEl.value} / ${shiftEl.value}`;
+  }
+
+  async function runOnce(source){
+    const t0 = now();
+    chipState.textContent = 'Running';
+    rt.textContent = '—';
+    setAsOf();
+    setStateText();
+
+    const f = features();
+
+    await new Promise(r => setTimeout(r, 120 + Math.random()*220));
+    const out = predict(f);
+
+    kAbs7.textContent = out.abs7.toFixed(1);
+    kAbsSub.textContent = `${f.headcount} HC • ${f.ratePct.toFixed(1)}% recent`;
+
+    kRiskShifts.textContent = String(out.riskShifts);
+    kRiskSub.textContent = `Cover ${f.cover}/shift • shift ${f.shift}`;
+
+    kAgency.textContent = String(out.agencyShifts);
+    kOT.textContent = String(out.otHours);
+
+    kConf.textContent = Math.round(out.conf*100) + '%';
+    kConfSub.textContent = out.conf > 0.72 ? 'Good signal' : (out.conf > 0.50 ? 'Some uncertainty' : 'Low certainty');
+
+    driftUI();
+
+    setRing(ringRisk, ringRiskTxt, clamp(out.riskShifts/7, 0, 1));
+    setRing(ringConf, ringConfTxt, out.conf);
+
+    abs7Series.push(out.abs7);
+    agencySeries.push(out.agencyShifts);
+    otSeries.push(out.otHours);
+    driftSeries.push(drift);
+    while (abs7Series.length > maxPts){
+      abs7Series.shift(); agencySeries.shift(); otSeries.shift(); driftSeries.shift();
     }
 
-    function driftUI(){
-      kDrift.textContent = (drift*100).toFixed(0) + '%';
-      if (drift < 0.35){
-        kDriftSub.textContent = 'Stable';
-        chipWarn.style.display = 'none'; chipBad.style.display = 'none';
-        lg2.textContent = 'Stable';
-      } else if (drift < 0.55){
-        kDriftSub.textContent = 'Investigate shift';
-        chipWarn.style.display = ''; chipBad.style.display = 'none';
-        lg2.textContent = 'Rising';
-      } else {
-        kDriftSub.textContent = 'Alert: retrain recommended';
-        chipWarn.style.display = 'none'; chipBad.style.display = '';
-        lg2.textContent = 'Critical';
-      }
+    drawSpark(spAbs, spAbsEl, abs7Series, 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
+    drawSpark(spAgency, spAgencyEl, agencySeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
+    drawSpark(spOT, spOTEl, otSeries, 'rgba(34,211,238,0.70)', 'rgba(34,211,238,0.55)');
+    drawSpark(spDrift, spDriftEl, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
+
+    const i = abs7Series.length-1;
+    const prevAbs = abs7Series[i-1] ?? out.abs7;
+    const prevAg = agencySeries[i-1] ?? out.agencyShifts;
+    const prevOT = otSeries[i-1] ?? out.otHours;
+    const prevDr = driftSeries[i-1] ?? drift;
+
+    setDelta(dAbs, out.abs7 - prevAbs);
+    setDelta(dAgency, out.agencyShifts - prevAg);
+    setDelta(dOT, out.otHours - prevOT);
+    setDeltaPct(dDrift, drift - prevDr);
+
+    dConf.textContent = out.conf > 0.70 ? '↑ stable' : (out.conf > 0.50 ? '≈' : '↓');
+    dConf.classList.remove('up','down','flat');
+    dConf.classList.add(out.conf > 0.70 ? 'up' : (out.conf > 0.50 ? 'flat' : 'down'));
+
+    drawForecast(out);
+    drawHeatmap(out, f);
+
+    lg1.textContent = `${out.abs7.toFixed(1)} abs/7d • ${out.riskShifts} risk shifts • ${Math.round(out.conf*100)}% conf`;
+
+    const acts = prescriptions(out, f);
+    renderNBA(acts);
+    nbaBadge.textContent = out.riskShifts >= 4 ? 'Cover risk' : (out.riskShifts >= 2 ? 'Watchlist' : 'Stable');
+
+    if (source === 'boot'){
+      pushEvent('g', `Loaded demo view for <b>${f.site}</b> / <b>${f.line}</b> / <b>${f.shift}</b>. Forecast running.`);
+    } else if (source === 'manual'){
+      pushEvent('g', `Scenario updated: <b>${f.headcount} HC</b>, <b>${f.cover} cover</b>, <b>${f.ratePct.toFixed(1)}%</b> recent rate.`);
     }
 
-    function setStateText(){
-      crumb.textContent = `AbsenceAI / ${siteEl.value} / ${lineEl.value} / ${shiftEl.value}`;
+    if (out.anomaly){
+      pushEvent('r', `<b>Anomaly</b>: pattern shift detected on <b>${f.shift}</b> (${f.line}). Recommend immediate cover action.`);
+    } else if (out.riskShifts >= 4){
+      pushEvent('y', `Cover risk rising: <b>${out.riskShifts}</b> shifts at risk in next 7 days. Consider float pool + agency.`);
+    } else if (drift > 0.52 && Math.random() < 0.45){
+      pushEvent('y', `Drift rising for ${f.site}/${f.line}. Validate drivers before schedule publish.`);
+    } else if (Math.random() < 0.22){
+      pushEvent('g', `Forecast stable: expected absences <b>${out.abs7.toFixed(1)}</b> over 7 days.`);
     }
 
-    // ---- Main run ----
-    async function runOnce(source){
-      const t0 = now();
-      chipState.textContent = 'Running';
-      rt.textContent = '—';
-      setAsOf();
-      setStateText();
-
-      const f = features();
-
-      // short compute feel
-      await new Promise(r => setTimeout(r, 150 + Math.random()*220));
-
-      const out = predict(f);
-
-      // KPIs
-      kAbs7.textContent = out.abs7.toFixed(1);
-      kAbsSub.textContent = `${f.headcount} HC • ${f.ratePct.toFixed(1)}% recent`;
-
-      kRiskShifts.textContent = String(out.riskShifts);
-      kRiskSub.textContent = `Cover ${f.cover}/shift • shift ${f.shift}`;
-
-      kAgency.textContent = String(out.agencyShifts);
-      kOT.textContent = String(out.otHours);
-
-      kConf.textContent = Math.round(out.conf*100) + '%';
-      kConfSub.textContent = out.conf > 0.72 ? 'Good signal' : (out.conf > 0.50 ? 'Some uncertainty' : 'Low certainty');
-
-      driftUI();
-
-      // rings
-      setRing(ringRisk, ringRiskTxt, clamp(out.riskShifts/7, 0, 1));
-      setRing(ringConf, ringConfTxt, out.conf);
-
-      // series update
-      abs7Series.push(out.abs7);
-      agencySeries.push(out.agencyShifts);
-      otSeries.push(out.otHours);
-      driftSeries.push(drift);
-
-      while (abs7Series.length > maxPts){
-        abs7Series.shift(); agencySeries.shift(); otSeries.shift(); driftSeries.shift();
-      }
-
-      // sparklines
-      drawSpark(spAbs, spAbs.canvas, abs7Series, 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
-      drawSpark(spAgency, spAgency.canvas, agencySeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
-      drawSpark(spOT, spOT.canvas, otSeries, 'rgba(34,211,238,0.70)', 'rgba(34,211,238,0.55)');
-      drawSpark(spDrift, spDrift.canvas, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
-
-      // deltas
-      const i = abs7Series.length-1;
-      const prevAbs = abs7Series[i-1] ?? out.abs7;
-      const prevAg = agencySeries[i-1] ?? out.agencyShifts;
-      const prevOT = otSeries[i-1] ?? out.otHours;
-      const prevDr = driftSeries[i-1] ?? drift;
-
-      setDelta(dAbs, out.abs7 - prevAbs);
-      setDelta(dAgency, out.agencyShifts - prevAg);
-      setDelta(dOT, out.otHours - prevOT);
-      setDeltaPct(dDrift, drift - prevDr);
-      dConf.textContent = out.conf > 0.70 ? '↑ stable' : (out.conf > 0.50 ? '≈' : '↓');
-      dConf.classList.remove('up','down','flat');
-      dConf.classList.add(out.conf > 0.70 ? 'up' : (out.conf > 0.50 ? 'flat' : 'down'));
-
-      // charts
-      drawForecast(out);
-      drawHeatmap(out, f);
-
-      lg1.textContent = `${out.abs7.toFixed(1)} abs/7d • ${out.riskShifts} risk shifts • ${Math.round(out.conf*100)}% conf`;
-
-      // prescriptions
-      const acts = prescriptions(out, f);
-      renderNBA(acts);
-      nbaBadge.textContent = out.riskShifts >= 4 ? 'Cover risk' : (out.riskShifts >= 2 ? 'Watchlist' : 'Stable');
-
-      // story-driven feed
-      if (source === 'boot'){
-        pushEvent('g', `Loaded demo view for <b>${f.site}</b> / <b>${f.line}</b> / <b>${f.shift}</b>. Forecast running.`);
-      } else if (source === 'manual'){
-        pushEvent('g', `Scenario updated: <b>${f.headcount} HC</b>, <b>${f.cover} cover</b>, <b>${f.ratePct.toFixed(1)}%</b> recent rate.`);
-      }
-
-      if (out.anomaly){
-        pushEvent('r', `<b>Anomaly</b>: absence pattern shift detected on <b>${f.shift}</b> (${f.line}). Recommend immediate cover action.`);
-      } else if (out.riskShifts >= 4){
-        pushEvent('y', `Cover risk rising: <b>${out.riskShifts}</b> shifts at risk in next 7 days. Consider float pool + agency.`);
-      } else if (drift > 0.52 && Math.random() < 0.45){
-        pushEvent('y', `Drift rising for ${f.site}/${f.line}. Validate driver features before next schedule publish.`);
-      } else if (Math.random() < 0.22){
-        pushEvent('g', `Forecast stable: expected absences <b>${out.abs7.toFixed(1)}</b> over 7 days.`);
-      }
-
-      // host error simulation: cover alert when very high risk
-      if (out.riskShifts >= 5){
-        chipBad.style.display = '';
-        chipWarn.style.display = 'none';
-      } else if (out.riskShifts >= 3){
-        chipWarn.style.display = '';
-        chipBad.style.display = 'none';
-      }
-
-      const ms = Math.round(now() - t0);
-      rt.textContent = `${ms}ms • ${source}`;
-      chipState.textContent = 'Live';
-
-      return out;
+    if (out.riskShifts >= 5){
+      chipBad.style.display = '';
+      chipWarn.style.display = 'none';
+    } else if (out.riskShifts >= 3){
+      chipWarn.style.display = '';
+      chipBad.style.display = 'none';
     }
 
-    // streaming behaviour
-    let live = true;
-    let timer = null;
+    const ms = Math.round(now() - t0);
+    rt.textContent = `${ms}ms • ${source}`;
+    chipState.textContent = 'Live';
 
-    function nudgeInputs(){
-      const rate = Number(rateEl.value||0);
-      const hc = Number(hcEl.value||0);
-      const cover = Number(coverEl.value||0);
+    return out;
+  }
 
-      // gentle drift in reality
-      rateEl.value = clamp(rate + (Math.random()-0.5)*0.35 + (Math.random()<0.06 ? 0.6 : 0), 0.8, 16).toFixed(1);
+  // streaming behaviour
+  let live = true;
+  let timer = null;
 
-      // occasional staffing volatility
-      if (Math.random() < 0.05){
-        hcEl.value = clamp(hc + (Math.random()<0.5 ? -2 : 2), 8, 480);
-      }
-      if (Math.random() < 0.05){
-        coverEl.value = clamp(cover + (Math.random()<0.5 ? -1 : 1), 2, 180);
-      }
+  function nudgeInputs(){
+    const rate = Number(rateEl.value||0);
+    const hc = Number(hcEl.value||0);
+    const cover = Number(coverEl.value||0);
 
-      // small “story” bias: Nights tends to be trickier
-      if (shiftEl.value === 'Nights' && Math.random() < 0.10){
-        rateEl.value = clamp(Number(rateEl.value)+0.3, 0.8, 16).toFixed(1);
-      }
+    rateEl.value = clamp(rate + (Math.random()-0.5)*0.35 + (Math.random()<0.06 ? 0.6 : 0), 0.8, 16).toFixed(1);
+
+    if (Math.random() < 0.05){
+      hcEl.value = clamp(hc + (Math.random()<0.5 ? -2 : 2), 8, 480);
+    }
+    if (Math.random() < 0.05){
+      coverEl.value = clamp(cover + (Math.random()<0.5 ? -1 : 1), 2, 180);
     }
 
-    function startStream(){
-      if (timer) return;
-      chipLive.style.display = '';
-      btnPause.textContent = 'Pause';
-      const loop = async () => {
-        if (!live) return;
-        updateDrift();
-        nudgeInputs();
-        await runOnce('stream');
-        timer = setTimeout(loop, 950);
-      };
-      timer = setTimeout(loop, 380);
+    if (shiftEl.value === 'Nights' && Math.random() < 0.10){
+      rateEl.value = clamp(Number(rateEl.value)+0.3, 0.8, 16).toFixed(1);
     }
+  }
 
-    function stopStream(){
-      if (timer){ clearTimeout(timer); timer = null; }
-      chipLive.style.display = 'none';
-      btnPause.textContent = 'Resume';
-    }
+  function startStream(){
+    if (timer) return;
+    chipLive.style.display = '';
+    btnPause.textContent = 'Pause';
 
-    btnPause.addEventListener('click', () => {
-      live = !live;
-      if (live) startStream(); else stopStream();
-    });
+    const loop = async () => {
+      if (!live) return;
+      updateDrift();
+      nudgeInputs();
+      await runOnce('stream');
+      timer = setTimeout(loop, 950);
+    };
+    timer = setTimeout(loop, 380);
+  }
 
-    btnRun.addEventListener('click', () => runOnce('manual'));
+  function stopStream(){
+    if (timer){ clearTimeout(timer); timer = null; }
+    chipLive.style.display = 'none';
+    btnPause.textContent = 'Resume';
+  }
 
-    // update table on selection changes
-    [siteEl, lineEl].forEach(el => el.addEventListener('change', () => renderTable()));
-    [siteEl, lineEl, shiftEl].forEach(el => el.addEventListener('change', () => {
-      setStateText();
-      pushEvent('g', `View changed: <b>${siteEl.value}</b> / <b>${lineEl.value}</b> / <b>${shiftEl.value}</b>.`);
-    }));
+  btnPause.addEventListener('click', () => {
+    live = !live;
+    if (live) startStream(); else stopStream();
+  });
 
-    // Boot
-    function initFromDemo(){
-      // pick a slightly “interesting” default for story
-      siteEl.value = 'Northgate';
-      lineEl.value = 'Security';
-      shiftEl.value = 'Nights';
-      hcEl.value = 86;
-      coverEl.value = 24;
-      rateEl.value = 6.8;
-    }
+  btnRun.addEventListener('click', () => runOnce('manual'));
 
-    window.addEventListener('resize', () => {
-      // redraw current charts using last computed values by re-running quickly
-      runOnce('resize');
-    });
+  [siteEl, lineEl].forEach(el => el.addEventListener('change', () => renderTable()));
+  [siteEl, lineEl, shiftEl].forEach(el => el.addEventListener('change', () => {
+    setStateText();
+    pushEvent('g', `View changed: <b>${siteEl.value}</b> / <b>${lineEl.value}</b> / <b>${shiftEl.value}</b>.`);
+  }));
 
-    (async function boot(){
-      initFromDemo();
-      renderTable();
-      setAsOf();
-      setStateText();
-      pushEvent('g', 'AbsenceAI started. Generating first forecast…');
-      await runOnce('boot');
-      startStream();
-    })();
+  function initFromDemo(){
+    siteEl.value = 'Northgate';
+    lineEl.value = 'Security';
+    shiftEl.value = 'Nights';
+    hcEl.value = 86;
+    coverEl.value = 24;
+    rateEl.value = 6.8;
+  }
 
-    console.assert(!!c1 && !!c2, 'Missing canvases');
+  // Debounced resize so “resize rerun” doesn’t spam and cause layout weirdness
+  let resizeTO = null;
+  window.addEventListener('resize', () => {
+    if (resizeTO) clearTimeout(resizeTO);
+    resizeTO = setTimeout(() => runOnce('resize'), 120);
+  });
+
+  // Boot
+  (async function boot(){
+    initFromDemo();
+    renderTable();
+    setAsOf();
+    setStateText();
+    pushEvent('g', 'AbsenceAI started. Generating first forecast…');
+    await runOnce('boot');
+    startStream();
   })();
-  </script>
-</body>
-</html>
+
+  console.assert(!!c1 && !!c2, 'Missing canvases');
+})();
+</script>
