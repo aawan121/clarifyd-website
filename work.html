@@ -498,7 +498,7 @@
   <main>
     <section class="hero">
       <div class="container">
-        <div class="kicker"><span class="spark" aria-hidden="true"></span> AbsenceIQ showpiece: shift scheduling decisions</div>
+        <div class="kicker"><span class="spark" aria-hidden="true"></span> AbsenceAI: shift scheduling decisions</div>
         <h1>Forecast absences. Protect cover. <span class="grad">Reduce agency spend</span>.</h1>
         <p class="lead">
           A realistic workforce story: predict absences by <strong>site</strong>, <strong>service line</strong> and <strong>shift</strong>,
@@ -528,10 +528,10 @@
       <div class="container workGrid">
         <!-- Left -->
         <div class="leftStack">
-          <section class="board" aria-label="AbsenceIQ dashboard visuals">
+          <section class="board" aria-label="AbsenceAI dashboard visuals">
             <div class="topbar">
               <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <span class="crumb" id="crumb">AbsenceIQ / Live rota risk</span>
+                <span class="crumb" id="crumb">AbsenceAI / Live rota risk</span>
                 <span class="chip" id="chipState">Idle</span>
                 <span class="chip live" id="chipLive">Streaming</span>
                 <span class="chip warn" id="chipWarn" style="display:none;">Risk rising</span>
@@ -570,7 +570,7 @@
                 <h3>Demo dataset + scenario controls</h3>
                 <div class="tiny muted">Headcount, historical absences, shift pattern, cover requirement. (No uploads.)</div>
               </div>
-              <span class="badge" id="demoBadge">Schema: absenceiq_demo.csv</span>
+              <span class="badge" id="demoBadge">Schema: AbsenceAI_demo.csv</span>
             </div>
 
             <div class="controls">
@@ -981,7 +981,7 @@
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 800);
     }
-    btnDemo.addEventListener('click', () => downloadText('absenceiq_demo.csv', demoCSV()));
+    btnDemo.addEventListener('click', () => downloadText('AbsenceAI_demo.csv', demoCSV()));
 
     // ---- Live model story (forecast + drift + actions) ----
     let drift = 0.12;
@@ -1450,7 +1450,7 @@
     }
 
     function setStateText(){
-      crumb.textContent = `AbsenceIQ / ${siteEl.value} / ${lineEl.value} / ${shiftEl.value}`;
+      crumb.textContent = `AbsenceAI / ${siteEl.value} / ${lineEl.value} / ${shiftEl.value}`;
     }
 
     // ---- Main run ----
@@ -1643,7 +1643,7 @@
       renderTable();
       setAsOf();
       setStateText();
-      pushEvent('g', 'AbsenceIQ started. Generating first forecast…');
+      pushEvent('g', 'AbsenceAI started. Generating first forecast…');
       await runOnce('boot');
       startStream();
     })();
