@@ -38,7 +38,13 @@
     .tiny{ font-size: 12px; color: rgba(242,244,255,.62) }
 
     /* Parallax background layers */
-    .parallax-layer{ position: fixed; inset: -18vh -18vw; pointer-events: none; z-index: 0; transform: translate3d(0,0,0); will-change: transform; opacity: .9; }
+    .parallax-layer{
+      position: fixed; inset: -18vh -18vw;
+      pointer-events: none; z-index: 0;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+      opacity: .9;
+    }
     .layer-a{
       background:
         radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
@@ -190,7 +196,13 @@
       pointer-events:none;
     }
     #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
-    .visual-wide{ width: 100%; min-height: 620px; }
+
+    /* ✅ Mobile-safe sizing */
+    .visual-wide{
+      width: 100%;
+      min-height: 640px;
+      height: clamp(560px, 72svh, 860px);
+    }
 
     /* overlay UI */
     .visual-ui{ position:absolute; inset:0; padding: 14px; pointer-events:none }
@@ -302,19 +314,21 @@
       .grid-2{ grid-template-columns: 1fr }
       .menu{ gap: 10px }
       .menu a{ padding: 10px 8px }
-      .visual-wide{ min-height: 520px; }
+      .visual-wide{ min-height: 560px; height: clamp(520px, 70svh, 780px); }
       .badge{ max-width: 40ch; }
       .commentary{ max-width: 40ch; }
+    }
+    @media (max-width: 520px){
+      .visual-wide{ min-height: 560px; height: 74svh; }
+      .visual-ui::after{ height: 78px; }
+      .stage{ left: 10px; right: 10px; bottom: 10px; padding: 8px; }
+      .badge{ max-width: 34ch; }
+      .commentary{ max-width: 30ch; }
+      h1{ font-size: 38px }
     }
     @media (prefers-reduced-motion: reduce){
       .pulse{ animation: none !important }
       .reveal{ transition:none !important }
-    }
-
-    /* --- Mobile fix: stop the animation panel being cut on phones --- */
-    @media (max-width: 520px){
-      .visual-wide{ min-height: 68vh; }
-      .visual-ui::after{ height: 86px; }
     }
   </style>
 </head>
@@ -449,745 +463,817 @@
   </main>
 
   <script>
-    (() => {
-      'use strict';
+(() => {
+  'use strict';
 
-      // ========= helpers =========
-      const yearEl = document.getElementById('year');
-      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  // ========= basics =========
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-
-      function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
-      function lerp(a,b,t){ return a+(b-a)*t; }
-      function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
-
-      // Reveal
-      const revealItems = document.querySelectorAll('.reveal');
-      const io = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-visible');
-            io.unobserve(e.target);
-          }
-        }
-      }, { threshold: 0.12 });
-      revealItems.forEach(el => io.observe(el));
-
-      // Parallax background layers
-      const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-      let latestY = 0, ticking = false;
-      function applyParallax(){
-        const y = latestY;
-        for (const el of layers) {
-          const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
-          el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
-        }
-        ticking = false;
+  // Reveal
+  const revealItems = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
       }
-      function onScroll(){
-        latestY = window.scrollY || 0;
-        if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
-      }
-      window.addEventListener('scroll', onScroll, { passive:true });
-      window.addEventListener('resize', onScroll);
-      onScroll();
+    }
+  }, { threshold: 0.12 });
+  revealItems.forEach(el => io.observe(el));
 
-      // Tilt (disable on phones)
-      const tiltCard = document.querySelector('[data-tilt]');
-      if (tiltCard && !isCoarse) {
-        let raf = null;
-        tiltCard.addEventListener('mousemove', (e) => {
-          if (prefersReduced) return;
-          const r = tiltCard.getBoundingClientRect();
-          const px = (e.clientX - r.left) / r.width - 0.5;
-          const py = (e.clientY - r.top) / r.height - 0.5;
-          if (raf) cancelAnimationFrame(raf);
-          raf = requestAnimationFrame(() => {
-            const rx = (-py * 4.2).toFixed(2);
-            const ry = (px * 6.2).toFixed(2);
-            tiltCard.style.transform = `perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-          });
-        }, { passive:true });
-        tiltCard.addEventListener('mouseleave', () => {
-          tiltCard.style.transform = 'translate3d(0,0,0)';
-        }, { passive:true });
-      } else if (tiltCard) {
-        tiltCard.style.transform = 'translate3d(0,0,0)';
-      }
+  // Parallax background layers
+  const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+  let latestY = 0, ticking = false;
+  function applyParallax(){
+    const y = latestY;
+    for (const el of layers) {
+      const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
+      el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
+    }
+    ticking = false;
+  }
+  function onScroll(){
+    latestY = window.scrollY || 0;
+    if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
 
-      // ========= showpiece animation =========
-      const host = document.getElementById('vizHost');
-      const canvas = document.getElementById('viz');
-      const ctx = canvas ? canvas.getContext('2d', { alpha: true, desynchronized: true }) : null;
+  // Tilt on showpiece (disabled on coarse pointers / reduced motion)
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
 
-      const IS_CHROME = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
-
-      const stageEls = Array.from(document.querySelectorAll('.pilltag'));
-      const modeEl = document.getElementById('mode');
-      const commentaryEl = document.getElementById('commentary');
-
-      const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
-      const COMMENTS = [
-        "Streaming signals into a usable dataset.",
-        "Cleaning & segregation: noise out, structure in.",
-        "Fitting a model: signal sharpens into structure.",
-        "Validation: uncertainty collapses as quality improves.",
-        "Deployment: model lands in the real world.",
-        "Monitoring: drift watch, performance stays healthy."
-      ];
-
-      let hoverStage = null;
-      let lockedStage = null;
-      let lockedUntil = 0;
-
-      function setStageUI(i){
-        stageEls.forEach(el => {
-          const idx = Number(el.dataset.stage);
-          el.classList.toggle('active', idx === i);
-          el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
-        });
-        if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
-        if (commentaryEl) commentaryEl.textContent = COMMENTS[i] || "";
-      }
-
-      // Desktop hover only; tap/click locks for 5s
-      stageEls.forEach(el => {
-        const i = Number(el.dataset.stage);
-
-        el.addEventListener('mouseenter', () => { if (!isCoarse) hoverStage = i; }, { passive:true });
-        el.addEventListener('mouseleave', () => { if (!isCoarse) hoverStage = null; }, { passive:true });
-        el.addEventListener('focus', () => { hoverStage = i; }, { passive:true });
-        el.addEventListener('blur',  () => { hoverStage = null; }, { passive:true });
-
-        el.addEventListener('click', () => {
-          lockedStage = i;
-          lockedUntil = nowMs() + 5000;
-          setStageUI(i);
-        });
-
-        el.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            el.click();
-          }
-        });
+  const tiltCard = document.querySelector('[data-tilt]');
+  if (tiltCard && !prefersReduced && !isCoarse) {
+    let raf = null;
+    tiltCard.addEventListener('mousemove', (e) => {
+      const r = tiltCard.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rx = (-py * 4.2).toFixed(2);
+        const ry = (px * 6.2).toFixed(2);
+        tiltCard.style.transform = `perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg)`;
       });
+    });
+    tiltCard.addEventListener('mouseleave', () => {
+      tiltCard.style.transform = 'translate3d(0,0,0)';
+    });
+  }
 
-      document.addEventListener('pointerdown', (e) => {
-        if (!isCoarse) return;
-        const t = e.target;
-        const onStage = t && t.closest && t.closest('.pilltag');
-        const onHost = t && (t === host || (host && host.contains(t)));
-        if (!onStage && onHost && lockedStage !== null) {
-          lockedStage = null;
-          lockedUntil = 0;
-        }
-      }, { passive:true });
+  // ========= showpiece animation =========
+  const host = document.getElementById('vizHost');
+  const canvas = document.getElementById('viz');
+  const ctx = canvas ? canvas.getContext('2d', { alpha:true, desynchronized:true }) : null;
+  const IS_CHROME = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
 
-      // ---- particles ----
-      const points = [];
-      const N = (window.innerWidth < 900) ? 850 : 1150;
-      const links = 140;
-      let frame = 0;
+  const stageEls = Array.from(document.querySelectorAll('.pilltag'));
+  const modeEl = document.getElementById('mode');
+  const commentaryEl = document.getElementById('commentary');
 
-      let W=0, H=0, DPR=1;
+  const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
+  const COMMENTS = [
+    "Streaming signals into a usable dataset.",
+    "Cleaning & segregation: noise out, structure in.",
+    "Training: mini-batches update a model core; structure emerges.",
+    "Validation: AUC rises as uncertainty collapses into CLARIFYD.",
+    "Deployment: the model lands on Earth.",
+    "Monitoring: drift watch + health signals stay green."
+  ];
 
-      function calcDPR(){
-        const dpr = window.devicePixelRatio || 1;
-        const cap = prefersReduced ? 1 : (isCoarse ? 1.25 : 1.5);
-        return Math.min(dpr, cap);
+  // Hover preview does NOT stop auto-cycle; click locks for 5s
+  let hoverStage = null;
+  let lockedStage = null;
+  let lockedUntil = 0;
+
+  function setStageUI(i){
+    stageEls.forEach(el => {
+      const idx = Number(el.dataset.stage);
+      el.classList.toggle('active', idx === i);
+      el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
+    });
+    if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
+    if (commentaryEl) commentaryEl.textContent = COMMENTS[i] || "";
+  }
+
+  function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
+  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  stageEls.forEach(el => {
+    const i = Number(el.dataset.stage);
+
+    el.addEventListener('mouseenter', () => { if (!isCoarse) hoverStage = i; });
+    el.addEventListener('mouseleave', () => { if (!isCoarse) hoverStage = null; });
+    el.addEventListener('focus', () => { if (!isCoarse) hoverStage = i; });
+    el.addEventListener('blur', () => { if (!isCoarse) hoverStage = null; });
+
+    el.addEventListener('click', () => {
+      lockedStage = i;
+      lockedUntil = nowMs() + 5000;
+      setStageUI(i);
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.click();
       }
+    });
+  });
 
-      function resizeCanvas(){
-        if (!canvas || !ctx || !host) return;
+  // ---- particles ----
+  const points = [];
+  const N = (window.innerWidth < 900) ? 900 : 1200;
+  const links = 140;
+  let frame = 0;
 
-        DPR = calcDPR();
+  let W=0,H=0,DPR=1;
+  function calcDPR(){
+    const dpr = window.devicePixelRatio || 1;
+    const cap = prefersReduced ? 1 : (isCoarse ? 1.25 : 1.5);
+    return Math.min(dpr, cap);
+  }
+  function resizeCanvas(){
+    if (!canvas || !ctx || !host) return;
+    DPR = calcDPR();
+    const r = host.getBoundingClientRect();
+    W = Math.max(280, Math.floor(r.width || window.innerWidth));
+    H = Math.max(340, Math.floor(r.height || 560));
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.width = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
 
-        const r = host.getBoundingClientRect();
-        const cssW = Math.max(280, Math.floor(r.width || canvas.clientWidth || window.innerWidth));
-        const cssH = Math.max(340, Math.floor(r.height || canvas.clientHeight || 420));
+  function randn(){
+    let u=0,v=0;
+    while(u===0) u=Math.random();
+    while(v===0) v=Math.random();
+    return Math.sqrt(-2.0*Math.log(u))*Math.cos(2.0*Math.PI*v);
+  }
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
 
-        W = cssW;
-        H = cssH;
+  // word targets (auto-fit CLARIFYD)
+  let wordTargets = [];
+  function buildWordTargets(text){
+    const oc = document.createElement('canvas');
+    const octx = oc.getContext('2d');
+    const scale = Math.min(2, DPR);
 
-        canvas.style.width = cssW + 'px';
-        canvas.style.height = cssH + 'px';
+    oc.width  = Math.floor(W * 0.92 * scale);
+    oc.height = Math.floor(H * 0.52 * scale);
 
-        canvas.width  = Math.floor(cssW * DPR);
-        canvas.height = Math.floor(cssH * DPR);
+    octx.clearRect(0,0,oc.width, oc.height);
+    octx.textBaseline = 'middle';
+    octx.textAlign = 'center';
 
-        ctx.setTransform(DPR,0,0,DPR,0,0);
+    let size = Math.floor(oc.height * 0.62);
+    while (size > 22) {
+      octx.font = `900 ${size}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
+      if (octx.measureText(text).width <= oc.width * 0.92) break;
+      size -= 8;
+    }
+
+    octx.fillStyle = '#000';
+    octx.fillText(text, oc.width/2, oc.height/2);
+
+    const img = octx.getImageData(0,0,oc.width, oc.height).data;
+    const coords = [];
+    const step = Math.max(3, Math.floor(6 * scale));
+
+    for (let y=0;y<oc.height;y+=step){
+      for (let x=0;x<oc.width;x+=step){
+        const idx=(y*oc.width+x)*4;
+        if (img[idx+3] > 10) coords.push({x,y});
       }
+    }
 
-      if (host && 'ResizeObserver' in window){
-        const ro = new ResizeObserver(() => resizeCanvas());
-        ro.observe(host);
+    const padX = W * (isCoarse ? 0.07 : 0.10);
+    const padY = H * (isCoarse ? 0.18 : 0.24);
+    const sx = (W - padX*2) / oc.width;
+    const sy = (H - padY*2) / oc.height;
+    const s  = Math.min(sx, sy) * 0.98;
+
+    const ox = W*0.50;
+    const oy = H*0.50;
+
+    for (let i=coords.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [coords[i], coords[j]] = [coords[j], coords[i]];
+    }
+
+    return coords.map(p => ({
+      x: ox + (p.x - oc.width/2) * (s/scale),
+      y: oy + (p.y - oc.height/2) * (s/scale)
+    }));
+  }
+
+  // timing
+  const stageDur = prefersReduced ? 2900 : 2450;
+  function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
+  function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
+  function validateProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+  function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+
+  function aucValue(t){
+    const p = validateProgress(t);
+    const wiggle = Math.sin(t/260) * 0.01;
+    return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
+  }
+  function lossValue(t){
+    const p = trainProgress(t);
+    const wiggle = Math.sin(t/240) * 0.015;
+    return clamp(1.25 - 0.85*p + wiggle, 0.18, 1.35);
+  }
+
+  function colorFor(c, a){
+    if (c===0) return `rgba(124,58,237,${a})`;
+    if (c===1) return `rgba(34,211,238,${a})`;
+    if (c===2) return `rgba(253,224,71,${a})`;
+    if (c===4) return `rgba(255,90,90,${a})`;
+    if (c===6) return `rgba(163,255,176,${a})`;
+    return `rgba(163,255,176,${a})`;
+  }
+
+  // Cursor-follow key point
+  let mx = 0.5, my = 0.5;
+  function updatePointer(clientX, clientY){
+    if (!host) return;
+    const r = host.getBoundingClientRect();
+    mx = clamp((clientX - r.left) / r.width, 0, 1);
+    my = clamp((clientY - r.top) / r.height, 0, 1);
+  }
+  if (host){
+    host.addEventListener('pointermove', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
+    host.addEventListener('pointerdown', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
+    host.addEventListener('touchstart', (e) => {
+      const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
+    }, { passive:true });
+    host.addEventListener('touchmove', (e) => {
+      const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
+    }, { passive:true });
+  }
+
+  // cinematic train config
+  const TRAIN = {
+    size: 78,
+    period: 760,
+    lanesY: [0.44, 0.56, 0.68],
+    beltX0: 0.12,
+    beltX1: 0.58,
+    batchBox: { x: 0.60, y: 0.18, w: 0.18, h: 0.13 },
+    core: { x: 0.74, y: 0.52, r: 0.11 },
+  };
+  function batchIndex(t, maxB){ return Math.floor((t / TRAIN.period) % maxB); }
+  function inBatch(i, b){ return (i >= b*TRAIN.size && i < (b*TRAIN.size + TRAIN.size)); }
+
+  function initParticles(){
+    if (!canvas || !ctx) return;
+    resizeCanvas();
+    points.length = 0;
+
+    for (let i=0;i<N;i++){
+      const f = clamp(randn()*0.70, -1, 1);
+      const grp = (f < -0.25) ? 0 : (f > 0.25 ? 2 : 1);
+      points.push({
+        x: W*0.5 + randn()*W*0.20,
+        y: H*0.56 + randn()*H*0.16,
+        vx: (Math.random()-.5)*0.18,
+        vy: (Math.random()-.5)*0.18,
+        alpha: 1,
+        cls: i%3,
+        f, grp,
+        ingest: {x:0,y:0},
+        clean:  {x:0,y:0},
+        train:  {x:0,y:0},
+        validate:{x:0,y:0},
+        deploy: {x:0,y:0},
+        monitor:{x:0,y:0},
+        earth: null,
+        out: false,
+        seed: Math.random()*1000,
+      });
+    }
+
+    // key datapoint
+    points[0].cls = 3;
+
+    // Ingest: stream from left
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const lane = (i % 10) / 9;
+      p.ingest.x = -W*0.15 + Math.random()*W*0.10;
+      p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
+    }
+
+    // Clean: segregate + quarantine
+    const cy = H*0.56;
+    const ry = H*0.24;
+    const laneX = [W*0.32, W*0.50, W*0.68];
+
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      p.out = Math.abs(p.f) > 0.92;
+      if (p.out) {
+        p.clean.x = W*0.88 + randn()*W*0.012;
+        p.clean.y = H*0.26 + Math.random()*H*0.56;
+      } else {
+        p.clean.x = laneX[p.grp] + randn()*W*0.022;
+        p.clean.y = cy + randn()*ry*0.42;
       }
-      window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 50), { passive:true });
+    }
 
-      function randn(){
-        let u=0,v=0;
-        while(u===0) u=Math.random();
-        while(v===0) v=Math.random();
-        return Math.sqrt(-2.0*Math.log(u))*Math.cos(2.0*Math.PI*v);
+    // Train: CLARIFYD
+    wordTargets = buildWordTargets('CLARIFYD');
+    if (wordTargets.length < 120) wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const t = wordTargets[i % wordTargets.length];
+      p.train.x = t.x + randn()*1.2;
+      p.train.y = t.y + randn()*1.2;
+    }
+
+    // Validate: slight split
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const left = (i % 2 === 0);
+      p.validate.x = p.train.x + (left ? -W*0.05 : W*0.05);
+      p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
+    }
+
+    // Deploy: Earth sphere
+    const earthCx = W*0.70;
+    const earthCy = H*0.56;
+    const earthR  = Math.min(W,H)*0.24;
+
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const u = (i + 0.5) / N;
+      const v = (i * 0.6180339887) % 1;
+      const lat = Math.acos(1 - 2*u) - Math.PI/2;
+      const lon = v * Math.PI * 2;
+      p.earth = { lat, lon };
+      p.deploy.x = earthCx + Math.cos(lat)*Math.cos(lon) * earthR;
+      p.deploy.y = earthCy + Math.sin(lat) * earthR;
+    }
+
+    // Monitor: stable wave path + per-point phase
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const u = i/(N-1);
+      p.monitor.x = W*0.10 + u * W*0.80;
+      p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.10) + (randn()*H*0.015);
+    }
+  }
+
+  function targetForStage(p, s){
+    switch(s){
+      case 0: return p.ingest;
+      case 1: return p.clean;
+      case 2: return p.train;
+      case 3: return p.validate;
+      case 4: return p.deploy;
+      case 5: return p.monitor;
+      default: return p.clean;
+    }
+  }
+
+  function drawVignette(){
+    const g = ctx.createRadialGradient(W*0.55, H*0.38, 50, W*0.55, H*0.55, Math.max(W,H));
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,.35)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  function drawEarth(t){
+    const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
+
+    const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
+    g.addColorStop(0, 'rgba(34,211,238,0.16)');
+    g.addColorStop(1, 'rgba(34,211,238,0.03)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+
+    // meridians
+    const rot = (t/1400) % (Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    for (let k=0;k<6;k++){
+      const a = (k/6)*Math.PI*2 + rot;
+      ctx.beginPath();
+      for (let s=0;s<=64;s++){
+        const th = (s/64)*Math.PI*2;
+        const x = cx + Math.cos(th)*Math.cos(a) * r;
+        const y = cy + Math.sin(th) * r;
+        if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
+      ctx.stroke();
+    }
 
-      function buildWordTargets(text){
-        const oc = document.createElement('canvas');
-        const octx = oc.getContext('2d');
+    // deployment arc into globe
+    const sx = W*0.22, sy = H*0.44;
+    const ex = cx - r*0.65, ey = cy - r*0.15;
+    ctx.strokeStyle = 'rgba(253,224,71,0.14)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.quadraticCurveTo((sx+ex)/2, sy - r*0.9, ex, ey);
+    ctx.stroke();
 
-        const scale = Math.min(2, DPR);
-        oc.width  = Math.floor(W * 0.94 * scale);
-        oc.height = Math.floor(H * 0.62 * scale);
+    const tt = (t/1200) % 1;
+    const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
+    const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
+    ctx.fillStyle = 'rgba(253,224,71,0.75)';
+    ctx.beginPath(); ctx.arc(qx, qy, 2.8, 0, Math.PI*2); ctx.fill();
+  }
 
-        octx.clearRect(0,0,oc.width, oc.height);
+  function drawValidateOverlay(t){
+    const s = (Math.sin(t/900)+1)/2;
+    const p = validateProgress(t);
+    const auc = aucValue(t);
 
-        const base = Math.floor(oc.height * 0.56);
-        octx.font = `800 ${base}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
-        octx.textBaseline = 'middle';
-        octx.textAlign = 'center';
-        octx.fillStyle = '#000';
-        octx.fillText(text, oc.width/2, oc.height/2);
+    const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
 
-        const img = octx.getImageData(0,0,oc.width, oc.height).data;
-        const coords = [];
-        const step = Math.max(3, Math.floor(6 * scale));
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.fillRect(x, y, w, h);
 
-        for (let y=0;y<oc.height;y+=step){
-          for (let x=0;x<oc.width;x+=step){
-            const idx=(y*oc.width+x)*4;
-            if (img[idx+3] > 10) coords.push({x,y});
-          }
-        }
+    const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
+    ctx.fillStyle = 'rgba(34,211,238,0.55)';
+    ctx.fillRect(x, y, w*v, h);
 
-        const padX = W * (isCoarse ? 0.08 : 0.12);
-        const padY = H * (isCoarse ? 0.18 : 0.26);
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.strokeRect(x, y, w, h);
 
-        const sx = (W - padX*2) / oc.width;
-        const sy = (H - padY*2) / oc.height;
-        const s  = Math.min(sx, sy) * (isCoarse ? 0.98 : 0.92);
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = 'rgba(242,244,255,0.78)';
+    ctx.fillText('AUC', x, y - 6);
 
-        const ox = W*0.50;
-        const oy = H*0.50;
+    ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
+    ctx.fillText(auc.toFixed(3), x + 38, y - 6);
+  }
 
-        for (let i=coords.length-1;i>0;i--){
-          const j = Math.floor(Math.random()*(i+1));
-          [coords[i], coords[j]] = [coords[j], coords[i]];
-        }
+  function drawTrainOverlay(t){
+    const tp = trainProgress(t);
+    const loss = lossValue(t);
 
-        return coords.map(p => ({
-          x: ox + (p.x - oc.width/2) * (s/scale),
-          y: oy + (p.y - oc.height/2) * (s/scale)
-        }));
+    // belts
+    ctx.lineWidth = 1;
+    for (let k=0;k<3;k++){
+      const y = H * TRAIN.lanesY[k];
+      ctx.strokeStyle = `rgba(255,255,255,${0.06 + 0.05*(1-tp)})`;
+      ctx.beginPath(); ctx.moveTo(W*TRAIN.beltX0, y); ctx.lineTo(W*TRAIN.beltX1, y); ctx.stroke();
+
+      // ticks moving
+      const tickN = 18;
+      for (let n=0;n<tickN;n++){
+        const u = (n/tickN);
+        const speed = (t/700) % 1;
+        const x = W*(TRAIN.beltX0 + ((u + speed)%1) * (TRAIN.beltX1-TRAIN.beltX0));
+        ctx.strokeStyle = 'rgba(253,224,71,0.12)';
+        ctx.beginPath(); ctx.moveTo(x, y-5); ctx.lineTo(x, y+5); ctx.stroke();
       }
+    }
 
-      const stageDur = prefersReduced ? 2600 : 2400;
-      function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
-      function easeInOut(t){ return t<0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
-      function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
-      function validateProgress(t){ return easeInOut((t % stageDur) / stageDur); }
-      function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+    // batch window
+    const bb = TRAIN.batchBox;
+    const bx = W*bb.x, by = H*bb.y, bw = W*bb.w, bh = H*bb.h;
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.strokeRect(bx, by, bw, bh);
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = 'rgba(242,244,255,0.72)';
+    ctx.fillText('mini-batch', bx + 10, by + 18);
 
-      function aucValue(t){
-        const p = validateProgress(t);
-        const wiggle = Math.sin(t/260) * 0.01;
-        return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
-      }
-      function lossValue(t){
-        const p = trainProgress(t);
-        const wiggle = Math.sin(t/240) * 0.015;
-        return clamp(1.25 - 0.85*p + wiggle, 0.18, 1.35);
-      }
+    // model core
+    const cx = W*TRAIN.core.x, cy = H*TRAIN.core.y, r = Math.min(W,H)*TRAIN.core.r;
+    const g = ctx.createRadialGradient(cx-r*0.35, cy-r*0.35, r*0.25, cx, cy, r);
+    g.addColorStop(0, `rgba(124,58,237,${0.18 + 0.22*tp})`);
+    g.addColorStop(1, 'rgba(124,58,237,0.03)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(34,211,238,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
 
-      function colorFor(c, a){
-        if (c===0) return `rgba(124,58,237,${a})`;
-        if (c===1) return `rgba(34,211,238,${a})`;
-        if (c===2) return `rgba(253,224,71,${a})`;
-        if (c===4) return `rgba(255,90,90,${a})`;
-        return `rgba(163,255,176,${a})`;
-      }
+    // pulse ring
+    const pulse = (t % TRAIN.period) / TRAIN.period;
+    ctx.strokeStyle = `rgba(34,211,238,${0.26*(1-pulse)})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, r + pulse*(r*1.25), 0, Math.PI*2); ctx.stroke();
 
-      // Cursor-follow key point
-      let mx = 0.5, my = 0.5;
-      function updatePointer(clientX, clientY){
-        if (!host) return;
-        const r = host.getBoundingClientRect();
-        mx = clamp((clientX - r.left) / r.width, 0, 1);
-        my = clamp((clientY - r.top) / r.height, 0, 1);
-      }
-      if (host){
-        host.addEventListener('pointermove', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
-        host.addEventListener('pointerdown', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
-        host.addEventListener('touchstart', (e) => {
-          const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
-        }, { passive:true });
-        host.addEventListener('touchmove', (e) => {
-          const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
-        }, { passive:true });
-      }
+    // loss HUD
+    const hx = W*0.74, hy = H*0.14, hw = W*0.20, hh = 12;
+    ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(hx, hy, hw, hh);
+    const fit = clamp(1 - (loss - 0.18) / (1.35 - 0.18), 0, 1);
+    ctx.fillStyle = `rgba(124,58,237,${0.35 + 0.35*tp})`; ctx.fillRect(hx, hy, hw*fit, hh);
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.strokeRect(hx, hy, hw, hh);
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = 'rgba(242,244,255,0.78)'; ctx.fillText('Loss', hx, hy - 6);
+    ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = `rgba(253,224,71,${0.55 + 0.30*tp})`; ctx.fillText(loss.toFixed(3), hx + 42, hy - 6);
+  }
 
-      let wordTargets = [];
+  function drawMonitorOverlay(t){
+    const baseY = H*0.30;
+    const amp = H*0.06;
+    const left = W*0.10, right = W*0.90;
 
-      function initParticles(){
-        if (!canvas || !ctx) return;
-        resizeCanvas();
-        points.length = 0;
+    ctx.strokeStyle = 'rgba(163,255,176,0.10)';
+    ctx.lineWidth = 1.2;
 
-        for (let i=0;i<N;i++){
-          const f = clamp(randn()*0.70, -1, 1);
-          const grp = (f < -0.25) ? 0 : (f > 0.25 ? 2 : 1);
-          points.push({
-            x: W*0.5 + randn()*W*0.20,
-            y: H*0.56 + randn()*H*0.16,
-            vx: (Math.random()-.5)*0.18,
-            vy: (Math.random()-.5)*0.18,
-            alpha: 1,
-            cls: i%3,
-            f, grp,
-            ingest: {x:0,y:0},
-            clean:  {x:0,y:0},
-            train:  {x:0,y:0},
-            validate:{x:0,y:0},
-            deploy: {x:0,y:0},
-            monitor:{x:0,y:0},
-            earth: null,
-            out: false,
-            seed: Math.random()*1000,
-          });
-        }
+    ctx.beginPath();
+    for (let i=0;i<=80;i++){
+      const u = i/80;
+      const x = lerp(left, right, u);
+      const y = baseY + Math.sin(u*Math.PI*6 + t/900) * amp * 0.35;
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
 
-        points[0].cls = 3;
+    // sweeping cursor
+    const sweep = (t/1200) % 1;
+    const sx = lerp(left, right, sweep);
+    ctx.strokeStyle = 'rgba(253,224,71,0.10)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(sx, H*0.24);
+    ctx.lineTo(sx, H*0.82);
+    ctx.stroke();
 
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          const lane = (i % 10) / 9;
-          p.ingest.x = -W*0.15 + Math.random()*W*0.10;
-          p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
-        }
+    // occasional drift pulse
+    const pulse = (Math.sin(t/620) + 1)/2;
+    ctx.fillStyle = `rgba(255,90,90,${0.05 + 0.08*pulse})`;
+    ctx.beginPath();
+    ctx.arc(lerp(left, right, 0.75), baseY + Math.sin(t/500)*amp*0.25, 10 + 10*pulse, 0, Math.PI*2);
+    ctx.fill();
+  }
 
-        const cy = H*0.56;
-        const ry = H*0.24;
-        const laneX = [W*0.32, W*0.50, W*0.68];
+  function effectiveStage(t){
+    const now = nowMs();
+    if (lockedStage !== null && now >= lockedUntil) lockedStage = null;
+    const auto = autoStageIndex(t);
+    if (lockedStage !== null) return lockedStage;
+    if (hoverStage !== null) return hoverStage;
+    return auto;
+  }
 
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          p.out = Math.abs(p.f) > 0.92;
-          if (p.out) {
-            p.clean.x = W*0.88 + randn()*W*0.012;
-            p.clean.y = H*0.26 + Math.random()*H*0.56;
-          } else {
-            p.clean.x = laneX[p.grp] + randn()*W*0.022;
-            p.clean.y = cy + randn()*ry*0.42;
-          }
-        }
-
-        wordTargets = buildWordTargets('CLARIFYD');
-        if (wordTargets.length < 120) wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          const t = wordTargets[i % wordTargets.length];
-          p.train.x = t.x + randn()*1.2;
-          p.train.y = t.y + randn()*1.2;
-        }
-
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          const left = (i % 2 === 0);
-          p.validate.x = p.train.x + (left ? -W*0.05 : W*0.05);
-          p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
-        }
-
-        const earthCx = W*0.70;
-        const earthCy = H*0.56;
-        const earthR  = Math.min(W,H)*0.24;
-
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          const u = (i + 0.5) / N;
-          const v = (i * 0.6180339887) % 1;
-          const lat = Math.acos(1 - 2*u) - Math.PI/2;
-          const lon = v * Math.PI * 2;
-          p.earth = { lat, lon };
-          p.deploy.x = earthCx + Math.cos(lat)*Math.cos(lon) * earthR;
-          p.deploy.y = earthCy + Math.sin(lat) * earthR;
-        }
-
-        for (let i=0;i<N;i++){
-          const p = points[i];
-          const u = i/(N-1);
-          p.monitor.x = W*0.10 + u * W*0.80;
-          p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.10) + (randn()*H*0.02);
-        }
-      }
-
-      function targetForStage(p, s){
-        switch(s){
-          case 0: return p.ingest;
-          case 1: return p.clean;
-          case 2: return p.train;
-          case 3: return p.validate;
-          case 4: return p.deploy;
-          case 5: return p.monitor;
-          default: return p.clean;
-        }
-      }
-
-      function drawVignette(){
-        const g = ctx.createRadialGradient(W*0.55, H*0.38, 50, W*0.55, H*0.55, Math.max(W,H));
-        g.addColorStop(0, 'rgba(0,0,0,0)');
-        g.addColorStop(1, 'rgba(0,0,0,.35)');
-        ctx.fillStyle = g;
-        ctx.fillRect(0,0,W,H);
-      }
-
-      function drawEarth(t){
-        const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
-
-        const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
-        g.addColorStop(0, 'rgba(34,211,238,0.16)');
-        g.addColorStop(1, 'rgba(34,211,238,0.03)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
-
-        const rot = (t/1400) % (Math.PI*2);
-        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-        for (let k=0;k<6;k++){
-          const a = (k/6)*Math.PI*2 + rot;
+  function drawConnections(si, t){
+    if ((si === 2 || si === 3) && (frame % 2 === 0)) {
+      ctx.lineWidth = 1;
+      const strength = (si === 2) ? (0.40 + 0.60*trainProgress(t)) : validateProgress(t);
+      for (let i=0;i<links;i++){
+        const a = points[(i*7) % points.length];
+        const b = points[(i*19 + 33) % points.length];
+        if (a.alpha < 0.15 || b.alpha < 0.15) continue;
+        const dx = a.x-b.x, dy = a.y-b.y;
+        const d2 = dx*dx + dy*dy;
+        if (d2 < 200*200){
+          const d = Math.sqrt(d2);
+          const alpha = (1 - d/200) * 0.20 * strength;
+          ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
           ctx.beginPath();
-          for (let s=0;s<=64;s++){
-            const th = (s/64)*Math.PI*2;
-            const x = cx + Math.cos(th)*Math.cos(a) * r;
-            const y = cy + Math.sin(th) * r;
-            if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-          }
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
           ctx.stroke();
         }
+      }
+    }
+  }
 
-        const sx = W*0.22, sy = H*0.44;
-        const ex = cx - r*0.65, ey = cy - r*0.15;
-        ctx.strokeStyle = 'rgba(253,224,71,0.14)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.quadraticCurveTo((sx+ex)/2, sy - r*0.9, ex, ey);
-        ctx.stroke();
+  function drawPoints(si, mix, t){
+    let activeBatch = -1, maxB = 0;
+    if (si === 2){
+      maxB = Math.ceil(points.length / TRAIN.size);
+      activeBatch = batchIndex(t, maxB);
+    }
 
-        const tt = (t/1200) % 1;
-        const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
-        const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
-        ctx.fillStyle = 'rgba(253,224,71,0.75)';
-        ctx.beginPath(); ctx.arc(qx, qy, 2.8, 0, Math.PI*2); ctx.fill();
+    for (let i=0;i<points.length;i++){
+      const p = points[i];
+      if (p.alpha < 0.03) continue;
+
+      const isKey = (i===0);
+      const isOut = (si === 1) && p.out;
+
+      let cls;
+      if (isKey) cls = 3;
+      else if (isOut) cls = 4;
+      else if (si === 1) cls = p.grp;
+      else if (si === 5) cls = 6;
+      else cls = p.cls;
+
+      // Train: highlight current mini-batch
+      let boost = 1.0;
+      if (si === 2 && i !== 0 && activeBatch >= 0){
+        if (inBatch(i, activeBatch)) boost = 1.35;
       }
 
-      function drawValidateOverlay(t){
-        const s = (Math.sin(t/900)+1)/2;
-        const p = validateProgress(t);
-        const auc = aucValue(t);
+      const a = (isKey ? 0.95 : 0.70) * p.alpha * (0.75 + 0.25*boost);
+      const r = isKey ? (isCoarse ? 3.0 : 2.7) : (isCoarse ? 1.45 : 1.25);
 
-        const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
+      // smooth Ingest->Clean colour blend
+      const blendToClean = (si === 0) ? mix : 0;
+      const baseCls = p.cls;
+      const cleanCls = p.grp;
 
-        ctx.fillStyle = 'rgba(0,0,0,0.22)';
-        ctx.fillRect(x, y, w, h);
+      const glowA = (isKey ? 0.16 : 0.055) * p.alpha * boost;
 
-        const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
-        ctx.fillStyle = 'rgba(34,211,238,0.55)';
-        ctx.fillRect(x, y, w*v, h);
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-        ctx.strokeRect(x, y, w, h);
-
-        ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-        ctx.fillStyle = 'rgba(242,244,255,0.78)';
-        ctx.fillText('AUC', x, y - 6);
-
-        ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-        ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
-        ctx.fillText(auc.toFixed(3), x + 38, y - 6);
+      // cheap glow (skip on chrome / reduced)
+      if (!IS_CHROME && !prefersReduced) {
+        ctx.fillStyle = colorFor(cls, glowA);
+        ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 14 : 7, 0, Math.PI*2); ctx.fill();
       }
 
-      function drawTrainOverlay(t){
-        const p = trainProgress(t);
-        const loss = lossValue(t);
+      if (!isKey && si === 0) {
+        ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
 
-        const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
+        ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+      } else {
+        ctx.fillStyle = colorFor(cls, a);
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+      }
+    }
+  }
 
-        ctx.fillStyle = 'rgba(0,0,0,0.22)';
-        ctx.fillRect(x, y, w, h);
+  function draw(t){
+    if (!canvas || !ctx) return;
 
-        const fit = clamp(1 - (loss - 0.18) / (1.35 - 0.18), 0, 1);
-        ctx.fillStyle = `rgba(124,58,237,${0.35 + 0.35*p})`;
-        ctx.fillRect(x, y, w*fit, h);
+    frame++;
+    const si = effectiveStage(t);
+    const mix = stageMix(t);
+    setStageUI(si);
 
-        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-        ctx.strokeRect(x, y, w, h);
+    ctx.clearRect(0,0,W,H);
+    drawVignette();
 
-        ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-        ctx.fillStyle = 'rgba(242,244,255,0.78)';
-        ctx.fillText('Loss', x, y - 6);
+    // Deploy: rotate earth targets
+    if (si === 4) {
+      const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
+      const rot = (t/1400) % (Math.PI*2);
+      for (let i=0;i<points.length;i++){
+        const p = points[i];
+        if (!p.earth) continue;
+        const lat = p.earth.lat;
+        const lon = p.earth.lon + rot;
+        p.deploy.x = cx + Math.cos(lat)*Math.cos(lon) * r;
+        p.deploy.y = cy + Math.sin(lat) * r;
+      }
+      drawEarth(t);
+    }
 
-        ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-        ctx.fillStyle = `rgba(253,224,71,${0.55 + 0.30*p})`;
-        ctx.fillText(loss.toFixed(3), x + 42, y - 6);
+    // overlays
+    if (si === 2) drawTrainOverlay(t);
+    if (si === 3) drawValidateOverlay(t);
+    if (si === 5) drawMonitorOverlay(t);
 
-        const cx = W*0.50, cy = H*0.50;
-        const rr = (Math.min(W,H)*0.10) * (0.6 + 0.6*(1-p));
-        ctx.strokeStyle = `rgba(34,211,238,${0.10 + 0.12*(1-p)})`;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.arc(cx, cy, rr + (Math.sin(t/220)*6), 0, Math.PI*2);
-        ctx.stroke();
+    // update particles
+    const maxB = Math.ceil(points.length / TRAIN.size);
+    const b = (si === 2) ? batchIndex(t, maxB) : -1;
+
+    for (let i=0;i<points.length;i++){
+      const p = points[i];
+
+      if (si !== 0) { p.x += p.vx; p.y += p.vy; }
+
+      // fade out outliers during Clean
+      if (si === 1) p.alpha = lerp(p.alpha, p.out ? 0.0 : 1.0, 0.07);
+      else p.alpha = lerp(p.alpha, 1.0, 0.04);
+
+      let target = targetForStage(p, si);
+
+      // TRAIN: belts -> batch -> core + hint of word
+      if (si === 2) {
+        const tp = trainProgress(t);
+        const active = (i !== 0) && inBatch(i, b);
+
+        const lane = p.grp;
+        const beltY = H * TRAIN.lanesY[lane];
+        const phase = (p.seed * 0.0007 + (t/900)) % 1;
+        const beltX = W*(TRAIN.beltX0 + phase * (TRAIN.beltX1 - TRAIN.beltX0));
+
+        const base = {
+          x: lerp(p.clean.x, beltX, 0.60),
+          y: lerp(p.clean.y, beltY, 0.70)
+        };
+
+        const hint = clamp(0.18 + 0.55*tp, 0, 0.78);
+        const towardWord = { x: p.train.x, y: p.train.y };
+
+        if (active) {
+          const u = (t % TRAIN.period) / TRAIN.period;
+          const eased = easeInOut(u);
+
+          const bb = TRAIN.batchBox;
+          const mid = { x: W*(bb.x + bb.w*0.50), y: H*(bb.y + bb.h*0.55) + (lane-1)*H*0.02 };
+          const core = { x: W*TRAIN.core.x, y: H*TRAIN.core.y };
+
+          const x1 = lerp(base.x, mid.x, eased);
+          const y1 = lerp(base.y, mid.y, eased);
+          const x2 = lerp(mid.x, core.x, eased);
+          const y2 = lerp(mid.y, core.y, eased);
+
+          const split = 0.55;
+          const x = (eased < split) ? lerp(base.x, x1, eased/split) : lerp(x1, x2, (eased-split)/(1-split));
+          const y = (eased < split) ? lerp(base.y, y1, eased/split) : lerp(y1, y2, (eased-split)/(1-split));
+
+          const jit = (1 - tp) * Math.min(W,H) * 0.006;
+          target = { x: x + Math.sin(t/90 + p.seed)*jit, y: y + Math.cos(t/110 + p.seed)*jit };
+        } else {
+          const x = lerp(base.x, towardWord.x, hint);
+          const y = lerp(base.y, towardWord.y, hint);
+          const noise = (1 - tp) * Math.min(W,H) * 0.010;
+          target = { x: x + Math.sin(t/140 + p.seed)*noise, y: y + Math.cos(t/160 + p.seed*1.1)*noise };
+        }
       }
 
-      function effectiveStage(t){
-        const now = nowMs();
-        if (lockedStage !== null && now >= lockedUntil) lockedStage = null;
-
-        const auto = Math.floor((t / (prefersReduced ? 2600 : 2400)) % STAGES.length);
-        if (lockedStage !== null) return lockedStage;
-        if (hoverStage !== null) return hoverStage;
-        return auto;
+      // VALIDATE: noisy -> clarify into CLARIFYD as AUC improves
+      if (si === 3) {
+        const vp = validateProgress(t);
+        const base = {
+          x: lerp(p.validate.x, p.train.x, vp),
+          y: lerp(p.validate.y, p.train.y, vp)
+        };
+        const amp = (1 - vp) * Math.min(W, H) * 0.030;
+        target = { x: base.x + Math.sin(t/120 + p.seed)*amp, y: base.y + Math.cos(t/140 + p.seed*1.31)*amp };
       }
 
-      function draw(t){
-        if (!canvas || !ctx || !host) return;
-
-        frame++;
-        const si = effectiveStage(t);
-        const mix = (t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400);
-        const easedMix = mix < 0.5 ? 2*mix*mix : 1 - Math.pow(-2*mix+2,2)/2;
-
-        setStageUI(si);
-
-        if ((frame % 20) === 0) resizeCanvas();
-
-        ctx.clearRect(0,0,W,H);
-        drawVignette();
-
-        if (si === 4) {
-          const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
-          const rot = (t/1400) % (Math.PI*2);
-          for (let i=0;i<points.length;i++){
-            const p = points[i];
-            if (!p.earth) continue;
-            const lat = p.earth.lat;
-            const lon = p.earth.lon + rot;
-            p.deploy.x = cx + Math.cos(lat)*Math.cos(lon) * r;
-            p.deploy.y = cy + Math.sin(lat) * r;
-          }
-          drawEarth(t);
-        }
-
-        if (si === 2) drawTrainOverlay(t);
-        if (si === 3) drawValidateOverlay(t);
-
-        for (let i=0;i<points.length;i++){
-          const p = points[i];
-
-          if (si !== 0) { p.x += p.vx; p.y += p.vy; }
-
-          if (si === 1) p.alpha = lerp(p.alpha, p.out ? 0.0 : 1.0, 0.07);
-          else p.alpha = lerp(p.alpha, 1.0, 0.04);
-
-          let target = targetForStage(p, si);
-
-          if (si === 2) {
-            const tp = (t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400);
-            const swirl = (1 - (tp < 0.5 ? 2*tp*tp : 1 - Math.pow(-2*tp+2,2)/2));
-            const ang = (t/520) + p.seed*0.002 + (p.cls*1.7);
-            const rad = (Math.min(W,H) * 0.08) * swirl;
-
-            const ox = Math.cos(ang) * rad;
-            const oy = Math.sin(ang) * rad;
-
-            const j = swirl * Math.min(W,H) * 0.010;
-            const jx = Math.sin(t/120 + p.seed) * j;
-            const jy = Math.cos(t/140 + p.seed*1.21) * j;
-
-            target = { x: p.train.x + ox + jx, y: p.train.y + oy + jy };
-          }
-
-          if (si === 3) {
-            const vp = (t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400);
-            const vpe = vp < 0.5 ? 2*vp*vp : 1 - Math.pow(-2*vp+2,2)/2;
-
-            const base = {
-              x: lerp(p.validate.x, p.train.x, vpe),
-              y: lerp(p.validate.y, p.train.y, vpe)
-            };
-            const amp = (1 - vpe) * Math.min(W, H) * 0.032;
-            const jx = Math.sin(t/120 + p.seed) * amp;
-            const jy = Math.cos(t/140 + p.seed*1.31) * amp;
-            target = { x: base.x + jx, y: base.y + jy };
-          }
-
-          if (si === 0) {
-            const into = targetForStage(p, 1);
-            const tx = lerp(target.x, into.x, easedMix);
-            const ty = lerp(target.y, into.y, easedMix);
-            p.x = lerp(p.x, tx, 0.08);
-            p.y = lerp(p.y, ty, 0.08);
-          } else {
-            p.x = lerp(p.x, target.x, 0.06);
-            p.y = lerp(p.y, target.y, 0.06);
-          }
-        }
-
-        const kp = points[0];
-        const steerX = W * (0.08 + mx*0.84);
-        const steerY = H * (0.08 + my*0.84);
-        kp.x = lerp(kp.x, steerX, 0.16);
-        kp.y = lerp(kp.y, steerY, 0.16);
-
-        if ((si === 2 || si === 3) && (frame % 2 === 0)) {
-          ctx.lineWidth = 1;
-          const strength = (si === 2) ? (0.65 + 0.35*((t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400))) : ((t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400));
-          for (let i=0;i<links;i++){
-            const a = points[(i*7) % points.length];
-            const b = points[(i*19 + 33) % points.length];
-            if (a.alpha < 0.15 || b.alpha < 0.15) continue;
-            const dx = a.x-b.x, dy = a.y-b.y;
-            const d2 = dx*dx + dy*dy;
-            if (d2 < 200*200){
-              const d = Math.sqrt(d2);
-              const alpha = (1 - d/200) * 0.20 * strength;
-              ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-              ctx.beginPath();
-              ctx.moveTo(a.x,a.y);
-              ctx.lineTo(b.x,b.y);
-              ctx.stroke();
-            }
-          }
-        }
-
-        for (let i=0;i<points.length;i++){
-          const p = points[i];
-          if (p.alpha < 0.03) continue;
-
-          const isKey = (i===0);
-          const isOut = (si === 1) && p.out;
-
-          let cls;
-          if (isKey) cls = 3;
-          else if (isOut) cls = 4;
-          else if (si === 1) cls = p.grp;
-          else cls = p.cls;
-
-          const a = (isKey ? 0.95 : 0.72) * p.alpha;
-          const rr = isKey ? (isCoarse ? 3.0 : 2.7) : (isCoarse ? 1.45 : 1.25);
-
-          const blendToClean = (si === 0) ? easedMix : 0;
-          const baseCls = p.cls;
-          const cleanCls = p.grp;
-
-          const glowA = (isKey ? 0.18 : 0.07) * p.alpha;
-
-          if (!IS_CHROME && !prefersReduced) {
-            if (!isKey && si === 0) {
-              ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
-              ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
-
-              ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
-              ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
-            } else {
-              ctx.fillStyle = colorFor(cls, glowA);
-              ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2); ctx.fill();
-            }
-          }
-
-          if (!isKey && si === 0) {
-            ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
-            ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI*2); ctx.fill();
-
-            ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
-            ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI*2); ctx.fill();
-          } else {
-            ctx.fillStyle = colorFor(cls, a);
-            ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI*2); ctx.fill();
-          }
-        }
-
-        if (si === 0) {
-          ctx.strokeStyle = 'rgba(255,255,255,0.10)';
-          ctx.lineWidth = 1;
-          for (let k=0;k<7;k++){
-            const y = H*(0.20 + k*0.10);
-            ctx.beginPath();
-            ctx.moveTo(W*0.06, y);
-            ctx.lineTo(W*0.26, y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(W*0.26, y);
-            ctx.lineTo(W*0.245, y-4);
-            ctx.lineTo(W*0.245, y+4);
-            ctx.closePath();
-            ctx.fillStyle = 'rgba(255,255,255,0.10)';
-            ctx.fill();
-          }
-        }
-
-        if (si === 1) {
-          ctx.strokeStyle = 'rgba(34,211,238,0.16)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.ellipse(W*0.50, H*0.56, W*0.32, H*0.24, 0, 0, Math.PI*2);
-          ctx.stroke();
-
-          ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-          for (const lx of [W*0.32, W*0.50, W*0.68]) {
-            ctx.beginPath();
-            ctx.moveTo(lx, H*0.28);
-            ctx.lineTo(lx, H*0.86);
-            ctx.stroke();
-          }
-
-          ctx.strokeStyle = 'rgba(255,90,90,0.18)';
-          ctx.strokeRect(W*0.84, H*0.24, W*0.12, H*0.62);
-        }
-
-        if (si === 5) {
-          const x = W*(0.10 + ((t/1200)%1)*0.80);
-          ctx.strokeStyle = 'rgba(253,224,71,0.10)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(x, H*0.34);
-          ctx.lineTo(x, H*0.82);
-          ctx.stroke();
-        }
-
-        ctx.strokeStyle = 'rgba(163,255,176,0.35)';
-        ctx.lineWidth = 1.7;
-        ctx.beginPath();
-        ctx.arc(kp.x, kp.y, isCoarse ? 24 : 26, -Math.PI*0.15, Math.PI*0.35);
-        ctx.stroke();
-
-        requestAnimationFrame(draw);
+      // MONITOR: animated drift around wave
+      if (si === 5) {
+        const u = i/(points.length-1);
+        const drift = Math.sin(t/900 + u*Math.PI*2) * (H*0.010);
+        const jitter = Math.sin(t/260 + p.seed) * (H*0.004);
+        target = { x: p.monitor.x, y: p.monitor.y + drift + jitter };
       }
 
-      function selfTest(){
-        console.assert(!!host, 'viz host missing');
-        console.assert(!!canvas, 'Canvas #viz missing');
-        console.assert(stageEls.length === 6, 'Expected 6 stage pills');
-        console.assert(!!modeEl, 'Mode badge missing');
-        console.assert(!!commentaryEl, 'Commentary missing');
+      // Ingest: stream -> clean smooth blend
+      if (si === 0) {
+        const into = targetForStage(p, 1);
+        const tx = lerp(target.x, into.x, mix);
+        const ty = lerp(target.y, into.y, mix);
+        p.x = lerp(p.x, tx, 0.08);
+        p.y = lerp(p.y, ty, 0.08);
+      } else {
+        p.x = lerp(p.x, target.x, 0.06);
+        p.y = lerp(p.y, target.y, 0.06);
       }
+    }
 
-      resizeCanvas();
-      initParticles();
+    // key datapoint follows cursor
+    const kp = points[0];
+    const steerX = W * (0.08 + mx*0.84);
+    const steerY = H * (0.08 + my*0.84);
+    kp.x = lerp(kp.x, steerX, 0.16);
+    kp.y = lerp(kp.y, steerY, 0.16);
 
-      window.addEventListener('resize', () => {
-        resizeCanvas();
-        initParticles();
-      }, { passive:true });
+    drawConnections(si, t);
+    drawPoints(si, mix, t);
 
-      selfTest();
-      requestAnimationFrame(draw);
-    })();
+    // key point halo
+    ctx.strokeStyle = 'rgba(163,255,176,0.35)';
+    ctx.lineWidth = 1.7;
+    ctx.beginPath();
+    ctx.arc(kp.x, kp.y, isCoarse ? 24 : 26, -Math.PI*0.15, Math.PI*0.35);
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+  }
+
+  // self-test
+  function selfTest(){
+    console.assert(!!host, 'viz host missing');
+    console.assert(!!canvas, 'Canvas #viz missing');
+    console.assert(stageEls.length === 6, 'Expected 6 stage pills');
+    console.assert(!!modeEl, 'Mode badge missing');
+    console.assert(!!commentaryEl, 'Commentary missing');
+  }
+
+  // Resize hooks (mobile-safe)
+  if ('ResizeObserver' in window && host){
+    const ro = new ResizeObserver(() => { resizeCanvas(); initParticles(); });
+    ro.observe(host);
+  }
+  if (window.visualViewport){
+    window.visualViewport.addEventListener('resize', () => { resizeCanvas(); initParticles(); }, { passive:true });
+  }
+  window.addEventListener('orientationchange', () => setTimeout(() => { resizeCanvas(); initParticles(); }, 70), { passive:true });
+  window.addEventListener('resize', () => { resizeCanvas(); initParticles(); }, { passive:true });
+
+  selfTest();
+  initParticles();
+  requestAnimationFrame(draw);
+})();
   </script>
 </body>
 </html>
