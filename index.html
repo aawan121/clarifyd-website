@@ -1,773 +1,1193 @@
-<script>
-(() => {
-  'use strict';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clarifyd | Data Science & AI</title>
+  <meta name="description" content="Clarifyd: data science training and contract delivery." />
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --text:#F2F4FF;
+      --muted: rgba(242,244,255,.72);
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 22px;
+      --max: 1160px;
+      --accentA: #7C3AED; /* purple */
+      --accentB: #22D3EE; /* cyan */
+      --accentC: #A3FFB0; /* mint */
+      --accentY: #FDE047; /* yellow */
+      --glowA: rgba(124,58,237,.45);
+    }
+    *{ box-sizing:border-box }
+    html,body{ margin:0; padding:0 }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+    a{ color: inherit }
+    .container{ max-width:var(--max); margin:0 auto; padding:0 22px }
+    .muted{ color: var(--muted) }
+    .tiny{ font-size: 12px; color: rgba(242,244,255,.62) }
 
-  // ========= helpers =========
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+    /* Parallax background layers */
+    .parallax-layer{ position: fixed; inset: -18vh -18vw; pointer-events: none; z-index: 0; transform: translate3d(0,0,0); will-change: transform; opacity: .9; }
+    .layer-a{
+      background:
+        radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);
+      filter: blur(14px);
+    }
+    .layer-b{
+      background:
+        radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),
+        radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);
+      filter: blur(18px);
+      opacity: .65;
+    }
+    .layer-c{
+      background:
+        radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
+      filter: blur(26px);
+      opacity: .45;
+    }
+    .bg-grid{
+      position: fixed; inset: 0; pointer-events: none; opacity: .20;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+      z-index: 1;
+    }
 
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+    main{ position: relative; z-index: 2 }
 
-  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
-  function lerp(a,b,t){ return a+(b-a)*t; }
-  function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
+    /* header */
+    .site-header{
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(7,10,18,.55);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0 }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight: 720; letter-spacing: .2px; text-decoration:none }
+    .mark{
+      width: 14px; height: 14px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--accentA), var(--accentB), var(--accentY));
+      box-shadow: 0 0 28px var(--glowA);
+    }
+    .menu{ display:flex; gap: 18px; align-items:center }
+    .menu a{
+      text-decoration: none;
+      font-size: 14px;
+      color: rgba(242,244,255,.72);
+      padding: 10px 10px;
+      border-radius: 999px;
+      transition: background .2s ease, color .2s ease;
+    }
+    .menu a:hover{ color: var(--text); background: rgba(255,255,255,.06) }
+    .pill{
+      padding: 10px 14px !important;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
 
-  // Reveal
-  const revealItems = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) {
-        e.target.classList.add('is-visible');
-        io.unobserve(e.target);
+    /* hero */
+    .hero{ padding: 78px 0 18px }
+    .hero-grid{ display:grid; grid-template-columns: 1fr; gap: 18px; align-items: start }
+
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      font-size: 13px;
+      color: rgba(242,244,255,.78);
+    }
+    .pulse{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: var(--accentB);
+      box-shadow: 0 0 0 0 rgba(34,211,238,.55);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%{ box-shadow: 0 0 0 0 rgba(34,211,238,.55) }
+      70%{ box-shadow: 0 0 0 12px rgba(34,211,238,0) }
+      100%{ box-shadow: 0 0 0 0 rgba(34,211,238,0) }
+    }
+
+    h1{ font-size: 54px; line-height: 1.05; letter-spacing: -1.2px; margin: 18px 0 12px }
+    .gradient-text{
+      background: linear-gradient(90deg, var(--accentA), var(--accentB), var(--accentY), var(--accentC));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .lead{ font-size: 18px; color: rgba(242,244,255,.74); max-width: 68ch; margin: 0 0 16px }
+
+    .cta{ display:flex; gap: 12px; flex-wrap: wrap; align-items:center; margin-top: 10px }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      text-decoration:none;
+      color: var(--text);
+      box-shadow: 0 16px 50px rgba(0,0,0,.38);
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));
+      border-color: transparent;
+      box-shadow: 0 22px 90px rgba(124,58,237,.25), 0 20px 70px rgba(34,211,238,.18);
+    }
+
+    .trust{ display:flex; gap:10px; flex-wrap: wrap; margin-top: 16px }
+    .chip{
+      font-size: 13px;
+      color: rgba(242,244,255,.72);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+
+    /* Visual showpiece */
+    .visual{
+      position: relative;
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+      user-select:none;
+      touch-action:none;
+    }
+    .visual::before{
+      content:"";
+      position:absolute; inset:-120px -160px;
+      background:
+        radial-gradient(closest-side at 40% 30%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(closest-side at 70% 55%, rgba(34,211,238,.26), transparent 62%),
+        radial-gradient(closest-side at 55% 80%, rgba(253,224,71,.14), transparent 60%);
+      filter: blur(14px);
+      opacity: .95;
+      pointer-events:none;
+    }
+    #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
+    .visual-wide{ width: 100%; min-height: 620px; }
+
+    /* overlay UI */
+    .visual-ui{ position:absolute; inset:0; padding: 14px; pointer-events:none }
+    .visual-ui > *{ pointer-events:auto }
+    .visual-ui::after{
+      content:"";
+      position:absolute; left:0; right:0; bottom:0; height: 140px;
+      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
+      pointer-events:none;
+    }
+    .mini-head{ position:relative; z-index:2; display:flex; align-items:flex-start; justify-content:space-between; gap: 10px }
+    .badge{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: rgba(242,244,255,.78);
+      max-width: 56ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .commentary{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.72);
+      max-width: 52ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: .92;
+    }
+
+    .stage{
+      position:absolute; left:14px; right:14px; bottom:14px; z-index:2;
+      display:flex; gap:8px; flex-wrap:wrap; padding: 10px;
+      border-radius: 16px; border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10); backdrop-filter: blur(10px);
+    }
+    .pilltag{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(242,244,255,.76);
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .pilltag:hover{ background: rgba(255,255,255,.08) }
+    .pilltag:focus{ outline: 2px solid rgba(253,224,71,.22); outline-offset: 2px }
+    .dot{ width:8px; height:8px; border-radius:999px; background: rgba(242,244,255,.28) }
+    .pilltag.active{ border-color: rgba(253,224,71,.35); background: rgba(253,224,71,.08) }
+    .pilltag.active .dot{ background: var(--accentY); box-shadow: 0 0 24px rgba(253,224,71,.35) }
+    .pilltag.locked{ border-color: rgba(34,211,238,.35); background: rgba(34,211,238,.08) }
+    .pilltag.locked .dot{ background: rgba(34,211,238,.95); box-shadow: 0 0 24px rgba(34,211,238,.35) }
+
+    /* sections */
+    .section{ padding: 56px 0 }
+    .section.alt{
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(800px 500px at 85% 30%, rgba(34,211,238,.14), transparent 58%),
+        radial-gradient(700px 500px at 55% 80%, rgba(253,224,71,.08), transparent 60%),
+        rgba(255,255,255,.02);
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap: 14px; margin-bottom: 18px }
+    .section-head h2{ margin:0; font-size: 34px; letter-spacing: -.5px }
+    .grid-2{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px }
+
+    .panel{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      padding: 20px;
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+    }
+    .cardlink{ text-decoration:none; display:block }
+    .panel:hover{ border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06) }
+
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap: 12px }
+    .tag{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.74);
+      white-space: nowrap;
+    }
+
+    /* reveal */
+    .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease }
+    .reveal.is-visible{ opacity: 1; transform: translateY(0) }
+
+    @media (max-width: 980px){
+      h1{ font-size: 44px }
+      .grid-2{ grid-template-columns: 1fr }
+      .menu{ gap: 10px }
+      .menu a{ padding: 10px 8px }
+      .visual-wide{ min-height: 520px; }
+      .badge{ max-width: 40ch; }
+      .commentary{ max-width: 40ch; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .pulse{ animation: none !important }
+      .reveal{ transition:none !important }
+    }
+
+    /* --- Mobile fix: stop the animation panel being cut on phones --- */
+    @media (max-width: 520px){
+      .visual-wide{ min-height: 68vh; }
+      .visual-ui::after{ height: 86px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
+  <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
+  <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/">
+        <span class="mark" aria-hidden="true"></span>
+        <span>Clarifyd</span>
+      </a>
+      <nav class="menu" aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/work.html">Work</a>
+        <a href="/contact.html" class="pill">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="kicker"><span class="pulse" aria-hidden="true"></span> Data Science • ML • MLOps • LLMs</div>
+          <h1>Make data <span class="gradient-text">useful</span>.<br/>Ship models with <span class="gradient-text">confidence</span>.</h1>
+          <p class="lead">Training and contract delivery—built for real-world deployment, not demos.</p>
+
+          <div class="cta">
+            <a class="btn primary" href="/contact.html">Enquire</a>
+            <a class="btn" href="/services.html">Services</a>
+            <a class="btn" href="/work.html">Work</a>
+          </div>
+
+          <div class="trust">
+            <div class="chip">UK • London / Remote</div>
+            <div class="chip">hello@clarifyd.co.uk</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Full-width showpiece animation -->
+    <section class="section" style="padding-top: 10px;">
+      <div class="container">
+        <div class="visual visual-wide reveal" id="vizHost" data-tilt aria-label="MLOps showpiece visual">
+          <canvas id="viz"></canvas>
+
+          <div class="visual-ui">
+            <div class="mini-head">
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+                <div class="badge">MLOps cycle</div>
+                <div class="badge" id="mode">Ingest</div>
+              </div>
+              <div class="commentary" id="commentary">Streaming signals into a usable dataset.</div>
+            </div>
+
+            <div class="stage" aria-label="Stages">
+              <div class="pilltag" role="button" tabindex="0" data-stage="0" aria-label="Ingest"><span class="dot"></span>Ingest</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="1" aria-label="Clean"><span class="dot"></span>Clean</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="2" aria-label="Train"><span class="dot"></span>Train</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="3" aria-label="Validate"><span class="dot"></span>Validate</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="4" aria-label="Deploy"><span class="dot"></span>Deploy</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="5" aria-label="Monitor"><span class="dot"></span>Monitor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Two services</h2>
+          <p class="muted">Capability uplift or project delivery—same standard: measurable outcomes.</p>
+        </div>
+
+        <div class="grid-2">
+          <a class="panel cardlink reveal" href="/training.html">
+            <div class="top">
+              <div>
+                <h3 style="margin:0 0 6px;">Training</h3>
+                <div class="muted">Traditional DS, MLOps, LLMs.</div>
+              </div>
+              <div class="tag">Capability</div>
+            </div>
+            <div class="muted" style="margin-top:12px;">Workshops • mentoring • templates</div>
+          </a>
+
+          <a class="panel cardlink reveal" href="/delivery.html">
+            <div class="top">
+              <div>
+                <h3 style="margin:0 0 6px;">Delivery</h3>
+                <div class="muted">Contracts and builds.</div>
+              </div>
+              <div class="tag">Delivery</div>
+            </div>
+            <div class="muted" style="margin-top:12px;">Forecasting • analytics • LLM prototypes</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="panel reveal">
+          <div class="top" style="align-items:center;">
+            <div>
+              <h3 style="margin:0 0 6px;">Fast start</h3>
+              <div class="muted">Clear scope → short milestones → clean handover.</div>
+            </div>
+            <a class="btn" href="/contact.html">Get started</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="section alt" style="padding:26px 0 38px;">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
+        <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
+          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
+          <span class="tiny">© <span id="year"></span></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // ========= helpers =========
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+
+      function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+      function lerp(a,b,t){ return a+(b-a)*t; }
+      function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
+
+      // Reveal
+      const revealItems = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        }
+      }, { threshold: 0.12 });
+      revealItems.forEach(el => io.observe(el));
+
+      // Parallax background layers
+      const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+      let latestY = 0, ticking = false;
+      function applyParallax(){
+        const y = latestY;
+        for (const el of layers) {
+          const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
+          el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
+        }
+        ticking = false;
       }
-    }
-  }, { threshold: 0.12 });
-  revealItems.forEach(el => io.observe(el));
+      function onScroll(){
+        latestY = window.scrollY || 0;
+        if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
+      }
+      window.addEventListener('scroll', onScroll, { passive:true });
+      window.addEventListener('resize', onScroll);
+      onScroll();
 
-  // Parallax background layers
-  const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-  let latestY = 0, ticking = false;
-  function applyParallax(){
-    const y = latestY;
-    for (const el of layers) {
-      const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
-      el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
-    }
-    ticking = false;
-  }
-  function onScroll(){
-    latestY = window.scrollY || 0;
-    if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
-  }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  window.addEventListener('resize', onScroll);
-  onScroll();
+      // Tilt (disable on phones)
+      const tiltCard = document.querySelector('[data-tilt]');
+      if (tiltCard && !isCoarse) {
+        let raf = null;
+        tiltCard.addEventListener('mousemove', (e) => {
+          if (prefersReduced) return;
+          const r = tiltCard.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width - 0.5;
+          const py = (e.clientY - r.top) / r.height - 0.5;
+          if (raf) cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => {
+            const rx = (-py * 4.2).toFixed(2);
+            const ry = (px * 6.2).toFixed(2);
+            tiltCard.style.transform = `perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+          });
+        }, { passive:true });
+        tiltCard.addEventListener('mouseleave', () => {
+          tiltCard.style.transform = 'translate3d(0,0,0)';
+        }, { passive:true });
+      } else if (tiltCard) {
+        tiltCard.style.transform = 'translate3d(0,0,0)';
+      }
 
-  // Tilt on showpiece (disable on phones/coarse pointers)
-  const tiltCard = document.querySelector('[data-tilt]');
-  if (tiltCard && !isCoarse) {
-    let raf = null;
-    tiltCard.addEventListener('mousemove', (e) => {
-      if (prefersReduced) return;
-      const r = tiltCard.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - 0.5;
-      const py = (e.clientY - r.top) / r.height - 0.5;
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rx = (-py * 4.2).toFixed(2);
-        const ry = (px * 6.2).toFixed(2);
-        tiltCard.style.transform = `perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      // ========= showpiece animation =========
+      const host = document.getElementById('vizHost');
+      const canvas = document.getElementById('viz');
+      const ctx = canvas ? canvas.getContext('2d', { alpha: true, desynchronized: true }) : null;
+
+      const IS_CHROME = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
+
+      const stageEls = Array.from(document.querySelectorAll('.pilltag'));
+      const modeEl = document.getElementById('mode');
+      const commentaryEl = document.getElementById('commentary');
+
+      const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
+      const COMMENTS = [
+        "Streaming signals into a usable dataset.",
+        "Cleaning & segregation: noise out, structure in.",
+        "Fitting a model: signal sharpens into structure.",
+        "Validation: uncertainty collapses as quality improves.",
+        "Deployment: model lands in the real world.",
+        "Monitoring: drift watch, performance stays healthy."
+      ];
+
+      let hoverStage = null;
+      let lockedStage = null;
+      let lockedUntil = 0;
+
+      function setStageUI(i){
+        stageEls.forEach(el => {
+          const idx = Number(el.dataset.stage);
+          el.classList.toggle('active', idx === i);
+          el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
+        });
+        if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
+        if (commentaryEl) commentaryEl.textContent = COMMENTS[i] || "";
+      }
+
+      // Desktop hover only; tap/click locks for 5s
+      stageEls.forEach(el => {
+        const i = Number(el.dataset.stage);
+
+        el.addEventListener('mouseenter', () => { if (!isCoarse) hoverStage = i; }, { passive:true });
+        el.addEventListener('mouseleave', () => { if (!isCoarse) hoverStage = null; }, { passive:true });
+        el.addEventListener('focus', () => { hoverStage = i; }, { passive:true });
+        el.addEventListener('blur',  () => { hoverStage = null; }, { passive:true });
+
+        el.addEventListener('click', () => {
+          lockedStage = i;
+          lockedUntil = nowMs() + 5000;
+          setStageUI(i);
+        });
+
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            el.click();
+          }
+        });
       });
-    }, { passive:true });
-    tiltCard.addEventListener('mouseleave', () => {
-      tiltCard.style.transform = 'translate3d(0,0,0)';
-    }, { passive:true });
-  } else if (tiltCard) {
-    tiltCard.style.transform = 'translate3d(0,0,0)';
-  }
 
-  // ========= showpiece animation =========
-  const host = document.getElementById('vizHost');
-  const canvas = document.getElementById('viz');
-  const ctx = canvas ? canvas.getContext('2d', { alpha: true, desynchronized: true }) : null;
-
-  // Chrome stutter: avoid extra glow layer
-  const IS_CHROME = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
-
-  const stageEls = Array.from(document.querySelectorAll('.pilltag'));
-  const modeEl = document.getElementById('mode');
-  const commentaryEl = document.getElementById('commentary');
-
-  const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
-  const COMMENTS = [
-    "Streaming signals into a usable dataset.",
-    "Cleaning & segregation: noise out, structure in.",
-    "Fitting a model: signal sharpens into structure.",
-    "Validation: uncertainty collapses as quality improves.",
-    "Deployment: model lands in the real world.",
-    "Monitoring: drift watch, performance stays healthy."
-  ];
-
-  // Hover preview does NOT stop auto-cycle; click locks for 5s
-  let hoverStage = null;
-  let lockedStage = null;
-  let lockedUntil = 0;
-
-  function setStageUI(i){
-    stageEls.forEach(el => {
-      const idx = Number(el.dataset.stage);
-      el.classList.toggle('active', idx === i);
-      el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
-    });
-    if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
-    if (commentaryEl) commentaryEl.textContent = COMMENTS[i] || "";
-  }
-
-  // Desktop hover only; mobile uses tap/click to lock
-  stageEls.forEach(el => {
-    const i = Number(el.dataset.stage);
-
-    el.addEventListener('mouseenter', () => { if (!isCoarse) hoverStage = i; }, { passive:true });
-    el.addEventListener('mouseleave', () => { if (!isCoarse) hoverStage = null; }, { passive:true });
-    el.addEventListener('focus', () => { hoverStage = i; }, { passive:true });
-    el.addEventListener('blur',  () => { hoverStage = null; }, { passive:true });
-
-    el.addEventListener('click', () => {
-      lockedStage = i;
-      lockedUntil = nowMs() + 5000;
-      setStageUI(i);
-    });
-
-    el.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        el.click();
-      }
-    });
-  });
-
-  // Tap outside stage pills to clear lock (mobile friendly)
-  document.addEventListener('pointerdown', (e) => {
-    if (!isCoarse) return;
-    const t = e.target;
-    const onStage = t && t.closest && t.closest('.pilltag');
-    const onHost = t && (t === host || (host && host.contains(t)));
-    if (!onStage && onHost && lockedStage !== null) {
-      lockedStage = null;
-      lockedUntil = 0;
-    }
-  }, { passive:true });
-
-  // ---- particles ----
-  const points = [];
-  const N = (window.innerWidth < 900) ? 850 : 1150;
-  const links = 140;
-  let frame = 0;
-
-  let W=0, H=0, DPR=1;
-
-  // Robust canvas sizing: use HOST rect (fixes iOS Safari address bar + cut issue)
-  function calcDPR(){
-    const dpr = window.devicePixelRatio || 1;
-    const cap = prefersReduced ? 1 : (isCoarse ? 1.25 : 1.5);
-    return Math.min(dpr, cap);
-  }
-
-  function resizeCanvas(){
-    if (!canvas || !ctx || !host) return;
-
-    DPR = calcDPR();
-
-    const r = host.getBoundingClientRect();
-    // fallback safety
-    const cssW = Math.max(280, Math.floor(r.width || canvas.clientWidth || window.innerWidth));
-    const cssH = Math.max(340, Math.floor(r.height || canvas.clientHeight || 420));
-
-    W = cssW;
-    H = cssH;
-
-    // lock the canvas CSS size to host size so the browser doesn’t reflow it oddly
-    canvas.style.width = cssW + 'px';
-    canvas.style.height = cssH + 'px';
-
-    canvas.width  = Math.floor(cssW * DPR);
-    canvas.height = Math.floor(cssH * DPR);
-
-    // draw in CSS pixel coordinates
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  }
-
-  // Keep canvas synced when iOS changes viewport height
-  if (host && 'ResizeObserver' in window){
-    const ro = new ResizeObserver(() => resizeCanvas());
-    ro.observe(host);
-  }
-  window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 50), { passive:true });
-
-  function randn(){
-    let u=0,v=0;
-    while(u===0) u=Math.random();
-    while(v===0) v=Math.random();
-    return Math.sqrt(-2.0*Math.log(u))*Math.cos(2.0*Math.PI*v);
-  }
-
-  // word targets
-  function buildWordTargets(text){
-    const oc = document.createElement('canvas');
-    const octx = oc.getContext('2d');
-
-    const scale = Math.min(2, DPR);
-    oc.width  = Math.floor(W * 0.94 * scale);
-    oc.height = Math.floor(H * 0.62 * scale);
-
-    octx.clearRect(0,0,oc.width, oc.height);
-
-    const base = Math.floor(oc.height * 0.56);
-    octx.font = `800 ${base}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
-    octx.textBaseline = 'middle';
-    octx.textAlign = 'center';
-    octx.fillStyle = '#000';
-    octx.fillText(text, oc.width/2, oc.height/2);
-
-    const img = octx.getImageData(0,0,oc.width, oc.height).data;
-    const coords = [];
-    const step = Math.max(3, Math.floor(6 * scale));
-
-    for (let y=0;y<oc.height;y+=step){
-      for (let x=0;x<oc.width;x+=step){
-        const idx=(y*oc.width+x)*4;
-        if (img[idx+3] > 10) coords.push({x,y});
-      }
-    }
-
-    const padX = W * (isCoarse ? 0.08 : 0.12);
-    const padY = H * (isCoarse ? 0.18 : 0.26);
-
-    const sx = (W - padX*2) / oc.width;
-    const sy = (H - padY*2) / oc.height;
-    const s  = Math.min(sx, sy) * (isCoarse ? 0.98 : 0.92);
-
-    const ox = W*0.50;
-    const oy = H*0.50;
-
-    // shuffle
-    for (let i=coords.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [coords[i], coords[j]] = [coords[j], coords[i]];
-    }
-
-    return coords.map(p => ({
-      x: ox + (p.x - oc.width/2) * (s/scale),
-      y: oy + (p.y - oc.height/2) * (s/scale)
-    }));
-  }
-
-  // timing
-  const stageDur = prefersReduced ? 2600 : 2400;
-  function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
-  function easeInOut(t){ return t<0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
-  function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
-  function validateProgress(t){ return easeInOut((t % stageDur) / stageDur); }
-  function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
-
-  function aucValue(t){
-    const p = validateProgress(t);
-    const wiggle = Math.sin(t/260) * 0.01;
-    return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
-  }
-  function lossValue(t){
-    const p = trainProgress(t);
-    const wiggle = Math.sin(t/240) * 0.015;
-    return clamp(1.25 - 0.85*p + wiggle, 0.18, 1.35);
-  }
-
-  function colorFor(c, a){
-    if (c===0) return `rgba(124,58,237,${a})`;
-    if (c===1) return `rgba(34,211,238,${a})`;
-    if (c===2) return `rgba(253,224,71,${a})`;
-    if (c===4) return `rgba(255,90,90,${a})`;
-    return `rgba(163,255,176,${a})`;
-  }
-
-  // Cursor-follow key point (works on all phones)
-  let mx = 0.5, my = 0.5;
-  function updatePointer(clientX, clientY){
-    if (!host) return;
-    const r = host.getBoundingClientRect();
-    mx = clamp((clientX - r.left) / r.width, 0, 1);
-    my = clamp((clientY - r.top) / r.height, 0, 1);
-  }
-  if (host){
-    host.addEventListener('pointermove', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
-    host.addEventListener('pointerdown', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
-    host.addEventListener('touchstart', (e) => {
-      const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
-    }, { passive:true });
-    host.addEventListener('touchmove', (e) => {
-      const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
-    }, { passive:true });
-  }
-
-  let wordTargets = [];
-
-  function initParticles(){
-    if (!canvas || !ctx) return;
-    resizeCanvas();
-    points.length = 0;
-
-    for (let i=0;i<N;i++){
-      const f = clamp(randn()*0.70, -1, 1);
-      const grp = (f < -0.25) ? 0 : (f > 0.25 ? 2 : 1);
-      points.push({
-        x: W*0.5 + randn()*W*0.20,
-        y: H*0.56 + randn()*H*0.16,
-        vx: (Math.random()-.5)*0.18,
-        vy: (Math.random()-.5)*0.18,
-        alpha: 1,
-        cls: i%3,
-        f, grp,
-        ingest: {x:0,y:0},
-        clean:  {x:0,y:0},
-        train:  {x:0,y:0},
-        validate:{x:0,y:0},
-        deploy: {x:0,y:0},
-        monitor:{x:0,y:0},
-        earth: null,
-        out: false,
-        seed: Math.random()*1000,
-      });
-    }
-
-    // key datapoint
-    points[0].cls = 3;
-
-    // Ingest: stream from left
-    for (let i=0;i<N;i++){
-      const p = points[i];
-      const lane = (i % 10) / 9;
-      p.ingest.x = -W*0.15 + Math.random()*W*0.10;
-      p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
-    }
-
-    // Clean: segregate + quarantine
-    const cy = H*0.56;
-    const ry = H*0.24;
-    const laneX = [W*0.32, W*0.50, W*0.68];
-
-    for (let i=0;i<N;i++){
-      const p = points[i];
-      p.out = Math.abs(p.f) > 0.92;
-      if (p.out) {
-        p.clean.x = W*0.88 + randn()*W*0.012;
-        p.clean.y = H*0.26 + Math.random()*H*0.56;
-      } else {
-        p.clean.x = laneX[p.grp] + randn()*W*0.022;
-        p.clean.y = cy + randn()*ry*0.42;
-      }
-    }
-
-    // Train: CLARIFYD
-    wordTargets = buildWordTargets('CLARIFYD');
-    if (wordTargets.length < 120) wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
-    for (let i=0;i<N;i++){
-      const p = points[i];
-      const t = wordTargets[i % wordTargets.length];
-      p.train.x = t.x + randn()*1.2;
-      p.train.y = t.y + randn()*1.2;
-    }
-
-    // Validate: slight split
-    for (let i=0;i<N;i++){
-      const p = points[i];
-      const left = (i % 2 === 0);
-      p.validate.x = p.train.x + (left ? -W*0.05 : W*0.05);
-      p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
-    }
-
-    // Deploy: Earth sphere
-    const earthCx = W*0.70;
-    const earthCy = H*0.56;
-    const earthR  = Math.min(W,H)*0.24;
-
-    for (let i=0;i<N;i++){
-      const p = points[i];
-      const u = (i + 0.5) / N;
-      const v = (i * 0.6180339887) % 1;
-      const lat = Math.acos(1 - 2*u) - Math.PI/2;
-      const lon = v * Math.PI * 2;
-      p.earth = { lat, lon };
-      p.deploy.x = earthCx + Math.cos(lat)*Math.cos(lon) * earthR;
-      p.deploy.y = earthCy + Math.sin(lat) * earthR;
-    }
-
-    // Monitor: wave
-    for (let i=0;i<N;i++){
-      const p = points[i];
-      const u = i/(N-1);
-      p.monitor.x = W*0.10 + u * W*0.80;
-      p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.10) + (randn()*H*0.02);
-    }
-  }
-
-  function targetForStage(p, s){
-    switch(s){
-      case 0: return p.ingest;
-      case 1: return p.clean;
-      case 2: return p.train;
-      case 3: return p.validate;
-      case 4: return p.deploy;
-      case 5: return p.monitor;
-      default: return p.clean;
-    }
-  }
-
-  function drawVignette(){
-    const g = ctx.createRadialGradient(W*0.55, H*0.38, 50, W*0.55, H*0.55, Math.max(W,H));
-    g.addColorStop(0, 'rgba(0,0,0,0)');
-    g.addColorStop(1, 'rgba(0,0,0,.35)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-  }
-
-  function drawEarth(t){
-    const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
-
-    const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
-    g.addColorStop(0, 'rgba(34,211,238,0.16)');
-    g.addColorStop(1, 'rgba(34,211,238,0.03)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
-
-    const rot = (t/1400) % (Math.PI*2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-    for (let k=0;k<6;k++){
-      const a = (k/6)*Math.PI*2 + rot;
-      ctx.beginPath();
-      for (let s=0;s<=64;s++){
-        const th = (s/64)*Math.PI*2;
-        const x = cx + Math.cos(th)*Math.cos(a) * r;
-        const y = cy + Math.sin(th) * r;
-        if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      }
-      ctx.stroke();
-    }
-
-    // deployment arc into globe
-    const sx = W*0.22, sy = H*0.44;
-    const ex = cx - r*0.65, ey = cy - r*0.15;
-    ctx.strokeStyle = 'rgba(253,224,71,0.14)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(sx, sy);
-    ctx.quadraticCurveTo((sx+ex)/2, sy - r*0.9, ex, ey);
-    ctx.stroke();
-
-    const tt = (t/1200) % 1;
-    const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
-    const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
-    ctx.fillStyle = 'rgba(253,224,71,0.75)';
-    ctx.beginPath(); ctx.arc(qx, qy, 2.8, 0, Math.PI*2); ctx.fill();
-  }
-
-  function drawValidateOverlay(t){
-    const s = (Math.sin(t/900)+1)/2;
-    const p = validateProgress(t);
-    const auc = aucValue(t);
-
-    const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
-
-    ctx.fillStyle = 'rgba(0,0,0,0.22)';
-    ctx.fillRect(x, y, w, h);
-
-    const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
-    ctx.fillStyle = 'rgba(34,211,238,0.55)';
-    ctx.fillRect(x, y, w*v, h);
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-    ctx.strokeRect(x, y, w, h);
-
-    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-    ctx.fillStyle = 'rgba(242,244,255,0.78)';
-    ctx.fillText('AUC', x, y - 6);
-
-    ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-    ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
-    ctx.fillText(auc.toFixed(3), x + 38, y - 6);
-  }
-
-  // Train overlay (distinct)
-  function drawTrainOverlay(t){
-    const p = trainProgress(t);
-    const loss = lossValue(t);
-
-    const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
-
-    ctx.fillStyle = 'rgba(0,0,0,0.22)';
-    ctx.fillRect(x, y, w, h);
-
-    const fit = clamp(1 - (loss - 0.18) / (1.35 - 0.18), 0, 1);
-    ctx.fillStyle = `rgba(124,58,237,${0.35 + 0.35*p})`;
-    ctx.fillRect(x, y, w*fit, h);
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-    ctx.strokeRect(x, y, w, h);
-
-    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-    ctx.fillStyle = 'rgba(242,244,255,0.78)';
-    ctx.fillText('Loss', x, y - 6);
-
-    ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-    ctx.fillStyle = `rgba(253,224,71,${0.55 + 0.30*p})`;
-    ctx.fillText(loss.toFixed(3), x + 42, y - 6);
-
-    const cx = W*0.50, cy = H*0.50;
-    const rr = (Math.min(W,H)*0.10) * (0.6 + 0.6*(1-p));
-    ctx.strokeStyle = `rgba(34,211,238,${0.10 + 0.12*(1-p)})`;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, rr + (Math.sin(t/220)*6), 0, Math.PI*2);
-    ctx.stroke();
-  }
-
-  function effectiveStage(t){
-    const now = nowMs();
-    if (lockedStage !== null && now >= lockedUntil) lockedStage = null;
-
-    const auto = autoStageIndex(t);
-    if (lockedStage !== null) return lockedStage;
-    if (hoverStage !== null) return hoverStage;
-    return auto;
-  }
-
-  function draw(t){
-    if (!canvas || !ctx || !host) return;
-
-    frame++;
-    const si = effectiveStage(t);
-    const mix = stageMix(t);
-    setStageUI(si);
-
-    // Always keep correct size (handles iOS Safari dynamic viewport)
-    // (Cheap guard: only re-resize occasionally)
-    if ((frame % 20) === 0) resizeCanvas();
-
-    ctx.clearRect(0,0,W,H);
-    drawVignette();
-
-    // Deploy: rotate earth targets
-    if (si === 4) {
-      const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
-      const rot = (t/1400) % (Math.PI*2);
-      for (let i=0;i<points.length;i++){
-        const p = points[i];
-        if (!p.earth) continue;
-        const lat = p.earth.lat;
-        const lon = p.earth.lon + rot;
-        p.deploy.x = cx + Math.cos(lat)*Math.cos(lon) * r;
-        p.deploy.y = cy + Math.sin(lat) * r;
-      }
-      drawEarth(t);
-    }
-
-    // overlays
-    if (si === 2) drawTrainOverlay(t);
-    if (si === 3) drawValidateOverlay(t);
-
-    // update particles
-    for (let i=0;i<points.length;i++){
-      const p = points[i];
-
-      if (si !== 0) { p.x += p.vx; p.y += p.vy; }
-
-      // fade out outliers during Clean
-      if (si === 1) p.alpha = lerp(p.alpha, p.out ? 0.0 : 1.0, 0.07);
-      else p.alpha = lerp(p.alpha, 1.0, 0.04);
-
-      let target = targetForStage(p, si);
-
-      // TRAIN: spiral-in settles
-      if (si === 2) {
-        const tp = trainProgress(t);
-        const swirl = (1 - tp);
-        const ang = (t/520) + p.seed*0.002 + (p.cls*1.7);
-        const rad = (Math.min(W,H) * 0.08) * swirl;
-
-        const ox = Math.cos(ang) * rad;
-        const oy = Math.sin(ang) * rad;
-
-        const j = (1 - tp) * Math.min(W,H) * 0.010;
-        const jx = Math.sin(t/120 + p.seed) * j;
-        const jy = Math.cos(t/140 + p.seed*1.21) * j;
-
-        target = { x: p.train.x + ox + jx, y: p.train.y + oy + jy };
+      document.addEventListener('pointerdown', (e) => {
+        if (!isCoarse) return;
+        const t = e.target;
+        const onStage = t && t.closest && t.closest('.pilltag');
+        const onHost = t && (t === host || (host && host.contains(t)));
+        if (!onStage && onHost && lockedStage !== null) {
+          lockedStage = null;
+          lockedUntil = 0;
+        }
+      }, { passive:true });
+
+      // ---- particles ----
+      const points = [];
+      const N = (window.innerWidth < 900) ? 850 : 1150;
+      const links = 140;
+      let frame = 0;
+
+      let W=0, H=0, DPR=1;
+
+      function calcDPR(){
+        const dpr = window.devicePixelRatio || 1;
+        const cap = prefersReduced ? 1 : (isCoarse ? 1.25 : 1.5);
+        return Math.min(dpr, cap);
       }
 
-      // VALIDATE: noisy -> converge
-      if (si === 3) {
-        const vp = validateProgress(t);
-        const base = {
-          x: lerp(p.validate.x, p.train.x, vp),
-          y: lerp(p.validate.y, p.train.y, vp)
-        };
-        const amp = (1 - vp) * Math.min(W, H) * 0.032;
-        const jx = Math.sin(t/120 + p.seed) * amp;
-        const jy = Math.cos(t/140 + p.seed*1.31) * amp;
-        target = { x: base.x + jx, y: base.y + jy };
+      function resizeCanvas(){
+        if (!canvas || !ctx || !host) return;
+
+        DPR = calcDPR();
+
+        const r = host.getBoundingClientRect();
+        const cssW = Math.max(280, Math.floor(r.width || canvas.clientWidth || window.innerWidth));
+        const cssH = Math.max(340, Math.floor(r.height || canvas.clientHeight || 420));
+
+        W = cssW;
+        H = cssH;
+
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
+
+        canvas.width  = Math.floor(cssW * DPR);
+        canvas.height = Math.floor(cssH * DPR);
+
+        ctx.setTransform(DPR,0,0,DPR,0,0);
       }
 
-      // Ingest: stream -> clean (smooth blend)
-      if (si === 0) {
-        const into = targetForStage(p, 1);
-        const tx = lerp(target.x, into.x, mix);
-        const ty = lerp(target.y, into.y, mix);
-        p.x = lerp(p.x, tx, 0.08);
-        p.y = lerp(p.y, ty, 0.08);
-      } else {
-        p.x = lerp(p.x, target.x, 0.06);
-        p.y = lerp(p.y, target.y, 0.06);
+      if (host && 'ResizeObserver' in window){
+        const ro = new ResizeObserver(() => resizeCanvas());
+        ro.observe(host);
       }
-    }
+      window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 50), { passive:true });
 
-    // key datapoint follows pointer
-    const kp = points[0];
-    const steerX = W * (0.08 + mx*0.84);
-    const steerY = H * (0.08 + my*0.84);
-    kp.x = lerp(kp.x, steerX, 0.16);
-    kp.y = lerp(kp.y, steerY, 0.16);
+      function randn(){
+        let u=0,v=0;
+        while(u===0) u=Math.random();
+        while(v===0) v=Math.random();
+        return Math.sqrt(-2.0*Math.log(u))*Math.cos(2.0*Math.PI*v);
+      }
 
-    // connections: every other frame for perf
-    if ((si === 2 || si === 3) && (frame % 2 === 0)) {
-      ctx.lineWidth = 1;
-      const strength = (si === 2) ? (0.65 + 0.35*trainProgress(t)) : validateProgress(t);
-      for (let i=0;i<links;i++){
-        const a = points[(i*7) % points.length];
-        const b = points[(i*19 + 33) % points.length];
-        if (a.alpha < 0.15 || b.alpha < 0.15) continue;
-        const dx = a.x-b.x, dy = a.y-b.y;
-        const d2 = dx*dx + dy*dy;
-        if (d2 < 200*200){
-          const d = Math.sqrt(d2);
-          const alpha = (1 - d/200) * 0.20 * strength;
-          ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      function buildWordTargets(text){
+        const oc = document.createElement('canvas');
+        const octx = oc.getContext('2d');
+
+        const scale = Math.min(2, DPR);
+        oc.width  = Math.floor(W * 0.94 * scale);
+        oc.height = Math.floor(H * 0.62 * scale);
+
+        octx.clearRect(0,0,oc.width, oc.height);
+
+        const base = Math.floor(oc.height * 0.56);
+        octx.font = `800 ${base}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
+        octx.textBaseline = 'middle';
+        octx.textAlign = 'center';
+        octx.fillStyle = '#000';
+        octx.fillText(text, oc.width/2, oc.height/2);
+
+        const img = octx.getImageData(0,0,oc.width, oc.height).data;
+        const coords = [];
+        const step = Math.max(3, Math.floor(6 * scale));
+
+        for (let y=0;y<oc.height;y+=step){
+          for (let x=0;x<oc.width;x+=step){
+            const idx=(y*oc.width+x)*4;
+            if (img[idx+3] > 10) coords.push({x,y});
+          }
+        }
+
+        const padX = W * (isCoarse ? 0.08 : 0.12);
+        const padY = H * (isCoarse ? 0.18 : 0.26);
+
+        const sx = (W - padX*2) / oc.width;
+        const sy = (H - padY*2) / oc.height;
+        const s  = Math.min(sx, sy) * (isCoarse ? 0.98 : 0.92);
+
+        const ox = W*0.50;
+        const oy = H*0.50;
+
+        for (let i=coords.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [coords[i], coords[j]] = [coords[j], coords[i]];
+        }
+
+        return coords.map(p => ({
+          x: ox + (p.x - oc.width/2) * (s/scale),
+          y: oy + (p.y - oc.height/2) * (s/scale)
+        }));
+      }
+
+      const stageDur = prefersReduced ? 2600 : 2400;
+      function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
+      function easeInOut(t){ return t<0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+      function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
+      function validateProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+      function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+
+      function aucValue(t){
+        const p = validateProgress(t);
+        const wiggle = Math.sin(t/260) * 0.01;
+        return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
+      }
+      function lossValue(t){
+        const p = trainProgress(t);
+        const wiggle = Math.sin(t/240) * 0.015;
+        return clamp(1.25 - 0.85*p + wiggle, 0.18, 1.35);
+      }
+
+      function colorFor(c, a){
+        if (c===0) return `rgba(124,58,237,${a})`;
+        if (c===1) return `rgba(34,211,238,${a})`;
+        if (c===2) return `rgba(253,224,71,${a})`;
+        if (c===4) return `rgba(255,90,90,${a})`;
+        return `rgba(163,255,176,${a})`;
+      }
+
+      // Cursor-follow key point
+      let mx = 0.5, my = 0.5;
+      function updatePointer(clientX, clientY){
+        if (!host) return;
+        const r = host.getBoundingClientRect();
+        mx = clamp((clientX - r.left) / r.width, 0, 1);
+        my = clamp((clientY - r.top) / r.height, 0, 1);
+      }
+      if (host){
+        host.addEventListener('pointermove', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
+        host.addEventListener('pointerdown', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
+        host.addEventListener('touchstart', (e) => {
+          const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
+        }, { passive:true });
+        host.addEventListener('touchmove', (e) => {
+          const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
+        }, { passive:true });
+      }
+
+      let wordTargets = [];
+
+      function initParticles(){
+        if (!canvas || !ctx) return;
+        resizeCanvas();
+        points.length = 0;
+
+        for (let i=0;i<N;i++){
+          const f = clamp(randn()*0.70, -1, 1);
+          const grp = (f < -0.25) ? 0 : (f > 0.25 ? 2 : 1);
+          points.push({
+            x: W*0.5 + randn()*W*0.20,
+            y: H*0.56 + randn()*H*0.16,
+            vx: (Math.random()-.5)*0.18,
+            vy: (Math.random()-.5)*0.18,
+            alpha: 1,
+            cls: i%3,
+            f, grp,
+            ingest: {x:0,y:0},
+            clean:  {x:0,y:0},
+            train:  {x:0,y:0},
+            validate:{x:0,y:0},
+            deploy: {x:0,y:0},
+            monitor:{x:0,y:0},
+            earth: null,
+            out: false,
+            seed: Math.random()*1000,
+          });
+        }
+
+        points[0].cls = 3;
+
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          const lane = (i % 10) / 9;
+          p.ingest.x = -W*0.15 + Math.random()*W*0.10;
+          p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
+        }
+
+        const cy = H*0.56;
+        const ry = H*0.24;
+        const laneX = [W*0.32, W*0.50, W*0.68];
+
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          p.out = Math.abs(p.f) > 0.92;
+          if (p.out) {
+            p.clean.x = W*0.88 + randn()*W*0.012;
+            p.clean.y = H*0.26 + Math.random()*H*0.56;
+          } else {
+            p.clean.x = laneX[p.grp] + randn()*W*0.022;
+            p.clean.y = cy + randn()*ry*0.42;
+          }
+        }
+
+        wordTargets = buildWordTargets('CLARIFYD');
+        if (wordTargets.length < 120) wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          const t = wordTargets[i % wordTargets.length];
+          p.train.x = t.x + randn()*1.2;
+          p.train.y = t.y + randn()*1.2;
+        }
+
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          const left = (i % 2 === 0);
+          p.validate.x = p.train.x + (left ? -W*0.05 : W*0.05);
+          p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
+        }
+
+        const earthCx = W*0.70;
+        const earthCy = H*0.56;
+        const earthR  = Math.min(W,H)*0.24;
+
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          const u = (i + 0.5) / N;
+          const v = (i * 0.6180339887) % 1;
+          const lat = Math.acos(1 - 2*u) - Math.PI/2;
+          const lon = v * Math.PI * 2;
+          p.earth = { lat, lon };
+          p.deploy.x = earthCx + Math.cos(lat)*Math.cos(lon) * earthR;
+          p.deploy.y = earthCy + Math.sin(lat) * earthR;
+        }
+
+        for (let i=0;i<N;i++){
+          const p = points[i];
+          const u = i/(N-1);
+          p.monitor.x = W*0.10 + u * W*0.80;
+          p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.10) + (randn()*H*0.02);
+        }
+      }
+
+      function targetForStage(p, s){
+        switch(s){
+          case 0: return p.ingest;
+          case 1: return p.clean;
+          case 2: return p.train;
+          case 3: return p.validate;
+          case 4: return p.deploy;
+          case 5: return p.monitor;
+          default: return p.clean;
+        }
+      }
+
+      function drawVignette(){
+        const g = ctx.createRadialGradient(W*0.55, H*0.38, 50, W*0.55, H*0.55, Math.max(W,H));
+        g.addColorStop(0, 'rgba(0,0,0,0)');
+        g.addColorStop(1, 'rgba(0,0,0,.35)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,W,H);
+      }
+
+      function drawEarth(t){
+        const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
+
+        const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
+        g.addColorStop(0, 'rgba(34,211,238,0.16)');
+        g.addColorStop(1, 'rgba(34,211,238,0.03)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+
+        const rot = (t/1400) % (Math.PI*2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        for (let k=0;k<6;k++){
+          const a = (k/6)*Math.PI*2 + rot;
           ctx.beginPath();
-          ctx.moveTo(a.x,a.y);
-          ctx.lineTo(b.x,b.y);
+          for (let s=0;s<=64;s++){
+            const th = (s/64)*Math.PI*2;
+            const x = cx + Math.cos(th)*Math.cos(a) * r;
+            const y = cy + Math.sin(th) * r;
+            if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          }
           ctx.stroke();
         }
+
+        const sx = W*0.22, sy = H*0.44;
+        const ex = cx - r*0.65, ey = cy - r*0.15;
+        ctx.strokeStyle = 'rgba(253,224,71,0.14)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.quadraticCurveTo((sx+ex)/2, sy - r*0.9, ex, ey);
+        ctx.stroke();
+
+        const tt = (t/1200) % 1;
+        const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
+        const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
+        ctx.fillStyle = 'rgba(253,224,71,0.75)';
+        ctx.beginPath(); ctx.arc(qx, qy, 2.8, 0, Math.PI*2); ctx.fill();
       }
-    }
 
-    // draw points (smooth ingest->clean colour blend)
-    for (let i=0;i<points.length;i++){
-      const p = points[i];
-      if (p.alpha < 0.03) continue;
+      function drawValidateOverlay(t){
+        const s = (Math.sin(t/900)+1)/2;
+        const p = validateProgress(t);
+        const auc = aucValue(t);
 
-      const isKey = (i===0);
-      const isOut = (si === 1) && p.out;
+        const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
 
-      let cls;
-      if (isKey) cls = 3;
-      else if (isOut) cls = 4;
-      else if (si === 1) cls = p.grp;
-      else cls = p.cls;
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.fillRect(x, y, w, h);
 
-      const a = (isKey ? 0.95 : 0.72) * p.alpha;
-      const r = isKey ? (isCoarse ? 3.0 : 2.7) : (isCoarse ? 1.45 : 1.25);
+        const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
+        ctx.fillStyle = 'rgba(34,211,238,0.55)';
+        ctx.fillRect(x, y, w*v, h);
 
-      const blendToClean = (si === 0) ? mix : 0;
-      const baseCls = p.cls;
-      const cleanCls = p.grp;
+        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+        ctx.strokeRect(x, y, w, h);
 
-      const glowA = (isKey ? 0.18 : 0.07) * p.alpha;
+        ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx.fillStyle = 'rgba(242,244,255,0.78)';
+        ctx.fillText('AUC', x, y - 6);
 
-      if (!IS_CHROME && !prefersReduced) {
-        if (!isKey && si === 0) {
-          ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
-          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+        ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
+        ctx.fillText(auc.toFixed(3), x + 38, y - 6);
+      }
 
-          ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
-          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
-        } else {
-          ctx.fillStyle = colorFor(cls, glowA);
-          ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2); ctx.fill();
+      function drawTrainOverlay(t){
+        const p = trainProgress(t);
+        const loss = lossValue(t);
+
+        const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.fillRect(x, y, w, h);
+
+        const fit = clamp(1 - (loss - 0.18) / (1.35 - 0.18), 0, 1);
+        ctx.fillStyle = `rgba(124,58,237,${0.35 + 0.35*p})`;
+        ctx.fillRect(x, y, w*fit, h);
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+        ctx.strokeRect(x, y, w, h);
+
+        ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx.fillStyle = 'rgba(242,244,255,0.78)';
+        ctx.fillText('Loss', x, y - 6);
+
+        ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx.fillStyle = `rgba(253,224,71,${0.55 + 0.30*p})`;
+        ctx.fillText(loss.toFixed(3), x + 42, y - 6);
+
+        const cx = W*0.50, cy = H*0.50;
+        const rr = (Math.min(W,H)*0.10) * (0.6 + 0.6*(1-p));
+        ctx.strokeStyle = `rgba(34,211,238,${0.10 + 0.12*(1-p)})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rr + (Math.sin(t/220)*6), 0, Math.PI*2);
+        ctx.stroke();
+      }
+
+      function effectiveStage(t){
+        const now = nowMs();
+        if (lockedStage !== null && now >= lockedUntil) lockedStage = null;
+
+        const auto = Math.floor((t / (prefersReduced ? 2600 : 2400)) % STAGES.length);
+        if (lockedStage !== null) return lockedStage;
+        if (hoverStage !== null) return hoverStage;
+        return auto;
+      }
+
+      function draw(t){
+        if (!canvas || !ctx || !host) return;
+
+        frame++;
+        const si = effectiveStage(t);
+        const mix = (t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400);
+        const easedMix = mix < 0.5 ? 2*mix*mix : 1 - Math.pow(-2*mix+2,2)/2;
+
+        setStageUI(si);
+
+        if ((frame % 20) === 0) resizeCanvas();
+
+        ctx.clearRect(0,0,W,H);
+        drawVignette();
+
+        if (si === 4) {
+          const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
+          const rot = (t/1400) % (Math.PI*2);
+          for (let i=0;i<points.length;i++){
+            const p = points[i];
+            if (!p.earth) continue;
+            const lat = p.earth.lat;
+            const lon = p.earth.lon + rot;
+            p.deploy.x = cx + Math.cos(lat)*Math.cos(lon) * r;
+            p.deploy.y = cy + Math.sin(lat) * r;
+          }
+          drawEarth(t);
         }
-      }
 
-      if (!isKey && si === 0) {
-        ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
-        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+        if (si === 2) drawTrainOverlay(t);
+        if (si === 3) drawValidateOverlay(t);
 
-        ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
-        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
-      } else {
-        ctx.fillStyle = colorFor(cls, a);
-        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
-      }
-    }
+        for (let i=0;i<points.length;i++){
+          const p = points[i];
 
-    // stage overlays (minimal)
-    if (si === 0) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
-      ctx.lineWidth = 1;
-      for (let k=0;k<7;k++){
-        const y = H*(0.20 + k*0.10);
+          if (si !== 0) { p.x += p.vx; p.y += p.vy; }
+
+          if (si === 1) p.alpha = lerp(p.alpha, p.out ? 0.0 : 1.0, 0.07);
+          else p.alpha = lerp(p.alpha, 1.0, 0.04);
+
+          let target = targetForStage(p, si);
+
+          if (si === 2) {
+            const tp = (t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400);
+            const swirl = (1 - (tp < 0.5 ? 2*tp*tp : 1 - Math.pow(-2*tp+2,2)/2));
+            const ang = (t/520) + p.seed*0.002 + (p.cls*1.7);
+            const rad = (Math.min(W,H) * 0.08) * swirl;
+
+            const ox = Math.cos(ang) * rad;
+            const oy = Math.sin(ang) * rad;
+
+            const j = swirl * Math.min(W,H) * 0.010;
+            const jx = Math.sin(t/120 + p.seed) * j;
+            const jy = Math.cos(t/140 + p.seed*1.21) * j;
+
+            target = { x: p.train.x + ox + jx, y: p.train.y + oy + jy };
+          }
+
+          if (si === 3) {
+            const vp = (t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400);
+            const vpe = vp < 0.5 ? 2*vp*vp : 1 - Math.pow(-2*vp+2,2)/2;
+
+            const base = {
+              x: lerp(p.validate.x, p.train.x, vpe),
+              y: lerp(p.validate.y, p.train.y, vpe)
+            };
+            const amp = (1 - vpe) * Math.min(W, H) * 0.032;
+            const jx = Math.sin(t/120 + p.seed) * amp;
+            const jy = Math.cos(t/140 + p.seed*1.31) * amp;
+            target = { x: base.x + jx, y: base.y + jy };
+          }
+
+          if (si === 0) {
+            const into = targetForStage(p, 1);
+            const tx = lerp(target.x, into.x, easedMix);
+            const ty = lerp(target.y, into.y, easedMix);
+            p.x = lerp(p.x, tx, 0.08);
+            p.y = lerp(p.y, ty, 0.08);
+          } else {
+            p.x = lerp(p.x, target.x, 0.06);
+            p.y = lerp(p.y, target.y, 0.06);
+          }
+        }
+
+        const kp = points[0];
+        const steerX = W * (0.08 + mx*0.84);
+        const steerY = H * (0.08 + my*0.84);
+        kp.x = lerp(kp.x, steerX, 0.16);
+        kp.y = lerp(kp.y, steerY, 0.16);
+
+        if ((si === 2 || si === 3) && (frame % 2 === 0)) {
+          ctx.lineWidth = 1;
+          const strength = (si === 2) ? (0.65 + 0.35*((t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400))) : ((t % (prefersReduced ? 2600 : 2400)) / (prefersReduced ? 2600 : 2400));
+          for (let i=0;i<links;i++){
+            const a = points[(i*7) % points.length];
+            const b = points[(i*19 + 33) % points.length];
+            if (a.alpha < 0.15 || b.alpha < 0.15) continue;
+            const dx = a.x-b.x, dy = a.y-b.y;
+            const d2 = dx*dx + dy*dy;
+            if (d2 < 200*200){
+              const d = Math.sqrt(d2);
+              const alpha = (1 - d/200) * 0.20 * strength;
+              ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+              ctx.beginPath();
+              ctx.moveTo(a.x,a.y);
+              ctx.lineTo(b.x,b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        for (let i=0;i<points.length;i++){
+          const p = points[i];
+          if (p.alpha < 0.03) continue;
+
+          const isKey = (i===0);
+          const isOut = (si === 1) && p.out;
+
+          let cls;
+          if (isKey) cls = 3;
+          else if (isOut) cls = 4;
+          else if (si === 1) cls = p.grp;
+          else cls = p.cls;
+
+          const a = (isKey ? 0.95 : 0.72) * p.alpha;
+          const rr = isKey ? (isCoarse ? 3.0 : 2.7) : (isCoarse ? 1.45 : 1.25);
+
+          const blendToClean = (si === 0) ? easedMix : 0;
+          const baseCls = p.cls;
+          const cleanCls = p.grp;
+
+          const glowA = (isKey ? 0.18 : 0.07) * p.alpha;
+
+          if (!IS_CHROME && !prefersReduced) {
+            if (!isKey && si === 0) {
+              ctx.fillStyle = colorFor(baseCls, glowA * (1 - blendToClean));
+              ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+
+              ctx.fillStyle = colorFor(cleanCls, glowA * blendToClean);
+              ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+            } else {
+              ctx.fillStyle = colorFor(cls, glowA);
+              ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 16 : 8, 0, Math.PI*2); ctx.fill();
+            }
+          }
+
+          if (!isKey && si === 0) {
+            ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
+            ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI*2); ctx.fill();
+
+            ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
+            ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI*2); ctx.fill();
+          } else {
+            ctx.fillStyle = colorFor(cls, a);
+            ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI*2); ctx.fill();
+          }
+        }
+
+        if (si === 0) {
+          ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+          ctx.lineWidth = 1;
+          for (let k=0;k<7;k++){
+            const y = H*(0.20 + k*0.10);
+            ctx.beginPath();
+            ctx.moveTo(W*0.06, y);
+            ctx.lineTo(W*0.26, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(W*0.26, y);
+            ctx.lineTo(W*0.245, y-4);
+            ctx.lineTo(W*0.245, y+4);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255,255,255,0.10)';
+            ctx.fill();
+          }
+        }
+
+        if (si === 1) {
+          ctx.strokeStyle = 'rgba(34,211,238,0.16)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.ellipse(W*0.50, H*0.56, W*0.32, H*0.24, 0, 0, Math.PI*2);
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+          for (const lx of [W*0.32, W*0.50, W*0.68]) {
+            ctx.beginPath();
+            ctx.moveTo(lx, H*0.28);
+            ctx.lineTo(lx, H*0.86);
+            ctx.stroke();
+          }
+
+          ctx.strokeStyle = 'rgba(255,90,90,0.18)';
+          ctx.strokeRect(W*0.84, H*0.24, W*0.12, H*0.62);
+        }
+
+        if (si === 5) {
+          const x = W*(0.10 + ((t/1200)%1)*0.80);
+          ctx.strokeStyle = 'rgba(253,224,71,0.10)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x, H*0.34);
+          ctx.lineTo(x, H*0.82);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'rgba(163,255,176,0.35)';
+        ctx.lineWidth = 1.7;
         ctx.beginPath();
-        ctx.moveTo(W*0.06, y);
-        ctx.lineTo(W*0.26, y);
+        ctx.arc(kp.x, kp.y, isCoarse ? 24 : 26, -Math.PI*0.15, Math.PI*0.35);
         ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(W*0.26, y);
-        ctx.lineTo(W*0.245, y-4);
-        ctx.lineTo(W*0.245, y+4);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(255,255,255,0.10)';
-        ctx.fill();
-      }
-    }
 
-    if (si === 1) {
-      ctx.strokeStyle = 'rgba(34,211,238,0.16)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.ellipse(W*0.50, H*0.56, W*0.32, H*0.24, 0, 0, Math.PI*2);
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-      for (const lx of [W*0.32, W*0.50, W*0.68]) {
-        ctx.beginPath();
-        ctx.moveTo(lx, H*0.28);
-        ctx.lineTo(lx, H*0.86);
-        ctx.stroke();
+        requestAnimationFrame(draw);
       }
 
-      ctx.strokeStyle = 'rgba(255,90,90,0.18)';
-      ctx.strokeRect(W*0.84, H*0.24, W*0.12, H*0.62);
-    }
+      function selfTest(){
+        console.assert(!!host, 'viz host missing');
+        console.assert(!!canvas, 'Canvas #viz missing');
+        console.assert(stageEls.length === 6, 'Expected 6 stage pills');
+        console.assert(!!modeEl, 'Mode badge missing');
+        console.assert(!!commentaryEl, 'Commentary missing');
+      }
 
-    if (si === 5) {
-      const x = W*(0.10 + ((t/1200)%1)*0.80);
-      ctx.strokeStyle = 'rgba(253,224,71,0.10)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x, H*0.34);
-      ctx.lineTo(x, H*0.82);
-      ctx.stroke();
-    }
+      resizeCanvas();
+      initParticles();
 
-    // key point halo
-    ctx.strokeStyle = 'rgba(163,255,176,0.35)';
-    ctx.lineWidth = 1.7;
-    ctx.beginPath();
-    ctx.arc(kp.x, kp.y, isCoarse ? 24 : 26, -Math.PI*0.15, Math.PI*0.35);
-    ctx.stroke();
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        initParticles();
+      }, { passive:true });
 
-    requestAnimationFrame(draw);
-  }
-
-  // self-test
-  function selfTest(){
-    console.assert(!!host, 'viz host missing');
-    console.assert(!!canvas, 'Canvas #viz missing');
-    console.assert(stageEls.length === 6, 'Expected 6 stage pills');
-    console.assert(!!modeEl, 'Mode badge missing');
-    console.assert(!!commentaryEl, 'Commentary missing');
-  }
-
-  // Init + resize behaviour
-  resizeCanvas();
-  initParticles();
-
-  window.addEventListener('resize', () => {
-    resizeCanvas();
-    initParticles();
-  }, { passive:true });
-
-  selfTest();
-  requestAnimationFrame(draw);
-})();
-</script>
+      selfTest();
+      requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>
