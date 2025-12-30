@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Clarifyd | Work</title>
-  <meta name="description" content="Showpiece work: a real-feeling data science project run, delivered as a static site." />
+  <meta name="description" content="Clarifyd work showpiece: business KPIs + forecasting + next best actions + drift monitoring. Static, client-side, privacy-first." />
   <style>
     :root{
-      --bg0:#070A12; --bg1:#0B1022; --text:#F2F4FF; --muted:rgba(242,244,255,.72);
-      --radius:22px; --max:1160px; --shadow:0 24px 80px rgba(0,0,0,.55);
-      --a:#7C3AED; --b:#22D3EE; --y:#FDE047; --c:#A3FFB0;
-      --card: rgba(255,255,255,.05);
-      --line: rgba(255,255,255,.12);
-      --soft: rgba(0,0,0,.18);
+      --bg0:#070A12; --bg1:#0B1022;
+      --text:#F2F4FF; --muted: rgba(242,244,255,.72);
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 22px; --max: 1220px;
+      --a:#7C3AED; --b:#22D3EE; --m:#A3FFB0; --y:#FDE047; --r:#ff5a5a;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
+    *{ box-sizing:border-box }
+    html,body{ margin:0; padding:0 }
     body{
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color: var(--text);
@@ -26,331 +25,435 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
     }
-    a{color:inherit}
-    .container{max-width:var(--max);margin:0 auto;padding:0 22px}
-    .muted{color:var(--muted)}
-    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    a{ color: inherit }
+    .container{ max-width:var(--max); margin:0 auto; padding:0 18px }
+    .muted{ color: var(--muted) }
+    .tiny{ font-size: 12px; color: rgba(242,244,255,.62) }
 
-    /* Parallax background layers */
-    .parallax-layer{position:fixed;inset:-18vh -18vw;pointer-events:none;z-index:0;will-change:transform}
-    .layer-a{
-      background:
+    .parallax-layer{ position: fixed; inset: -18vh -18vw; pointer-events:none; z-index:0; will-change: transform; opacity:.9;}
+    .layer-a{ background:
         radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
         radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);
-      filter: blur(14px); opacity:.9;
+      filter: blur(14px);
     }
-    .layer-b{
-      background:
+    .layer-b{ background:
         radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),
         radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);
-      filter: blur(18px); opacity:.65;
+      filter: blur(18px);
+      opacity: .65;
     }
-    .layer-c{
-      background: radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
-      filter: blur(26px); opacity:.45;
+    .layer-c{ background:
+        radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
+      filter: blur(26px);
+      opacity: .45;
     }
     .bg-grid{
-      position:fixed; inset:0; pointer-events:none; opacity:.20; z-index:1;
+      position: fixed; inset: 0; pointer-events: none; opacity: .20;
       background-image:
         linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size:64px 64px;
+      background-size: 64px 64px;
       mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+      z-index: 1;
     }
-    main{position:relative;z-index:2}
+    main{ position: relative; z-index:2 }
 
-    header{
-      position:sticky; top:0; z-index:30;
-      background:rgba(7,10,18,.55);
-      border-bottom:1px solid rgba(255,255,255,.08);
+    /* Header */
+    .site-header{
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(7,10,18,.55);
+      border-bottom: 1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(12px);
     }
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:720;letter-spacing:.2px;text-decoration:none}
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0; gap: 12px }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight: 760; letter-spacing: .2px; text-decoration:none; white-space:nowrap }
     .mark{
-      width:14px;height:14px;border-radius:5px;
-      background: linear-gradient(135deg,var(--a),var(--b),var(--y));
+      width: 14px; height: 14px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--a), var(--b), var(--y));
       box-shadow: 0 0 28px rgba(124,58,237,.45);
     }
-    .menu{display:flex;gap:18px;align-items:center}
+    .menu{ display:flex; gap: 10px; align-items:center; flex-wrap:wrap; justify-content:flex-end }
     .menu a{
-      text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);
-      padding:10px 10px;border-radius:999px;transition:background .2s,color .2s;
+      text-decoration: none;
+      font-size: 14px;
+      color: rgba(242,244,255,.72);
+      padding: 10px 10px;
+      border-radius: 999px;
+      transition: background .2s ease, color .2s ease;
     }
-    .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
-    .pill{padding:10px 14px!important;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .menu a:hover{ color: var(--text); background: rgba(255,255,255,.06) }
+    .pill{
+      padding: 10px 14px !important;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
 
-    .hero{padding:72px 0 18px}
+    /* Hero */
+    .hero{ padding: 52px 0 16px }
     .kicker{
-      display:inline-flex;gap:10px;align-items:center;
-      padding:8px 12px;border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);border-radius:999px;
-      font-size:13px;color:rgba(242,244,255,.78);
-    }
-    .spark{
-      width:8px;height:8px;border-radius:999px;background:var(--y);
-      box-shadow:0 0 0 0 rgba(253,224,71,.35);
-      animation:spark 2s ease-in-out infinite;
-    }
-    @keyframes spark{
-      0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}
-      70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}
-      100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}
-    }
-    h1{font-size:46px;letter-spacing:-1px;line-height:1.06;margin:14px 0 10px}
-    .grad{
-      background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--c));
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-    }
-    .lead{max-width:86ch;color:rgba(242,244,255,.74);margin:0}
-
-    .section{padding:28px 0 48px}
-    .grid{display:grid;grid-template-columns: 1.35fr .65fr; gap:16px; align-items:start}
-    .panel{
-      border-radius: var(--radius);
-      border:1px solid var(--line);
-      background: var(--card);
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
       box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      overflow:hidden;
-      transform: translate3d(0,0,0);
+      font-size: 13px;
+      color: rgba(242,244,255,.78);
     }
-    .panel.pad{padding:18px}
-    .panel-header{
-      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-      padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.10);
+    .spark{ width:8px; height:8px; border-radius:999px; background: var(--y); box-shadow: 0 0 0 0 rgba(253,224,71,.35); animation: spark 2.0s ease-in-out infinite; }
+    @keyframes spark{ 0%{ box-shadow: 0 0 0 0 rgba(253,224,71,.35) } 70%{ box-shadow: 0 0 0 12px rgba(253,224,71,0) } 100%{ box-shadow: 0 0 0 0 rgba(253,224,71,0) } }
+    h1{ font-size: 44px; line-height: 1.06; letter-spacing: -1px; margin: 16px 0 10px }
+    .grad{
+      background: linear-gradient(90deg, var(--a), var(--b), var(--y), var(--m));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
     }
-    .title{font-weight:750;letter-spacing:.2px}
-    .tag{
-      font-size:12px;padding:8px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.18);
-      color:rgba(242,244,255,.74);
-      white-space:nowrap;
-    }
+    .lead{ font-size: 16px; color: rgba(242,244,255,.74); max-width: 100ch; margin: 0 0 14px }
 
-    .board{position:relative;padding: 14px 14px 16px}
-    .board-top{
-      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      margin-bottom: 10px;
-    }
-    .runbar{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.16);
-    }
-    .dot{
-      width:9px;height:9px;border-radius:99px;background: rgba(34,211,238,.95);
-      box-shadow: 0 0 18px rgba(34,211,238,.22);
-      animation: blink 1.6s ease-in-out infinite;
-    }
-    @keyframes blink{0%,100%{opacity:.5}50%{opacity:1}}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
-      color:var(--text); text-decoration:none;
-      transition: transform .16s ease, background .2s ease, border-color .2s ease;
-      cursor:pointer; user-select:none;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
-    .btn.primary{background:linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));border-color:transparent}
-
-    .metrics{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .metric{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      border-radius: 16px;
-      padding: 10px 12px;
-      position:relative;
-      overflow:hidden;
-    }
-    .metric::before{
-      content:"";
-      position:absolute; inset:-50px -80px;
-      background: radial-gradient(closest-side at 20% 20%, rgba(253,224,71,.10), transparent 68%);
-      opacity:.85;
-      pointer-events:none;
-    }
-    .metric .k{font-size:12px;color:rgba(242,244,255,.68)}
-    .metric .v{font-size:18px;font-weight:800;letter-spacing:-.2px;margin-top:2px}
-    .metric .sub{font-size:12px;color:rgba(242,244,255,.62);margin-top:2px}
-
-    .subgrid{display:grid;grid-template-columns: 1.05fr .95fr; gap: 12px}
-    .svg-wrap{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
+    .privacy{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+      margin-top: 14px;
+      padding: 12px 14px;
       border-radius: 18px;
-      padding: 10px;
-      overflow:hidden;
-      position:relative;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 18px 60px rgba(0,0,0,.30);
     }
-    .svg-wrap::after{
-      content:"";
-      position:absolute; left:0; right:0; bottom:0; height: 120px;
-      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.22));
-      pointer-events:none;
+    .lock{
+      width: 26px; height: 26px; border-radius: 10px;
+      background: rgba(34,211,238,.12);
+      border: 1px solid rgba(34,211,238,.28);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
     }
-    svg{width:100%;height:auto;display:block}
-
-    .cm{display:grid;grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px}
-    .cell{
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 10px 10px;
-      position:relative;
-      overflow:hidden;
-    }
-    .cell .h{font-size:11px;color:rgba(242,244,255,.62)}
-    .cell .n{font-size:18px;font-weight:800;margin-top:2px}
-    .bar{
-      position:absolute;left:0;bottom:0;height:4px;width:0%;
-      background: linear-gradient(90deg, rgba(34,211,238,.8), rgba(253,224,71,.8));
-      opacity:.8;
-    }
-
-    /* Data quality + cleaning */
-    .dq{
-      display:grid;grid-template-columns: repeat(3,minmax(0,1fr));
-      gap: 10px; margin-top: 10px;
-    }
-    .dq .chip{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      border-radius: 16px;
-      padding: 10px 12px;
-    }
-    .dq .chip .k{font-size:11px;color:rgba(242,244,255,.62)}
-    .dq .chip .v{font-weight:850;font-size:16px;margin-top:2px}
-    .mini-bars{display:grid;gap:8px;margin-top:10px}
-    .mini-bar{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      border-radius: 14px;
-      padding: 10px 10px;
-    }
-    .mini-bar-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .track{height:8px;border-radius:999px;background: rgba(255,255,255,.06);overflow:hidden;margin-top:8px}
-    .fill{height:100%;width:20%;border-radius:999px;background: linear-gradient(90deg, rgba(124,58,237,.9), rgba(34,211,238,.9), rgba(253,224,71,.8))}
-
-    /* Feature importance */
-    .fi{display:grid;gap:10px;margin-top:10px}
-    .fi-row{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      border-radius: 14px;
-      padding: 10px 10px;
-    }
-    .fi-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .fi-name{font-weight:700}
-    .fi-val{color:rgba(242,244,255,.70)}
-    .fi-track{height:8px;border-radius:999px;background: rgba(255,255,255,.06);overflow:hidden;margin-top:8px}
-    .fi-fill{height:100%;width:40%;border-radius:999px;background: linear-gradient(90deg, rgba(34,211,238,.9), rgba(253,224,71,.85))}
-
-    /* Side panels */
-    .side{display:grid;gap:16px}
-    .list{display:grid;gap:10px;margin-top:12px}
-    .item{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      border-radius: 16px;
-      padding: 12px 12px;
-      display:flex; justify-content:space-between; gap: 10px;
-    }
-    .badge{
-      font-size:12px;
+    .lock svg{ width: 16px; height: 16px; opacity: .9 }
+    .pill2{
+      font-size: 12px;
       padding: 6px 10px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      color: rgba(242,244,255,.74);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: rgba(242,244,255,.72);
       white-space: nowrap;
     }
 
-    .terminal{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      border-radius: 18px;
-      padding: 12px;
-      height: 220px;
-      overflow:hidden;
-      position:relative;
-    }
-    .terminal::before{
-      content:"";
-      position:absolute; inset:-80px -120px;
-      background: radial-gradient(closest-side at 20% 20%, rgba(124,58,237,.18), transparent 68%);
-      opacity:.75;
-      pointer-events:none;
-    }
-    .log{position:relative;display:grid;gap:8px}
-    .line{display:flex;gap:10px;align-items:flex-start}
-    .ts{color:rgba(242,244,255,.48);min-width:62px}
-    .msg{color:rgba(242,244,255,.78)}
-    .hl{color:rgba(253,224,71,.86)}
-
-    /* monitor strip */
-    .strip{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      border-radius: 18px;
-      padding: 10px;
-      margin-top: 12px;
-    }
-    .strip svg{height:64px}
-    .alert{
-      display:flex; align-items:center; justify-content:space-between; gap: 10px;
-      margin-top: 10px;
+    /* Buttons */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
       padding: 10px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+      text-decoration:none;
+      user-select:none;
+      font-size: 13px;
+      white-space: nowrap;
     }
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:6px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-size:12px;color:rgba(242,244,255,.74);
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));
+      border-color: transparent;
+      box-shadow: 0 22px 90px rgba(124,58,237,.14), 0 20px 70px rgba(34,211,238,.10);
+    }
+
+    /* Work area (left board + right KPIs) */
+    .section{ padding: 10px 0 52px }
+    .workGrid{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .leftStack{
+      display:grid;
+      grid-template-rows: 1fr auto;
+      gap: 14px;
+      min-height: 690px;
+    }
+
+    .board{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+      min-height: 540px;
+      isolation:isolate;
+    }
+    .board::before{
+      content:"";
+      position:absolute; inset:-120px -160px;
+      background:
+        radial-gradient(closest-side at 40% 30%, rgba(124,58,237,.28), transparent 60%),
+        radial-gradient(closest-side at 70% 55%, rgba(34,211,238,.22), transparent 62%),
+        radial-gradient(closest-side at 55% 80%, rgba(253,224,71,.12), transparent 60%);
+      filter: blur(14px);
+      opacity: .95;
+      pointer-events:none;
+      z-index:0;
+    }
+    .topbar{
+      position:absolute; left:0; right:0; top:0; height: 56px;
+      display:flex; align-items:center; justify-content:space-between; gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+      z-index: 2;
+    }
+    .crumb{ font-size: 12px; color: rgba(242,244,255,.72) }
+    .chip{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: rgba(242,244,255,.72);
       white-space:nowrap;
     }
-    .pill .s{width:8px;height:8px;border-radius:99px;background: rgba(163,255,176,.9);box-shadow: 0 0 18px rgba(163,255,176,.18)}
+    .chip.live{ border-color: rgba(34,211,238,.28); background: rgba(34,211,238,.08); }
+    .chip.warn{ border-color: rgba(253,224,71,.28); background: rgba(253,224,71,.08); }
+    .chip.bad{ border-color: rgba(255,90,90,.28); background: rgba(255,90,90,.08); }
 
-    .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
-    .reveal.is-visible{opacity:1;transform:translateY(0)}
-    footer{padding:26px 0 38px;border-top:1px solid rgba(255,255,255,.10)}
+    .boardBody{
+      position:absolute; inset:56px 0 0 0;
+      display:grid;
+      grid-template-rows: 1fr 250px;
+      z-index: 1;
+    }
+    .pane{
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .pane:last-child{ border-bottom: none; }
+    canvas{ width:100%; height:100%; display:block; }
+    .legend{
+      position:absolute; left:12px; bottom:12px; right:12px;
+      display:flex; gap: 8px; flex-wrap:wrap;
+      pointer-events:none;
+    }
 
-    @media (max-width: 1040px){
-      .grid{grid-template-columns:1fr}
-      .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .subgrid{grid-template-columns:1fr}
-      h1{font-size:40px}
-      .dq{grid-template-columns:1fr}
+    .panel{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      padding: 14px;
+      overflow:hidden;
+    }
+    .panelHead{ display:flex; align-items:flex-start; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
+    .panelHead h3{ margin:0; font-size: 15px; letter-spacing: .2px }
+    .badge{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: rgba(242,244,255,.78);
+      white-space: nowrap;
+    }
+
+    .controls{ display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; margin-top: 10px }
+    .field label{ display:block; font-size: 12px; color: rgba(242,244,255,.72); margin: 0 0 6px }
+    .input, select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.82);
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline: none;
+    }
+    .actions{ display:flex; gap: 10px; flex-wrap:wrap; align-items:center; margin-top: 12px }
+
+    .tableWrap{
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.18);
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      color: rgba(242,244,255,.78);
+      text-align:left;
+      white-space: nowrap;
+    }
+    th{ color: rgba(242,244,255,.62); background: rgba(255,255,255,.04); }
+    tr:last-child td{ border-bottom: none; }
+
+    /* Right column */
+    .rightCol{
+      display:flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 690px;
+    }
+
+    /* KPI cards with graphics */
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .kpi{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(0,0,0,.16);
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+      min-height: 104px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .kpi::before{
+      content:"";
+      position:absolute; inset:-60px -60px;
+      background: radial-gradient(closest-side at 20% 20%, rgba(34,211,238,.12), transparent 65%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .kpi .meta{ position: relative; min-width: 0; }
+    .kpi .l{ font-size: 12px; color: rgba(242,244,255,.68) }
+    .kpi .v{ font-size: 22px; font-weight: 860; letter-spacing: -.2px; margin-top: 4px }
+    .kpi .s{ font-size: 12px; color: rgba(242,244,255,.60); margin-top: 6px; display:flex; gap: 8px; align-items:center; flex-wrap:wrap }
+
+    .delta{
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: rgba(242,244,255,.72);
+      white-space: nowrap;
+    }
+    .delta.up{ border-color: rgba(163,255,176,.24); background: rgba(163,255,176,.08) }
+    .delta.down{ border-color: rgba(255,90,90,.24); background: rgba(255,90,90,.08) }
+    .delta.flat{ border-color: rgba(253,224,71,.24); background: rgba(253,224,71,.08) }
+
+    .mini{
+      position: relative;
+      width: 84px;
+      height: 52px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      overflow:hidden;
+      align-self: end;
+    }
+    .mini canvas{ width:100%; height:100%; display:block; opacity: .95; }
+    .ring{
+      width: 52px; height: 52px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      display:grid; place-items:center;
+      position: relative;
+      overflow:hidden;
+    }
+    .ring svg{ width: 52px; height: 52px; transform: rotate(-90deg); }
+    .ring .t{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-size: 11px;
+      color: rgba(242,244,255,.70);
+      font-weight: 750;
+    }
+
+    .pillRisk{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      font-size: 12px;
+    }
+    .dot{ width:8px; height:8px; border-radius:999px; background: rgba(242,244,255,.28) }
+    .dot.g{ background: rgba(163,255,176,.9); box-shadow: 0 0 18px rgba(163,255,176,.20) }
+    .dot.y{ background: rgba(253,224,71,.95); box-shadow: 0 0 18px rgba(253,224,71,.18) }
+    .dot.r{ background: rgba(255,90,90,.95); box-shadow: 0 0 18px rgba(255,90,90,.18) }
+
+    /* NBA */
+    .nba{ display:grid; gap: 10px; margin-top: 12px; }
+    .nbaCard{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+    }
+    .nbaCard::before{
+      content:"";
+      position:absolute; inset:-60px -60px;
+      background: radial-gradient(closest-side at 20% 20%, rgba(253,224,71,.09), transparent 62%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .nbaTop{ display:flex; justify-content:space-between; gap: 10px; align-items:center; position: relative; }
+    .nbaTitle{ font-weight: 780 }
+    .nbaBody{ margin-top: 8px; color: rgba(242,244,255,.74); font-size: 13px; line-height: 1.4; position: relative; }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      overflow:hidden;
+      margin-top: 10px;
+      position: relative;
+    }
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(34,211,238,.65), rgba(253,224,71,.55));
+      transition: width .55s ease;
+    }
+
+    .foot{ padding: 26px 0 38px; }
+
+    @media (max-width: 1100px){
+      .workGrid{ grid-template-columns: 1fr; }
+      .rightCol{ min-height: unset; }
+      .leftStack{ min-height: unset; }
+      .controls{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .boardBody{ grid-template-rows: 360px 250px; }
+      h1{ font-size: 38px }
+    }
+    @media (max-width: 520px){
+      .kpis{ grid-template-columns: 1fr; }
+      .controls{ grid-template-columns: 1fr; }
+      .mini{ width: 100%; height: 56px; }
+      .kpi{ grid-template-columns: 1fr; }
+      .ring{ justify-self: start; }
     }
     @media (prefers-reduced-motion: reduce){
-      .reveal{transition:none!important}
-      .spark,.dot{animation:none!important}
+      .spark{ animation:none !important }
     }
   </style>
 </head>
+
 <body>
   <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
   <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
   <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
   <div class="bg-grid" aria-hidden="true"></div>
 
-  <header>
+  <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
+      <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
       <nav class="menu" aria-label="Primary">
         <a href="/services.html">Services</a>
         <a href="/work.html" aria-current="page">Work</a>
@@ -361,237 +464,259 @@
 
   <main>
     <section class="hero">
-      <div class="container reveal">
-        <div class="kicker"><span class="spark"></span> From noise to signal</div>
-        <h1>A DS project that feels <span class="grad">real</span>.</h1>
-        <p class="lead"> Watch a project move end-to-end — ingest, clean, train, validate, deploy, and monitor — just like real delivery.</p>
+      <div class="container">
+        <div class="kicker"><span class="spark" aria-hidden="true"></span> Work showpiece: retention forecasting + prescriptive ops</div>
+        <h1>Business KPIs that drive <span class="grad">decisions</span>.</h1>
+        <p class="lead">
+          A realistic SaaS retention workflow: forecast revenue retention, flag account risk, recommend Next Best Actions,
+          and monitor drift — all client-side, static, and privacy-first.
+        </p>
+
+        <div class="privacy" role="note" aria-label="Privacy notice">
+          <div class="lock" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7.5 10V7.8c0-2.9 2.1-5.3 4.5-5.3s4.5 2.4 4.5 5.3V10" stroke="rgba(242,244,255,.85)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6.2 10h11.6c.7 0 1.2.5 1.2 1.2v8.1c0 .7-.5 1.2-1.2 1.2H6.2c-.7 0-1.2-.5-1.2-1.2v-8.1c0-.7.5-1.2 1.2-1.2Z" stroke="rgba(242,244,255,.85)" stroke-width="2"/>
+              <path d="M12 14v3" stroke="rgba(253,224,71,.85)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div style="min-width: 260px;">
+            <div><strong>Privacy-first</strong> — your data stays in the browser.</div>
+            <div class="tiny">No uploads. No storage. Refresh clears everything.</div>
+          </div>
+          <div class="pill2">Demo dataset download</div>
+          <div class="pill2">Client-side compute</div>
+          <div class="pill2">Static hosting</div>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <div class="container grid">
-        <!-- Main -->
-        <section class="panel reveal">
-          <div class="panel-header">
-            <div>
-              <div class="title">Experiment run — <span class="mono" id="runId">run_7f3a</span></div>
-              <div class="tiny">Simulated workflow (no network): reproducible, deterministic-ish signals.</div>
-            </div>
-            <div class="tag"><span class="mono" id="epochTag">epoch 1</span></div>
-          </div>
-
-          <div class="board">
-            <div class="board-top">
-              <div class="runbar">
-                <span class="dot" aria-hidden="true"></span>
-                <div class="mono tiny">status: <span class="hl" id="status">training</span></div>
-                <div class="mono tiny">seed: <span id="seed">42</span></div>
-                <div class="mono tiny">rows: <span id="rows">1,240,000</span></div>
+      <div class="container workGrid">
+        <!-- Left -->
+        <div class="leftStack">
+          <section class="board" aria-label="Dashboard visuals">
+            <div class="topbar">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <span class="crumb">Retention / Executive view</span>
+                <span class="chip" id="chipState">Idle</span>
+                <span class="chip live" id="chipLive">Streaming</span>
+                <span class="chip warn" id="chipWarn" style="display:none;">Drift rising</span>
+                <span class="chip bad" id="chipBad" style="display:none;">Alert</span>
               </div>
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn" id="pauseBtn" type="button">Pause</button>
-                <button class="btn primary" id="restartBtn" type="button">Restart</button>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <span class="chip" id="engineBadge">Engine: simulated (ONNX-ready)</span>
+                <span class="chip" id="rt">—</span>
+                <button class="btn" id="btnPause" type="button">Pause</button>
               </div>
             </div>
 
-            <div class="metrics">
-              <div class="metric">
-                <div class="k">Loss</div>
-                <div class="v mono" id="loss">1.214</div>
-                <div class="sub mono">↓ converging</div>
-              </div>
-              <div class="metric">
-                <div class="k">AUC</div>
-                <div class="v mono" id="auc">0.612</div>
-                <div class="sub mono">↑ improving</div>
-              </div>
-              <div class="metric">
-                <div class="k">Accuracy</div>
-                <div class="v mono" id="acc">0.684</div>
-                <div class="sub mono">↑ stabilising</div>
-              </div>
-              <div class="metric">
-                <div class="k">Drift</div>
-                <div class="v mono" id="drift">0.18</div>
-                <div class="sub mono">monitoring</div>
-              </div>
-            </div>
-
-            <div class="subgrid">
-              <!-- Curves -->
-              <div class="svg-wrap">
-                <svg viewBox="0 0 720 260" role="img" aria-label="Training curve">
-                  <defs>
-                    <linearGradient id="gLine" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0" stop-color="rgba(124,58,237,0.95)"/>
-                      <stop offset="0.55" stop-color="rgba(34,211,238,0.95)"/>
-                      <stop offset="1" stop-color="rgba(253,224,71,0.95)"/>
-                    </linearGradient>
-                    <linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stop-color="rgba(34,211,238,0.20)"/>
-                      <stop offset="1" stop-color="rgba(34,211,238,0)"/>
-                    </linearGradient>
-                  </defs>
-
-                  <g opacity="0.18">
-                    <path d="M40 30 H700 M40 80 H700 M40 130 H700 M40 180 H700 M40 230 H700" stroke="white" stroke-width="1"/>
-                    <path d="M100 20 V240 M200 20 V240 M300 20 V240 M400 20 V240 M500 20 V240 M600 20 V240" stroke="white" stroke-width="1"/>
-                  </g>
-
-                  <path d="M40 240 H700" stroke="rgba(255,255,255,0.25)"/>
-                  <path d="M40 20 V240" stroke="rgba(255,255,255,0.25)"/>
-
-                  <path id="area" d="" fill="url(#gFill)" opacity="0.9"></path>
-                  <path id="curve" d="" fill="none" stroke="url(#gLine)" stroke-width="3" stroke-linecap="round"></path>
-                  <circle id="marker" cx="0" cy="0" r="6" fill="rgba(253,224,71,0.95)" opacity="0.9"></circle>
-
-                  <text x="42" y="18" class="mono" font-size="12" fill="rgba(242,244,255,0.70)">live validation quality</text>
-                </svg>
-              </div>
-
-              <!-- Validate + cleaning -->
-              <div class="svg-wrap">
-                <div class="tiny mono" style="padding:2px 2px 10px;color:rgba(242,244,255,.72)">
-                  validation gate: <span class="hl" id="gate">pending</span>
-                </div>
-
-                <div class="cm" aria-label="Confusion matrix">
-                  <div class="cell"><div class="h mono">TP</div><div class="n mono" id="tp">482</div><div class="bar" id="tpb"></div></div>
-                  <div class="cell"><div class="h mono">FP</div><div class="n mono" id="fp">171</div><div class="bar" id="fpb"></div></div>
-                  <div class="cell"><div class="h mono">FN</div><div class="n mono" id="fn">139</div><div class="bar" id="fnb"></div></div>
-                  <div class="cell"><div class="h mono">TN</div><div class="n mono" id="tn">611</div><div class="bar" id="tnb"></div></div>
-                </div>
-
-                <div class="dq" aria-label="Data quality">
-                  <div class="chip"><div class="k mono">nulls</div><div class="v mono" id="nulls">2.8%</div></div>
-                  <div class="chip"><div class="k mono">outliers</div><div class="v mono" id="outliers">1.6%</div></div>
-                  <div class="chip"><div class="k mono">dupes</div><div class="v mono" id="dupes">0.9%</div></div>
-                </div>
-
-                <div class="mini-bars" aria-label="Cleaning actions">
-                  <div class="mini-bar">
-                    <div class="mini-bar-top">
-                      <div class="mono tiny">drop nulls</div><div class="mono tiny"><span id="dropNulls">42,300</span> rows</div>
-                    </div>
-                    <div class="track"><div class="fill" id="dropNullsFill"></div></div>
-                  </div>
-                  <div class="mini-bar">
-                    <div class="mini-bar-top">
-                      <div class="mono tiny">clamp outliers</div><div class="mono tiny"><span id="clamp">18,120</span> rows</div>
-                    </div>
-                    <div class="track"><div class="fill" id="clampFill"></div></div>
-                  </div>
-                  <div class="mini-bar">
-                    <div class="mini-bar-top">
-                      <div class="mono tiny">remove duplicates</div><div class="mono tiny"><span id="dedupe">9,640</span> rows</div>
-                    </div>
-                    <div class="track"><div class="fill" id="dedupeFill"></div></div>
-                  </div>
+            <div class="boardBody">
+              <div class="pane">
+                <canvas id="c1"></canvas>
+                <div class="legend">
+                  <span class="chip">NRR / GRR trend</span>
+                  <span class="chip">Risk distribution</span>
+                  <span class="chip" id="lg1">—</span>
                 </div>
               </div>
-            </div>
-
-            <!-- Feature importance + monitor -->
-            <div class="subgrid" style="margin-top:12px">
-              <div class="svg-wrap">
-                <div class="tiny mono" style="padding:2px 2px 10px;color:rgba(242,244,255,.72)">
-                  feature importance (shifts with drift)
+              <div class="pane">
+                <canvas id="c2"></canvas>
+                <div class="legend">
+                  <span class="chip">Drift monitor</span>
+                  <span class="chip" id="lg2">—</span>
                 </div>
-                <div class="fi" id="fi"></div>
-              </div>
-
-              <div class="svg-wrap">
-                <div class="tiny mono" style="padding:2px 2px 10px;color:rgba(242,244,255,.72)">
-                  drift monitor (last 60m)
-                </div>
-
-                <div class="strip">
-                  <svg viewBox="0 0 720 80" role="img" aria-label="Drift strip">
-                    <path d="M20 60 H700" stroke="rgba(255,255,255,0.18)"/>
-                    <path id="driftLine" d="" fill="none" stroke="rgba(34,211,238,0.85)" stroke-width="3" stroke-linecap="round"/>
-                    <circle id="driftDot" cx="0" cy="0" r="6" fill="rgba(253,224,71,0.92)"/>
-                    <text x="22" y="18" class="mono" font-size="12" fill="rgba(242,244,255,0.68)">PSI / drift</text>
-                  </svg>
-                </div>
-
-                <div class="alert">
-                  <div>
-                    <div style="font-weight:750">Alerts</div>
-                    <div class="tiny muted">Threshold: drift &gt; <span class="mono">0.22</span></div>
-                  </div>
-                  <span class="pill"><span class="s" id="alertDot"></span><span class="mono" id="alertText">ok</span></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Side -->
-        <aside class="side">
-          <section class="panel pad reveal">
-            <div class="title">Artifacts</div>
-            <div class="muted" style="margin-top:6px">What a real delivery produces.</div>
-
-            <div class="list">
-              <div class="item">
-                <div>
-                  <div style="font-weight:700">Data contract</div>
-                  <div class="tiny mono">schema.yaml • checks.sql</div>
-                </div>
-                <span class="badge">versioned</span>
-              </div>
-              <div class="item">
-                <div>
-                  <div style="font-weight:700">Pipelines</div>
-                  <div class="tiny mono">ingest → transform → train</div>
-                </div>
-                <span class="badge">scheduled</span>
-              </div>
-              <div class="item">
-                <div>
-                  <div style="font-weight:700">Model registry</div>
-                  <div class="tiny mono">model:v3.2 • tags:staging</div>
-                </div>
-                <span class="badge">ready</span>
-              </div>
-              <div class="item">
-                <div>
-                  <div style="font-weight:700">Deployment</div>
-                  <div class="tiny mono">blue/green • rollback</div>
-                </div>
-                <span class="badge" id="deployBadge">pending</span>
               </div>
             </div>
           </section>
 
-          <section class="panel pad reveal">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <section class="panel" aria-label="Dataset & scenario controls">
+            <div class="panelHead">
               <div>
-                <div class="title">RAG retrieval</div>
-                <div class="tiny muted">Simulated context refresh.</div>
+                <h3>Demo dataset + scenario controls</h3>
+                <div class="tiny muted">Accounts, ARR, NRR/GRR, expansion, health. (No uploads.)</div>
               </div>
-              <div class="tag mono">top-k=4</div>
+              <span class="badge" id="demoBadge">Schema: accounts_retention_demo.csv</span>
             </div>
-            <div class="terminal" style="margin-top:12px">
-              <div class="log" id="ragLog"></div>
+
+            <div class="controls">
+              <div class="field">
+                <label>Account tier</label>
+                <select id="tier" class="input">
+                  <option value="mid" selected>Mid-market</option>
+                  <option value="smb">SMB</option>
+                  <option value="ent">Enterprise</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>ARR (£k)</label>
+                <input id="arr" class="input" type="number" min="5" max="2500" value="180" />
+              </div>
+              <div class="field">
+                <label>Seats</label>
+                <input id="seats" class="input" type="number" min="5" max="5000" value="120" />
+              </div>
+              <div class="field">
+                <label>Usage (30d)</label>
+                <input id="usage" class="input" type="number" min="0" max="100" value="68" />
+              </div>
+              <div class="field">
+                <label>CSAT</label>
+                <input id="csat" class="input" type="number" min="0" max="100" value="84" />
+              </div>
+              <div class="field">
+                <label>Renewal in (days)</label>
+                <input id="renewal" class="input" type="number" min="1" max="365" value="75" />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn primary" id="btnRun" type="button">Run pipeline</button>
+              <button class="btn" id="btnDemo" type="button">Download demo CSV</button>
+              <span class="tiny muted" id="runNote">Tip: tweak a few fields and run again.</span>
+            </div>
+
+            <div class="tableWrap" aria-label="Demo dataset preview">
+              <table>
+                <thead>
+                  <tr>
+                    <th>account_id</th><th>tier</th><th>arr_k</th><th>seats</th><th>usage_30d</th><th>csat</th><th>renewal_days</th><th>nrr_next_q</th><th>risk_band</th>
+                  </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right -->
+        <aside class="rightCol" aria-label="KPIs and Next Best Action">
+          <section class="panel">
+            <div class="panelHead">
+              <div>
+                <h3>Executive KPIs</h3>
+                <div class="tiny muted">Graphical KPIs teams expect to see.</div>
+              </div>
+              <span class="badge" id="asof">As of —</span>
+            </div>
+
+            <div class="kpis">
+              <!-- NRR (sparkline) -->
+              <div class="kpi">
+                <div class="meta">
+                  <div class="l">Net Revenue Retention</div>
+                  <div class="v" id="kNRR">—</div>
+                  <div class="s">
+                    <span class="delta up" id="dNRR">—</span>
+                    <span class="tiny muted" id="kNRRsub">—</span>
+                  </div>
+                </div>
+                <div class="mini" aria-hidden="true"><canvas id="spNRR"></canvas></div>
+              </div>
+
+              <!-- GRR (sparkline) -->
+              <div class="kpi">
+                <div class="meta">
+                  <div class="l">Gross Revenue Retention</div>
+                  <div class="v" id="kGRR">—</div>
+                  <div class="s">
+                    <span class="delta flat" id="dGRR">—</span>
+                    <span class="tiny muted" id="kGRRsub">—</span>
+                  </div>
+                </div>
+                <div class="mini" aria-hidden="true"><canvas id="spGRR"></canvas></div>
+              </div>
+
+              <!-- At-risk ARR (ring) -->
+              <div class="kpi">
+                <div class="meta">
+                  <div class="l">At-risk ARR (next 90d)</div>
+                  <div class="v" id="kAtRisk">—</div>
+                  <div class="s">
+                    <span class="delta down" id="dRisk">—</span>
+                    <span class="tiny muted" id="kAtRiskSub">—</span>
+                  </div>
+                </div>
+                <div class="ring" aria-hidden="true">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="6"/>
+                    <circle id="ringRisk" cx="22" cy="22" r="17" fill="none" stroke="rgba(253,224,71,0.70)" stroke-width="6" stroke-linecap="round"
+                            stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+                  </svg>
+                  <div class="t" id="ringRiskTxt">—</div>
+                </div>
+              </div>
+
+              <!-- Risk band (pill + microbar) -->
+              <div class="kpi">
+                <div class="meta">
+                  <div class="l">Risk band</div>
+                  <div class="v" id="kBand">—</div>
+                  <div class="s">
+                    <span class="pillRisk" id="riskPill"><span class="dot"></span><span id="riskLabel">—</span></span>
+                    <span class="delta flat" id="dBand">—</span>
+                  </div>
+                </div>
+                <div class="mini" aria-hidden="true"><canvas id="spRisk"></canvas></div>
+              </div>
+
+              <!-- Expansion (ring) -->
+              <div class="kpi">
+                <div class="meta">
+                  <div class="l">Expansion potential</div>
+                  <div class="v" id="kExp">—</div>
+                  <div class="s">
+                    <span class="delta up" id="dExp">—</span>
+                    <span class="tiny muted">Upsell propensity proxy</span>
+                  </div>
+                </div>
+                <div class="ring" aria-hidden="true">
+                  <svg viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="6"/>
+                    <circle id="ringExp" cx="22" cy="22" r="17" fill="none" stroke="rgba(34,211,238,0.70)" stroke-width="6" stroke-linecap="round"
+                            stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+                  </svg>
+                  <div class="t" id="ringExpTxt">—</div>
+                </div>
+              </div>
+
+              <!-- Drift (sparkline) -->
+              <div class="kpi">
+                <div class="meta">
+                  <div class="l">Drift score</div>
+                  <div class="v" id="kDrift">—</div>
+                  <div class="s">
+                    <span class="delta flat" id="dDrift">—</span>
+                    <span class="tiny muted" id="kDriftSub">—</span>
+                  </div>
+                </div>
+                <div class="mini" aria-hidden="true"><canvas id="spDrift"></canvas></div>
+              </div>
             </div>
           </section>
 
-          <section class="panel pad reveal">
-            <div class="title">Pipeline events</div>
-            <div class="tiny muted" style="margin-top:6px">Simulated stream logs.</div>
-            <div class="terminal" style="margin-top:12px">
-              <div class="log" id="pipeLog"></div>
+          <section class="panel" style="flex:1">
+            <div class="panelHead">
+              <div>
+                <h3>Next Best Actions</h3>
+                <div class="tiny muted">Actions change based on risk + opportunity.</div>
+              </div>
+              <span class="badge" id="nbaBadge">—</span>
+            </div>
+
+            <div class="nba" id="nba"></div>
+
+            <div class="tiny muted" style="margin-top: 14px;">
+              <strong>Production swap:</strong> export a trained model to ONNX, load with <span class="pill2">onnxruntime-web</span>, keep the same UI.
             </div>
           </section>
         </aside>
       </div>
     </section>
 
-    <footer>
-      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:18px;">
-        <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
+    <footer class="foot">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
+        <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
         <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
           <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
           <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
@@ -602,379 +727,673 @@
   </main>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+  (() => {
+    'use strict';
 
-    // Reveal
-    const revealItems = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries)=>{
-      for (const e of entries){
-        if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-      }
-    },{threshold:.12});
-    revealItems.forEach(el=>io.observe(el));
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-    // Parallax
+    // Parallax layers
     const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-    let latestY=0, ticking=false;
+    let latestY = 0, ticking = false;
     function applyParallax(){
       const y = latestY;
-      for (const el of layers){
-        const s = parseFloat(el.getAttribute('data-parallax')||'0.1');
-        el.style.transform = `translate3d(0, ${-y*s}px, 0)`;
+      for (const el of layers) {
+        const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
+        el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
       }
-      ticking=false;
+      ticking = false;
     }
     function onScroll(){
       latestY = window.scrollY || 0;
-      if (!ticking){ requestAnimationFrame(applyParallax); ticking=true; }
+      if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
     }
-    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('scroll', onScroll, { passive:true });
     window.addEventListener('resize', onScroll);
     onScroll();
 
-    // ===== Live simulation (no network) =====
-    const el = (id)=>document.getElementById(id);
-    const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-    const lerp=(a,b,t)=>a+(b-a)*t;
-    const ease=(t)=> t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
+    // Elements
+    const btnRun = document.getElementById('btnRun');
+    const btnDemo = document.getElementById('btnDemo');
+    const btnPause = document.getElementById('btnPause');
 
-    const lossEl=el('loss'), aucEl=el('auc'), accEl=el('acc'), driftEl=el('drift');
-    const epochEl=el('epochTag'), statusEl=el('status'), gateEl=el('gate'), deployBadge=el('deployBadge');
+    const tierEl = document.getElementById('tier');
+    const arrEl = document.getElementById('arr');
+    const seatsEl = document.getElementById('seats');
+    const usageEl = document.getElementById('usage');
+    const csatEl = document.getElementById('csat');
+    const renewalEl = document.getElementById('renewal');
 
-    const tpEl=el('tp'), fpEl=el('fp'), fnEl=el('fn'), tnEl=el('tn');
-    const bars={tp:el('tpb'),fp:el('fpb'),fn:el('fnb'),tn:el('tnb')};
+    const chipState = document.getElementById('chipState');
+    const chipLive = document.getElementById('chipLive');
+    const chipWarn = document.getElementById('chipWarn');
+    const chipBad  = document.getElementById('chipBad');
+    const rt = document.getElementById('rt');
+    const lg1 = document.getElementById('lg1');
+    const lg2 = document.getElementById('lg2');
+    const engineBadge = document.getElementById('engineBadge');
 
-    const nullsEl=el('nulls'), outEl=el('outliers'), dupEl=el('dupes');
-    const dropNulls=el('dropNulls'), clampOut=el('clamp'), dedupe=el('dedupe');
-    const dropNullsFill=el('dropNullsFill'), clampFill=el('clampFill'), dedupeFill=el('dedupeFill');
+    const kNRR = document.getElementById('kNRR');
+    const kNRRsub = document.getElementById('kNRRsub');
+    const kGRR = document.getElementById('kGRR');
+    const kGRRsub = document.getElementById('kGRRsub');
+    const kAtRisk = document.getElementById('kAtRisk');
+    const kAtRiskSub = document.getElementById('kAtRiskSub');
+    const kBand = document.getElementById('kBand');
+    const kExp = document.getElementById('kExp');
+    const kDrift = document.getElementById('kDrift');
+    const kDriftSub = document.getElementById('kDriftSub');
+    const asof = document.getElementById('asof');
 
-    const curve=el('curve'), area=el('area'), marker=el('marker');
+    const dNRR = document.getElementById('dNRR');
+    const dGRR = document.getElementById('dGRR');
+    const dRisk = document.getElementById('dRisk');
+    const dBand = document.getElementById('dBand');
+    const dExp = document.getElementById('dExp');
+    const dDrift = document.getElementById('dDrift');
 
-    const driftLine=el('driftLine'), driftDot=el('driftDot');
-    const alertDot=el('alertDot'), alertText=el('alertText');
+    const ringRisk = document.getElementById('ringRisk');
+    const ringRiskTxt = document.getElementById('ringRiskTxt');
+    const ringExp = document.getElementById('ringExp');
+    const ringExpTxt = document.getElementById('ringExpTxt');
 
-    const ragLog=el('ragLog'), pipeLog=el('pipeLog');
-    const pauseBtn=el('pauseBtn'), restartBtn=el('restartBtn');
+    const riskPill = document.getElementById('riskPill');
+    const riskLabel = document.getElementById('riskLabel');
 
-    const fiHost = el('fi');
+    const nba = document.getElementById('nba');
+    const nbaBadge = document.getElementById('nbaBadge');
 
-    let paused=false;
-    let start=performance.now();
-    let epoch=1;
+    const rowsEl = document.getElementById('rows');
 
-    el('runId').textContent = 'run_' + Math.random().toString(16).slice(2,6);
-    el('seed').textContent = String(10 + Math.floor(Math.random()*90));
+    // Big board canvases
+    const c1 = document.getElementById('c1');
+    const c2 = document.getElementById('c2');
+    const ctx1 = c1.getContext('2d');
+    const ctx2 = c2.getContext('2d');
 
-    function ts(){
-      const d=new Date();
-      const hh=String(d.getHours()).padStart(2,'0');
-      const mm=String(d.getMinutes()).padStart(2,'0');
-      const ss=String(d.getSeconds()).padStart(2,'0');
-      return `${hh}:${mm}:${ss}`;
+    // Sparklines
+    const spNRR = document.getElementById('spNRR').getContext('2d');
+    const spGRR = document.getElementById('spGRR').getContext('2d');
+    const spRisk = document.getElementById('spRisk').getContext('2d');
+    const spDrift = document.getElementById('spDrift').getContext('2d');
+
+    function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function now(){ return (performance && performance.now) ? performance.now() : Date.now(); }
+    function pct(x){ return (x*100).toFixed(1) + '%'; }
+    function moneyK(x){ return '£' + x.toFixed(0) + 'k'; }
+
+    function fitCanvas(cv, ctx){
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const r = cv.getBoundingClientRect();
+      const w = Math.max(2, Math.floor(r.width));
+      const h = Math.max(2, Math.floor(r.height));
+      cv.width = Math.floor(w * dpr);
+      cv.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      return { w, h };
     }
-    function addLog(container, message, html=false){
-      const line=document.createElement('div');
-      line.className='line mono';
-      const t=document.createElement('div'); t.className='ts'; t.textContent=ts();
-      const m=document.createElement('div'); m.className='msg';
-      if(html) m.innerHTML=message; else m.textContent=message;
-      line.appendChild(t); line.appendChild(m);
-      container.appendChild(line);
-      while(container.children.length>10) container.removeChild(container.firstChild);
+
+    function fitSmall(ctx, canvasEl){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const r = canvasEl.getBoundingClientRect();
+      const w = Math.max(2, Math.floor(r.width));
+      const h = Math.max(2, Math.floor(r.height));
+      canvasEl.width = Math.floor(w * dpr);
+      canvasEl.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      return { w, h };
     }
 
-    const docs=[
-      "Retrieved: policy_handbook_v2.pdf (score 0.78)",
-      "Retrieved: onboarding_playbook.md (score 0.74)",
-      "Retrieved: incident_runbook.yaml (score 0.72)",
-      "Retrieved: customer_terms_2025.docx (score 0.69)",
-      "Retrieved: pricing_matrix.csv (score 0.66)",
-      "Retrieved: architecture_overview.png (score 0.64)",
-    ];
-    const pipeEvents=[
-      "ingest: batch received (32k rows)",
-      "clean: schema enforced + null handling",
-      "clean: outlier clamp (winsorize p=0.98)",
-      "train: gradient step applied",
-      "validate: slice checks passed",
-      "deploy: staging rollout started",
-      "monitor: drift window updated",
+    // ---- Demo data (accounts) ----
+    const demo = [
+      { account_id:'AC-1021', tier:'mid', arr_k:180, seats:120, usage_30d:68, csat:84, renewal_days:75, nrr_next_q:1.08, risk_band:'Medium' },
+      { account_id:'AC-1007', tier:'ent', arr_k:720, seats:680, usage_30d:82, csat:88, renewal_days:140, nrr_next_q:1.12, risk_band:'Low' },
+      { account_id:'AC-1094', tier:'smb', arr_k:28, seats:35, usage_30d:44, csat:71, renewal_days:45, nrr_next_q:0.92, risk_band:'High' },
+      { account_id:'AC-1058', tier:'mid', arr_k:240, seats:210, usage_30d:61, csat:79, renewal_days:95, nrr_next_q:1.03, risk_band:'Medium' },
+      { account_id:'AC-1012', tier:'smb', arr_k:18, seats:22, usage_30d:52, csat:76, renewal_days:30, nrr_next_q:0.98, risk_band:'Medium' },
+      { account_id:'AC-1110', tier:'ent', arr_k:980, seats:1200, usage_30d:74, csat:86, renewal_days:210, nrr_next_q:1.06, risk_band:'Low' },
     ];
 
-    // feature importance base (will shift)
-    const features = [
-      {name:"tenure_months", v:0.18},
-      {name:"usage_7d", v:0.16},
-      {name:"region", v:0.12},
-      {name:"support_tickets", v:0.11},
-      {name:"plan_type", v:0.10},
-      {name:"price_change", v:0.09},
-      {name:"sessions_30d", v:0.08},
-      {name:"latency_ms", v:0.06},
-    ];
-
-    function renderFeatures(vals){
-      fiHost.innerHTML = "";
-      const max = Math.max(...vals.map(x=>x.v));
-      vals.slice(0,8).forEach((f)=>{
-        const row=document.createElement('div');
-        row.className='fi-row';
-        const top=document.createElement('div');
-        top.className='fi-top';
-        const n=document.createElement('div'); n.className='fi-name mono'; n.textContent=f.name;
-        const v=document.createElement('div'); v.className='fi-val mono'; v.textContent=f.v.toFixed(3);
-        top.appendChild(n); top.appendChild(v);
-        const tr=document.createElement('div'); tr.className='fi-track';
-        const fl=document.createElement('div'); fl.className='fi-fill';
-        fl.style.width = `${clamp((f.v/max)*92, 6, 100)}%`;
-        tr.appendChild(fl);
-        row.appendChild(top);
-        row.appendChild(tr);
-        fiHost.appendChild(row);
+    function renderTable(){
+      rowsEl.innerHTML = '';
+      demo.slice(0,6).forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.account_id}</td>
+          <td>${r.tier}</td>
+          <td>${r.arr_k}</td>
+          <td>${r.seats}</td>
+          <td>${r.usage_30d}</td>
+          <td>${r.csat}</td>
+          <td>${r.renewal_days}</td>
+          <td>${r.nrr_next_q.toFixed(2)}</td>
+          <td>${r.risk_band}</td>
+        `;
+        rowsEl.appendChild(tr);
       });
     }
 
-    // curve sample points
-    const pts = Array.from({length:64}, ()=>({y:0.75}));
+    // Download demo CSV
+    function demoCSV(){
+      const header = ['account_id','tier','arr_k','seats','usage_30d','csat','renewal_days','nrr_next_q','risk_band'].join(',');
+      const rows = demo.map(d => [d.account_id,d.tier,d.arr_k,d.seats,d.usage_30d,d.csat,d.renewal_days,d.nrr_next_q.toFixed(2),d.risk_band].join(','));
+      return [header, ...rows].join('\n');
+    }
+    function downloadText(filename, text){
+      const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 800);
+    }
+    btnDemo.addEventListener('click', () => downloadText('accounts_retention_demo.csv', demoCSV()));
 
-    function buildPath(values){
-      const X0=40, Y0=20, W=660, H=220;
-      let d='';
-      for(let i=0;i<values.length;i++){
-        const x = X0 + (i/(values.length-1))*W;
-        const y = Y0 + (1-values[i])*H;
-        d += (i===0 ? `M ${x.toFixed(2)} ${y.toFixed(2)}` : ` L ${x.toFixed(2)} ${y.toFixed(2)}`);
+    // ---- Model-ish scoring (business-friendly) ----
+    let drift = 0.10;
+    let driftTrend = 0.0007;
+
+    function updateDrift(){
+      const shock = (Math.random() < 0.015) ? (0.06 + Math.random()*0.10) : 0;
+      drift = clamp(drift + driftTrend + (Math.random()-0.5)*0.01 + shock, 0.02, 0.92);
+      if (drift > 0.55) driftTrend = -0.002;
+      else if (drift < 0.16) driftTrend = 0.0010;
+    }
+
+    function features(){
+      return {
+        tier: String(tierEl.value),
+        arr_k: Number(arrEl.value||0),
+        seats: Number(seatsEl.value||0),
+        usage: Number(usageEl.value||0),
+        csat: Number(csatEl.value||0),
+        renewal: Number(renewalEl.value||0),
+        drift
+      };
+    }
+
+    function scoreRetention(f){
+      const tierAdj = (f.tier === 'ent') ? 0.04 : (f.tier === 'smb' ? -0.03 : 0.0);
+
+      const health = clamp(0.55 + (f.usage-50)/120 + (f.csat-75)/150 + tierAdj, 0.05, 0.95);
+      const renewalPressure = clamp(1 - (f.renewal/220), 0, 1);
+      const driftPenalty = f.drift * 0.10;
+
+      let grr = clamp(0.86 + (health-0.55)*0.22 - renewalPressure*0.10 - driftPenalty, 0.60, 0.98);
+
+      const seatScale = clamp(Math.log10(f.seats+10)/4, 0, 1);
+      const exp = clamp(0.02 + (health-0.55)*0.08 + seatScale*0.06, 0.0, 0.22);
+
+      let nrr = clamp(grr + exp, 0.75, 1.35);
+
+      const risk = clamp(1 - grr + renewalPressure*0.08 + driftPenalty*0.6, 0.02, 0.85);
+
+      const conf = clamp((0.78 + (health-0.55)*0.18) * (1 - f.drift*0.55), 0.18, 0.95);
+
+      return { nrr, grr, exp, risk, conf, health, renewalPressure };
+    }
+
+    function riskBand(r){
+      if (r < 0.25) return 'Low';
+      if (r < 0.50) return 'Medium';
+      return 'High';
+    }
+
+    function setRiskUI(band){
+      kBand.textContent = band;
+      const dot = riskPill.querySelector('.dot');
+      dot.classList.remove('g','y','r');
+      if (band === 'Low') dot.classList.add('g');
+      if (band === 'Medium') dot.classList.add('y');
+      if (band === 'High') dot.classList.add('r');
+      riskLabel.textContent = band + ' risk';
+    }
+
+    function setDriftUI(){
+      kDrift.textContent = (drift*100).toFixed(0) + '%';
+      if (drift < 0.35){
+        kDriftSub.textContent = 'Stable';
+        chipWarn.style.display = 'none'; chipBad.style.display = 'none';
+      } else if (drift < 0.55){
+        kDriftSub.textContent = 'Investigate shift';
+        chipWarn.style.display = ''; chipBad.style.display = 'none';
+      } else {
+        kDriftSub.textContent = 'Alert: retrain recommended';
+        chipWarn.style.display = 'none'; chipBad.style.display = '';
       }
-      return d;
+      lg2.textContent = drift < 0.35 ? 'Stable' : (drift < 0.55 ? 'Rising' : 'Critical');
     }
-    function buildArea(values){
-      const X0=40, Y0=20, W=660, H=220;
-      let d='';
-      for(let i=0;i<values.length;i++){
-        const x = X0 + (i/(values.length-1))*W;
-        const y = Y0 + (1-values[i])*H;
-        d += (i===0 ? `M ${x.toFixed(2)} ${y.toFixed(2)}` : ` L ${x.toFixed(2)} ${y.toFixed(2)}`);
+
+    function pickNBA(out, f){
+      const items = [];
+      const band = riskBand(out.risk);
+      const big = f.arr_k >= 400;
+      const lowUsage = f.usage < 55;
+      const lowCsat = f.csat < 78;
+      const closeRenewal = f.renewal < 60;
+
+      if (band === 'High' || closeRenewal){
+        items.push({ title: 'Renewal save plan (30-day)',
+          body: 'Run a renewal playbook: exec sponsor, success plan, weekly risk review until renewal.',
+          lift: 0.14 });
       }
-      d += ` L ${X0+W} ${Y0+H} L ${X0} ${Y0+H} Z`;
-      return d;
-    }
-
-    // drift strip points (60 min)
-    const driftPts = Array.from({length:36}, (_,i)=>({v:0.14 + i*0.001}));
-    function buildDrift(values){
-      const X0=20, Y0=16, W=680, H=44;
-      let d='';
-      for(let i=0;i<values.length;i++){
-        const x = X0 + (i/(values.length-1))*W;
-        const y = Y0 + (1-values[i])*H;
-        d += (i===0 ? `M ${x.toFixed(2)} ${y.toFixed(2)}` : ` L ${x.toFixed(2)} ${y.toFixed(2)}`);
+      if (lowUsage){
+        items.push({ title: 'Adoption sprint',
+          body: 'Enablement sprint: onboarding refresh + adoption targets across key teams.',
+          lift: 0.10 });
       }
-      return d;
+      if (lowCsat){
+        items.push({ title: 'Service recovery + roadmap alignment',
+          body: 'Close top pain points, confirm fix dates, and align roadmap priorities with stakeholders.',
+          lift: 0.09 });
+      }
+      if (out.exp > 0.08 && band !== 'High'){
+        items.push({ title: 'Expansion motion',
+          body: 'Seat growth forecast, value review, and an expansion proposal with clear ROI.',
+          lift: 0.08 });
+      }
+      if (big){
+        items.push({ title: 'Executive business review',
+          body: 'Schedule an EBR with outcomes + ROI narrative; reduces churn for strategic accounts.',
+          lift: 0.07 });
+      }
+      if (items.length < 3){
+        items.push({ title: 'Health score instrumentation',
+          body: 'Tighten telemetry: adoption, usage frequency, stakeholder mapping for better forecasting.',
+          lift: 0.06 });
+      }
+      items.sort((a,b)=>b.lift-a.lift);
+      return items.slice(0,3);
     }
 
-    function updateCM(q){
-      const total=1400;
-      const tp=Math.round(lerp(420, 640, q));
-      const fp=Math.round(lerp(210, 85, q));
-      const fn=Math.round(lerp(190, 90, q));
-      const tn= total - tp - fp - fn;
-      tpEl.textContent=tp; fpEl.textContent=fp; fnEl.textContent=fn; tnEl.textContent=tn;
-
-      bars.tp.style.width = `${clamp(20 + q*80, 0, 100)}%`;
-      bars.fp.style.width = `${clamp(20 + (1-q)*80, 0, 100)}%`;
-      bars.fn.style.width = `${clamp(20 + (1-q)*80, 0, 100)}%`;
-      bars.tn.style.width = `${clamp(20 + q*80, 0, 100)}%`;
+    function renderNBA(items){
+      nba.innerHTML = '';
+      items.forEach((it, idx) => {
+        const el = document.createElement('div');
+        el.className = 'nbaCard';
+        const width = Math.round(clamp(it.lift, 0, 0.18)/0.18 * 100);
+        el.innerHTML = `
+          <div class="nbaTop">
+            <div class="nbaTitle">${idx+1}. ${it.title}</div>
+            <span class="badge">Δ ${(it.lift*100).toFixed(0)}%</span>
+          </div>
+          <div class="nbaBody">${it.body}</div>
+          <div class="bar"><i style="width:${width}%"></i></div>
+        `;
+        nba.appendChild(el);
+      });
     }
 
-    function resetRun(){
-      start=performance.now();
-      epoch=1;
-      statusEl.textContent="training";
-      gateEl.textContent="pending";
-      gateEl.style.color="rgba(253,224,71,.86)";
-      deployBadge.textContent="pending";
-      ragLog.innerHTML="";
-      pipeLog.innerHTML="";
-      addLog(pipeLog,"pipeline: run started");
-      addLog(ragLog,docs[Math.floor(Math.random()*docs.length)]);
-      renderFeatures(features);
+    // ---- Charts ----
+    const nrrSeries = [];
+    const grrSeries = [];
+    const riskSeries = [];
+    const driftSeries = [];
+    const maxPts = 64;
+
+    function drawExecutive(){
+      const { w, h } = fitCanvas(c1, ctx1);
+      ctx1.clearRect(0,0,w,h);
+
+      const g = ctx1.createRadialGradient(w*0.55, h*0.35, 10, w*0.55, h*0.55, Math.max(w,h));
+      g.addColorStop(0, 'rgba(0,0,0,0)');
+      g.addColorStop(1, 'rgba(0,0,0,0.35)');
+      ctx1.fillStyle = g;
+      ctx1.fillRect(0,0,w,h);
+
+      ctx1.fillStyle = 'rgba(242,244,255,0.78)';
+      ctx1.font = '700 12px ui-sans-serif, system-ui';
+      ctx1.fillText('NRR / GRR forecast (next quarter)', 12, 18);
+
+      const pad = 14;
+      const top = 36;
+      const boxW = w - pad*2;
+      const chartH = Math.max(120, Math.floor(h*0.52));
+      const chartTop = top;
+      const chartBottom = chartTop + chartH;
+
+      ctx1.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx1.strokeRect(pad, chartTop, boxW, chartH);
+
+      const yMin = 0.75, yMax = 1.35;
+      const yFor = v => chartTop + (1 - (v-yMin)/(yMax-yMin))*chartH;
+
+      ctx1.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx1.lineWidth = 1;
+      for (let k=0;k<=6;k++){
+        const y = chartTop + (k/6)*chartH;
+        ctx1.beginPath(); ctx1.moveTo(pad, y); ctx1.lineTo(pad+boxW, y); ctx1.stroke();
+      }
+
+      function drawLine(series, color){
+        if (series.length < 2) return;
+        ctx1.strokeStyle = color;
+        ctx1.lineWidth = 2;
+        ctx1.beginPath();
+        for (let i=0;i<series.length;i++){
+          const x = pad + (i/(series.length-1))*boxW;
+          const y = yFor(series[i]);
+          if (i===0) ctx1.moveTo(x,y); else ctx1.lineTo(x,y);
+        }
+        ctx1.stroke();
+      }
+      drawLine(grrSeries, 'rgba(34,211,238,0.55)');
+      drawLine(nrrSeries, 'rgba(253,224,71,0.55)');
+
+      ctx1.fillStyle = 'rgba(34,211,238,0.70)';
+      ctx1.font = '600 12px ui-sans-serif, system-ui';
+      ctx1.fillText('GRR', pad+10, chartTop+16);
+      ctx1.fillStyle = 'rgba(253,224,71,0.78)';
+      ctx1.fillText('NRR', pad+50, chartTop+16);
+
+      const distTop = chartBottom + 28;
+      const distH = h - distTop - 18;
+
+      ctx1.fillStyle = 'rgba(242,244,255,0.78)';
+      ctx1.font = '700 12px ui-sans-serif, system-ui';
+      ctx1.fillText('Risk distribution (stream)', 12, distTop-10);
+
+      ctx1.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx1.strokeRect(pad, distTop, boxW, distH);
+
+      const bins = 10;
+      const counts = new Array(bins).fill(0);
+      for (const r of riskSeries){
+        const b = clamp(Math.floor(r * bins), 0, bins-1);
+        counts[b] += 1;
+      }
+      const maxC = Math.max(1, ...counts);
+      const bw = boxW / bins;
+
+      for (let i=0;i<bins;i++){
+        const u = i/(bins-1);
+        const x = pad + i*bw;
+        const bh = (counts[i]/maxC)*distH;
+
+        let col = 'rgba(163,255,176,0.28)';
+        if (u > 0.33) col = 'rgba(253,224,71,0.25)';
+        if (u > 0.66) col = 'rgba(255,90,90,0.22)';
+
+        ctx1.fillStyle = col;
+        ctx1.fillRect(x+4, distTop + (distH-bh), bw-8, bh);
+      }
     }
 
-    pauseBtn.addEventListener('click', ()=>{
-      paused = !paused;
-      pauseBtn.textContent = paused ? "Resume" : "Pause";
+    function drawDrift(){
+      const { w, h } = fitCanvas(c2, ctx2);
+      ctx2.clearRect(0,0,w,h);
+
+      const g = ctx2.createRadialGradient(w*0.60, h*0.30, 10, w*0.55, h*0.55, Math.max(w,h));
+      g.addColorStop(0, 'rgba(0,0,0,0)');
+      g.addColorStop(1, 'rgba(0,0,0,0.35)');
+      ctx2.fillStyle = g;
+      ctx2.fillRect(0,0,w,h);
+
+      ctx2.fillStyle = 'rgba(242,244,255,0.78)';
+      ctx2.font = '700 12px ui-sans-serif, system-ui';
+      ctx2.fillText('Drift (PSI-like proxy)', 12, 18);
+
+      const pad = 14;
+      const boxW = w - pad*2;
+      const y = 44, barH = 14;
+
+      ctx2.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx2.fillRect(pad, y, boxW, barH);
+
+      let col = 'rgba(163,255,176,0.55)';
+      if (drift > 0.35) col = 'rgba(253,224,71,0.55)';
+      if (drift > 0.55) col = 'rgba(255,90,90,0.55)';
+      ctx2.fillStyle = col;
+      ctx2.fillRect(pad, y, boxW*drift, barH);
+
+      ctx2.strokeStyle = 'rgba(255,255,255,0.14)';
+      ctx2.strokeRect(pad, y, boxW, barH);
+
+      const top = 92;
+      const hH = h - top - 18;
+      ctx2.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx2.strokeRect(pad, top, boxW, hH);
+
+      const bins = 18;
+      const bw = boxW / bins;
+      for (let i=0;i<bins;i++){
+        const u = i/(bins-1);
+        const base = Math.exp(-Math.pow((u-0.55)/0.22,2));
+        const cur = Math.exp(-Math.pow((u-(0.55 + (drift-0.15)*0.25))/0.22,2));
+        const x = pad + i*bw;
+
+        ctx2.fillStyle = 'rgba(34,211,238,0.18)';
+        ctx2.fillRect(x, top + hH*(1-base), bw-2, hH*base);
+
+        ctx2.fillStyle = 'rgba(253,224,71,0.16)';
+        ctx2.fillRect(x, top + hH*(1-cur), bw-2, hH*cur);
+      }
+    }
+
+    // ---- KPI graphics helpers ----
+    function drawSpark(ctx, canvasEl, series, colorA, colorB){
+      const { w, h } = fitSmall(ctx, canvasEl);
+      ctx.clearRect(0,0,w,h);
+
+      // background vignette
+      const g = ctx.createRadialGradient(w*0.35, h*0.20, 8, w*0.55, h*0.55, Math.max(w,h));
+      g.addColorStop(0, 'rgba(255,255,255,0.05)');
+      g.addColorStop(1, 'rgba(0,0,0,0.20)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+
+      if (series.length < 2) return;
+
+      const min = Math.min(...series);
+      const max = Math.max(...series);
+      const pad = 6;
+      const X = i => pad + (i/(series.length-1))*(w - pad*2);
+      const Y = v => pad + (1 - (v-min)/Math.max(1e-6, (max-min)))*(h - pad*2);
+
+      // line
+      ctx.strokeStyle = colorA;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i=0;i<series.length;i++){
+        const x = X(i), y = Y(series[i]);
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+
+      // subtle fill
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = colorB;
+      ctx.beginPath();
+      ctx.moveTo(X(0), h-pad);
+      for (let i=0;i<series.length;i++) ctx.lineTo(X(i), Y(series[i]));
+      ctx.lineTo(X(series.length-1), h-pad);
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function setRing(el, txtEl, value01){
+      const C = 106.8; // approx circumference for r=17
+      const v = clamp(value01, 0, 1);
+      const off = C * (1 - v);
+      el.style.strokeDashoffset = String(off);
+      txtEl.textContent = Math.round(v*100) + '%';
+    }
+
+    function setDelta(el, val){
+      // val expected like +0.02 or -0.01 etc
+      const s = (val>=0 ? '+' : '') + (val*100).toFixed(1) + '%';
+      el.textContent = s;
+      el.classList.remove('up','down','flat');
+      if (Math.abs(val) < 0.003) el.classList.add('flat');
+      else if (val > 0) el.classList.add('up');
+      else el.classList.add('down');
+    }
+
+    // ---- Stream + run ----
+    async function runOnce(source){
+      const t0 = now();
+      chipState.textContent = 'Running';
+      rt.textContent = '—';
+
+      const f = features();
+      await new Promise(r => setTimeout(r, 170 + Math.random()*240));
+
+      const out = scoreRetention(f);
+      const band = riskBand(out.risk);
+
+      // KPIs
+      kNRR.textContent = pct(out.nrr);
+      kGRR.textContent = pct(out.grr);
+      kNRRsub.textContent = `Conf ${(out.conf*100).toFixed(0)}% • tier ${f.tier.toUpperCase()}`;
+      kGRRsub.textContent = `Renewal pressure ${(out.renewalPressure*100).toFixed(0)}%`;
+      setRiskUI(band);
+
+      const atRisk = f.arr_k * out.risk * 0.85;
+      kAtRisk.textContent = moneyK(atRisk);
+      kAtRiskSub.textContent = `Account ARR £${f.arr_k.toFixed(0)}k • risk ${(out.risk*100).toFixed(0)}%`;
+
+      kExp.textContent = pct(out.exp);
+      setDriftUI();
+
+      // Series
+      nrrSeries.push(out.nrr);
+      grrSeries.push(out.grr);
+      riskSeries.push(out.risk);
+      driftSeries.push(drift);
+
+      while (nrrSeries.length > maxPts){ nrrSeries.shift(); grrSeries.shift(); riskSeries.shift(); driftSeries.shift(); }
+
+      // Board charts
+      lg1.textContent = `NRR ${pct(out.nrr)} • GRR ${pct(out.grr)} • ${band}`;
+      drawExecutive();
+      drawDrift();
+
+      // KPI sparklines
+      const nrrMin = 0.80, nrrMax = 1.30;
+      const grrMin = 0.65, grrMax = 0.98;
+
+      drawSpark(spNRR, spNRR.canvas, nrrSeries.map(v => clamp((v-nrrMin)/(nrrMax-nrrMin),0,1)), 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
+      drawSpark(spGRR, spGRR.canvas, grrSeries.map(v => clamp((v-grrMin)/(grrMax-grrMin),0,1)), 'rgba(34,211,238,0.75)', 'rgba(34,211,238,0.55)');
+      drawSpark(spRisk, spRisk.canvas, riskSeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
+      drawSpark(spDrift, spDrift.canvas, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
+
+      // KPI rings
+      setRing(ringRisk, ringRiskTxt, out.risk);
+      setRing(ringExp, ringExpTxt, clamp(out.exp/0.22, 0, 1));
+
+      // Deltas (compare recent point to previous)
+      const i = nrrSeries.length-1;
+      const prevNRR = nrrSeries[i-1] ?? out.nrr;
+      const prevGRR = grrSeries[i-1] ?? out.grr;
+      const prevRisk = riskSeries[i-1] ?? out.risk;
+      const prevExp = (i>0 ? ( (grrSeries[i-1] ?? out.grr) + (out.exp) ) : out.exp);
+
+      setDelta(dNRR, (out.nrr - prevNRR));
+      setDelta(dGRR, (out.grr - prevGRR));
+      setDelta(dRisk, -(out.risk - prevRisk)); // lower risk is "up"
+      setDelta(dExp, (out.exp - (out.exp))); // keep stable (proxy)
+      setDelta(dDrift, (drift - (driftSeries[i-1] ?? drift)));
+
+      dBand.textContent = (band === 'High') ? 'Needs action' : (band === 'Medium' ? 'Watchlist' : 'Healthy');
+      dBand.classList.remove('up','down','flat');
+      dBand.classList.add(band === 'High' ? 'down' : (band === 'Medium' ? 'flat' : 'up'));
+
+      // NBA
+      const actions = pickNBA(out, f);
+      renderNBA(actions);
+      nbaBadge.textContent = (band === 'High') ? 'Retention priority' : (band === 'Medium' ? 'Watchlist' : 'Healthy');
+
+      const ms = Math.round(now() - t0);
+      rt.textContent = `${ms}ms • ${source}`;
+      chipState.textContent = 'Live';
+    }
+
+    // streaming behaviour
+    let live = true;
+    let timer = null;
+
+    function nudgeInputs(){
+      const arr = Number(arrEl.value||0);
+      const usage = Number(usageEl.value||0);
+      const csat = Number(csatEl.value||0);
+      const renewal = Number(renewalEl.value||0);
+
+      arrEl.value = clamp(arr + (Math.random()-0.5)*6, 5, 2500).toFixed(0);
+      usageEl.value = clamp(usage + (Math.random()-0.5)*3.5, 0, 100).toFixed(0);
+      csatEl.value = clamp(csat + (Math.random()-0.5)*2.5, 0, 100).toFixed(0);
+      renewalEl.value = clamp(renewal + (Math.random()<0.12 ? -1 : 0) + (Math.random()<0.04 ? -7 : 0), 1, 365).toFixed(0);
+
+      const seats = Number(seatsEl.value||0);
+      seatsEl.value = clamp(seats + (Math.random()<0.10 ? (Math.random()<0.5?10:-10) : 0), 5, 5000);
+    }
+
+    function startStream(){
+      if (timer) return;
+      chipLive.style.display = '';
+      btnPause.textContent = 'Pause';
+      const loop = async () => {
+        if (!live) return;
+        updateDrift();
+        nudgeInputs();
+        await runOnce('stream');
+        timer = setTimeout(loop, 900);
+      };
+      timer = setTimeout(loop, 350);
+    }
+
+    function stopStream(){
+      if (timer){ clearTimeout(timer); timer = null; }
+      chipLive.style.display = 'none';
+      btnPause.textContent = 'Resume';
+    }
+
+    btnPause.addEventListener('click', () => {
+      live = !live;
+      if (live) startStream(); else stopStream();
     });
-    restartBtn.addEventListener('click', ()=>{
-      paused=false;
-      pauseBtn.textContent="Pause";
-      resetRun();
+
+    btnRun.addEventListener('click', () => runOnce('manual'));
+
+    // Init from demo row
+    function initFromDemo(){
+      const d = demo[0];
+      tierEl.value = d.tier;
+      arrEl.value = d.arr_k;
+      seatsEl.value = d.seats;
+      usageEl.value = d.usage_30d;
+      csatEl.value = d.csat;
+      renewalEl.value = d.renewal_days;
+    }
+
+    function setAsOf(){
+      const dt = new Date();
+      const s = dt.toLocaleString(undefined, { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+      asof.textContent = 'As of ' + s;
+    }
+
+    engineBadge.textContent = 'Engine: simulated (ONNX-ready)';
+
+    window.addEventListener('resize', () => {
+      drawExecutive(); drawDrift();
+      // redraw sparklines too
+      drawSpark(spNRR, spNRR.canvas, nrrSeries, 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
+      drawSpark(spGRR, spGRR.canvas, grrSeries, 'rgba(34,211,238,0.75)', 'rgba(34,211,238,0.55)');
+      drawSpark(spRisk, spRisk.canvas, riskSeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
+      drawSpark(spDrift, spDrift.canvas, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
     });
 
-    resetRun();
+    (async function boot(){
+      renderTable();
+      initFromDemo();
+      setAsOf();
+      await runOnce('boot');
+      startStream();
+    })();
 
-    let nextPipe=0, nextRag=0;
-
-    function tick(t){
-      if(!paused){
-        const dt=t-start;
-        const cycle=18000; // a bit longer to show more “real”
-        const p=(dt%cycle)/cycle;
-
-        // "quality" improves within cycle + modest epoch boost
-        const within = ease(clamp((dt%cycle)/(cycle*0.86),0,1));
-        const epochBoost = clamp((epoch-1)*0.06,0,0.30);
-        const q = clamp(0.10 + within*0.80 + epochBoost, 0, 1);
-
-        // status phases
-        let status="training";
-        if(p>0.22 && p<=0.40) status="cleaning";
-        else if(p>0.40 && p<=0.62) status="training";
-        else if(p>0.62 && p<=0.78) status="validating";
-        else if(p>0.78 && p<=0.90) status="deploying";
-        else if(p>0.90) status="monitoring";
-        statusEl.textContent=status;
-
-        // metrics
-        const loss = clamp(1.30 - q*0.98 + Math.sin(t/420)*0.02, 0.18, 1.35);
-        const auc  = clamp(0.56 + q*0.42 + Math.sin(t/650)*0.01, 0.50, 0.999);
-        const acc  = clamp(0.60 + q*0.33 + Math.sin(t/700)*0.008, 0.50, 0.999);
-
-        // drift rises slowly with time, drops a bit when "monitoring actions" happen
-        const driftBase = 0.10 + (dt/120000)*0.06; // slow rise
-        const driftWave = Math.abs(Math.sin(t/1800))*0.06;
-        const drift = clamp(driftBase + driftWave - q*0.10, 0.02, 0.36);
-
-        lossEl.textContent=loss.toFixed(3);
-        aucEl.textContent=auc.toFixed(3);
-        accEl.textContent=acc.toFixed(3);
-        driftEl.textContent=drift.toFixed(2);
-
-        epochEl.textContent=`epoch ${epoch}`;
-
-        // Gate
-        if(auc>0.845 && loss<0.45){
-          gateEl.textContent="pass";
-          gateEl.style.color="rgba(163,255,176,.9)";
-          deployBadge.textContent = (status==="deploying" || status==="monitoring") ? "shipped" : "ready";
-        }else{
-          gateEl.textContent="pending";
-          gateEl.style.color="rgba(253,224,71,.86)";
-          deployBadge.textContent="pending";
-        }
-
-        // Cleaning indicators: higher early, reduce as q improves
-        const nulls = clamp(0.040 - q*0.028 + Math.abs(Math.sin(t/1200))*0.004, 0.002, 0.06);
-        const outliers = clamp(0.030 - q*0.020 + Math.abs(Math.cos(t/1300))*0.003, 0.002, 0.05);
-        const dupes = clamp(0.018 - q*0.012 + Math.abs(Math.sin(t/1500))*0.002, 0.001, 0.03);
-
-        nullsEl.textContent = (nulls*100).toFixed(1) + "%";
-        outEl.textContent = (outliers*100).toFixed(1) + "%";
-        dupEl.textContent = (dupes*100).toFixed(1) + "%";
-
-        // Translate to affected rows
-        const baseRows = 1240000;
-        const dn = Math.round(baseRows*nulls);
-        const co = Math.round(baseRows*outliers);
-        const dd = Math.round(baseRows*dupes);
-
-        dropNulls.textContent = dn.toLocaleString();
-        clampOut.textContent = co.toLocaleString();
-        dedupe.textContent = dd.toLocaleString();
-
-        // fills
-        dropNullsFill.style.width = `${clamp(18 + (1-q)*70, 8, 96)}%`;
-        clampFill.style.width = `${clamp(16 + (1-q)*64, 8, 92)}%`;
-        dedupeFill.style.width = `${clamp(12 + (1-q)*52, 6, 86)}%`;
-
-        // curve values (use "q" shaped + noise that reduces)
-        for(let i=0;i<pts.length;i++){
-          const u=i/(pts.length-1);
-          const noiseAmp=(1-q)*0.10;
-          const wave=Math.sin((t/600)+u*6)*noiseAmp + Math.cos((t/950)+u*3)*noiseAmp*0.7;
-          const base=clamp(0.18 + q*0.78 - (1-u)*0.06 + wave, 0.02, 0.98);
-          pts[i].y = lerp(pts[i].y, base, 0.12);
-        }
-        const values=pts.map(p=>p.y);
-        curve.setAttribute('d', buildPath(values));
-        area.setAttribute('d', buildArea(values));
-
-        const idx=Math.floor(clamp((dt%cycle)/cycle,0,0.999)*(pts.length-1));
-        const X0=40,Y0=20,W=660,H=220;
-        const mx=X0+(idx/(pts.length-1))*W;
-        const my=Y0+(1-values[idx])*H;
-        marker.setAttribute('cx', mx.toFixed(2));
-        marker.setAttribute('cy', my.toFixed(2));
-
-        // confusion matrix
-        updateCM(q);
-
-        // Feature importance shifts with drift (introduce slight reweight)
-        const shift = clamp((drift-0.12)/0.20, 0, 1); // 0..1
-        const jitter = (Math.sin(t/1400)+1)/2 * 0.01;
-        const updated = features.map((f,i)=>{
-          // drift increases importance of "latency_ms" and "support_tickets" a bit
-          let v=f.v;
-          if(f.name==="latency_ms") v += 0.06*shift;
-          if(f.name==="support_tickets") v += 0.04*shift;
-          if(f.name==="usage_7d") v -= 0.04*shift;
-          if(f.name==="sessions_30d") v -= 0.03*shift;
-          v = clamp(v + (i%2? jitter : -jitter), 0.02, 0.30);
-          return {name:f.name, v};
-        }).sort((a,b)=>b.v-a.v);
-        renderFeatures(updated);
-
-        // drift strip update (shift values, keep smooth)
-        driftPts.shift();
-        driftPts.push({v: clamp(0.10 + shift*0.22 + Math.sin(t/1200)*0.02, 0.02, 0.34)});
-        const dv = driftPts.map(p=>p.v/0.36); // normalise
-        driftLine.setAttribute('d', buildDrift(dv));
-        const last = driftPts[driftPts.length-1].v/0.36;
-        const dx = 20 + 680;
-        const dy = 16 + (1-last)*44;
-        driftDot.setAttribute('cx', dx.toFixed(2));
-        driftDot.setAttribute('cy', dy.toFixed(2));
-
-        // alerting
-        if (drift > 0.22){
-          alertText.textContent = "alert";
-          alertText.style.color = "rgba(255,120,120,.92)";
-          alertDot.style.background = "rgba(255,120,120,.92)";
-          alertDot.style.boxShadow = "0 0 18px rgba(255,120,120,.18)";
-        } else {
-          alertText.textContent = "ok";
-          alertText.style.color = "rgba(163,255,176,.9)";
-          alertDot.style.background = "rgba(163,255,176,.9)";
-          alertDot.style.boxShadow = "0 0 18px rgba(163,255,176,.18)";
-        }
-
-        // logs cadence
-        if (t > nextPipe){
-          nextPipe = t + 1100 + Math.random()*900;
-          const msg = pipeEvents[Math.floor(Math.random()*pipeEvents.length)];
-          const anomaly = Math.random()<0.14;
-          addLog(pipeLog, anomaly ? `${msg} <span class="hl">(anomaly)</span>` : msg, anomaly);
-        }
-        if (t > nextRag){
-          nextRag = t + 1500 + Math.random()*900;
-          addLog(ragLog, docs[Math.floor(Math.random()*docs.length)]);
-        }
-
-        // epoch bump on wrap
-        if ((dt % cycle) < 18){
-          if (!tick._wrapped){
-            epoch = Math.min(epoch+1, 9);
-            tick._wrapped = true;
-            addLog(pipeLog, `epoch advanced → ${epoch}`, true);
-          }
-        } else tick._wrapped = false;
-      }
-
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-
-    console.assert(!!curve && !!area && !!marker, "SVG curve elements missing");
-    console.assert(!!fiHost, "Feature importance host missing");
+    console.assert(!!c1 && !!c2, 'Missing canvases');
+  })();
   </script>
 </body>
 </html>
