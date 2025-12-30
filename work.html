@@ -1,885 +1,316 @@
-<script>
-(() => {
-  'use strict';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Clarifyd | Work — AbsenceAI</title>
 
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  <meta name="description"
+        content="AbsenceAI showpiece: absence forecasting by site, service line, and shift with operational prescriptions. Privacy-first, fully client-side." />
 
-  // Parallax layers
-  const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-  let latestY = 0, ticking = false;
-  function applyParallax(){
-    const y = latestY;
-    for (const el of layers) {
-      const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
-      el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
-    }
-    ticking = false;
-  }
-  function onScroll(){
-    latestY = window.scrollY || 0;
-    if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
-  }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  window.addEventListener('resize', onScroll);
-  onScroll();
+  <style>
+    /* =====================
+       DESIGN TOKENS
+    ====================== */
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --text:#F2F4FF;
+      --muted:rgba(242,244,255,.72);
 
-  // Elements
-  const btnRun = document.getElementById('btnRun');
-  const btnDemo = document.getElementById('btnDemo');
-  const btnPause = document.getElementById('btnPause');
+      --a:#7C3AED;   /* purple */
+      --b:#22D3EE;   /* cyan */
+      --m:#A3FFB0;   /* mint */
+      --y:#FDE047;   /* yellow */
+      --r:#ff5a5a;   /* red */
 
-  const siteEl = document.getElementById('site');
-  const lineEl = document.getElementById('line');
-  const shiftEl = document.getElementById('shift');
-  const hcEl = document.getElementById('hc');
-  const coverEl = document.getElementById('cover');
-  const rateEl = document.getElementById('rate');
-
-  const chipState = document.getElementById('chipState');
-  const chipLive = document.getElementById('chipLive');
-  const chipWarn = document.getElementById('chipWarn');
-  const chipBad  = document.getElementById('chipBad');
-  const rt = document.getElementById('rt');
-  const lg1 = document.getElementById('lg1');
-  const lg2 = document.getElementById('lg2');
-  const crumb = document.getElementById('crumb');
-
-  const kAbs7 = document.getElementById('kAbs7');
-  const kAbsSub = document.getElementById('kAbsSub');
-  const kRiskShifts = document.getElementById('kRiskShifts');
-  const kRiskSub = document.getElementById('kRiskSub');
-  const kAgency = document.getElementById('kAgency');
-  const kOT = document.getElementById('kOT');
-  const kConf = document.getElementById('kConf');
-  const kConfSub = document.getElementById('kConfSub');
-  const kDrift = document.getElementById('kDrift');
-  const kDriftSub = document.getElementById('kDriftSub');
-  const asof = document.getElementById('asof');
-
-  const dAbs = document.getElementById('dAbs');
-  const dRisk = document.getElementById('dRisk');
-  const dAgency = document.getElementById('dAgency');
-  const dOT = document.getElementById('dOT');
-  const dConf = document.getElementById('dConf');
-  const dDrift = document.getElementById('dDrift');
-
-  const ringRisk = document.getElementById('ringRisk');
-  const ringRiskTxt = document.getElementById('ringRiskTxt');
-  const ringConf = document.getElementById('ringConf');
-  const ringConfTxt = document.getElementById('ringConfTxt');
-
-  const nba = document.getElementById('nba');
-  const nbaBadge = document.getElementById('nbaBadge');
-  const feed = document.getElementById('feed');
-  const rowsEl = document.getElementById('rows');
-
-  // Canvases
-  const c1 = document.getElementById('c1');
-  const c2 = document.getElementById('c2');
-  const ctx1 = c1.getContext('2d', { alpha:true });
-  const ctx2 = c2.getContext('2d', { alpha:true });
-
-  // Sparklines
-  const spAbsEl = document.getElementById('spAbs');
-  const spAgencyEl = document.getElementById('spAgency');
-  const spOTEl = document.getElementById('spOT');
-  const spDriftEl = document.getElementById('spDrift');
-
-  const spAbs = spAbsEl.getContext('2d', { alpha:true });
-  const spAgency = spAgencyEl.getContext('2d', { alpha:true });
-  const spOT = spOTEl.getContext('2d', { alpha:true });
-  const spDrift = spDriftEl.getContext('2d', { alpha:true });
-
-  // ---------- small layout guards (prevents “disjointed” look on wrap) ----------
-  // Keeps the topbar right side from exploding width, and prevents chip text from wrapping oddly.
-  (function layoutGuards(){
-    const topbar = document.querySelector('.topbar');
-    if (!topbar) return;
-
-    // prevent buttons/chips from stretching layout on small screens
-    topbar.style.alignItems = 'center';
-
-    // Make right cluster not exceed container width when wrapping
-    const rightCluster = topbar.children && topbar.children[1];
-    if (rightCluster) {
-      rightCluster.style.justifyContent = 'flex-end';
-      rightCluster.style.maxWidth = '50%';
-      rightCluster.style.minWidth = '240px';
+      --radius:22px;
+      --shadow:0 24px 80px rgba(0,0,0,.55);
+      --max:1200px;
     }
 
-    // keep crumb stable: allow ellipsis instead of wrapping into two rows
-    if (crumb) {
-      crumb.style.maxWidth = '52vw';
-      crumb.style.overflow = 'hidden';
-      crumb.style.textOverflow = 'ellipsis';
-      crumb.style.whiteSpace = 'nowrap';
-      crumb.style.display = 'inline-block';
-    }
-  })();
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
 
-  // ---------- helpers ----------
-  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
-  function lerp(a,b,t){ return a+(b-a)*t; }
-  function now(){ return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(); }
-
-  // Stable canvas sizing (prevents jitter that can make text feel “misaligned”)
-  function fitCanvas(cv, ctx){
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const r = cv.getBoundingClientRect();
-    const w = Math.max(2, Math.floor(r.width));
-    const h = Math.max(2, Math.floor(r.height));
-    const pw = Math.floor(w * dpr);
-    const ph = Math.floor(h * dpr);
-    if (cv.width !== pw || cv.height !== ph) {
-      cv.width = pw;
-      cv.height = ph;
-    }
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    return { w, h };
-  }
-  function fitSmall(ctx, canvasEl){
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const r = canvasEl.getBoundingClientRect();
-    const w = Math.max(2, Math.floor(r.width));
-    const h = Math.max(2, Math.floor(r.height));
-    const pw = Math.floor(w * dpr);
-    const ph = Math.floor(h * dpr);
-    if (canvasEl.width !== pw || canvasEl.height !== ph) {
-      canvasEl.width = pw;
-      canvasEl.height = ph;
-    }
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    return { w, h };
-  }
-
-  function setDelta(el, val){
-    const s = (val>=0 ? '+' : '') + (val).toFixed(1);
-    el.textContent = s;
-    el.classList.remove('up','down','flat');
-    if (Math.abs(val) < 0.2) el.classList.add('flat');
-    else if (val > 0) el.classList.add('down'); // more absences/risk => down
-    else el.classList.add('up');
-  }
-  function setDeltaPct(el, valPct){
-    const s = (valPct>=0 ? '+' : '') + (valPct*100).toFixed(1) + '%';
-    el.textContent = s;
-    el.classList.remove('up','down','flat');
-    if (Math.abs(valPct) < 0.004) el.classList.add('flat');
-    else if (valPct > 0) el.classList.add('down');
-    else el.classList.add('up');
-  }
-  function setRing(el, txtEl, value01){
-    const C = 106.8;
-    const v = clamp(value01, 0, 1);
-    el.style.strokeDashoffset = String(C * (1 - v));
-    txtEl.textContent = Math.round(v*100) + '%';
-  }
-
-  // ---- Demo dataset (last 14 days rows) ----
-  const demoSites = ['Northgate','Riverside','Kingston'];
-  const demoLines = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
-  const demoShifts = ['Days','Nights','Weekend'];
-
-  function fmtDate(d){
-    const yy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,'0');
-    const dd = String(d.getDate()).padStart(2,'0');
-    return `${yy}-${mm}-${dd}`;
-  }
-  function seededNoise(seed){
-    const x = Math.sin(seed*999.13) * 10000;
-    return x - Math.floor(x);
-  }
-  function buildDemoRows(){
-    const rows = [];
-    const today = new Date();
-    for (let i=13;i>=0;i--){
-      const d = new Date(today);
-      d.setDate(today.getDate()-i);
-      const date = fmtDate(d);
-      for (let s=0;s<demoSites.length;s++){
-        for (let l=0;l<demoLines.length;l++){
-          for (let sh=0;sh<demoShifts.length;sh++){
-            const baseHc = 50 + l*9 + sh*12 + s*7;
-            const cover = 14 + l*2 + (sh===1?6:0) + (sh===2?3:0);
-            const baseRate = 0.055 + l*0.004 + (sh===1?0.018:0) + (sh===2?0.009:0) + s*0.002;
-            const season = 0.012 * Math.sin((today.getTime()/86400000 + i)/6.2);
-            const n = seededNoise((i+1)*31 + s*7 + l*13 + sh*17);
-            const rate = clamp(baseRate + season + (n-0.5)*0.02, 0.01, 0.18);
-            const abs = Math.max(0, Math.round(baseHc * rate));
-            const notes = (sh===1 && rate>0.09) ? 'Nights trending high' : (rate>0.11 ? 'Spike' : '');
-            rows.push({
-              date, site: demoSites[s], service_line: demoLines[l], shift: demoShifts[sh],
-              headcount: baseHc, cover_required: cover, absences: abs,
-              absence_rate: +(rate*100).toFixed(1), notes
-            });
-          }
-        }
-      }
-    }
-    return rows;
-  }
-  const demoRows = buildDemoRows();
-
-  function renderTable(){
-    rowsEl.innerHTML = '';
-    demoRows
-      .filter(r => r.site === siteEl.value && r.service_line === lineEl.value)
-      .slice(-6)
-      .forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.date}</td>
-          <td>${r.site}</td>
-          <td>${r.service_line}</td>
-          <td>${r.shift}</td>
-          <td>${r.headcount}</td>
-          <td>${r.cover_required}</td>
-          <td>${r.absences}</td>
-          <td>${r.absence_rate}%</td>
-          <td>${r.notes || ''}</td>
-        `;
-        rowsEl.appendChild(tr);
-      });
-  }
-
-  function demoCSV(){
-    const header = ['date','site','service_line','shift','headcount','cover_required','absences','absence_rate','notes'].join(',');
-    const rows = demoRows.map(d => [
-      d.date,d.site,d.service_line,d.shift,d.headcount,d.cover_required,d.absences,d.absence_rate,(d.notes||'')
-    ].map(x => String(x).includes(',') ? `"${String(x).replaceAll('"','""')}"` : x).join(','));
-    return [header, ...rows].join('\n');
-  }
-  function downloadText(filename, text){
-    const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 800);
-  }
-  btnDemo.addEventListener('click', () => downloadText('AbsenceAI_demo.csv', demoCSV()));
-
-  // ---- Live model story (forecast + drift + actions) ----
-  let drift = 0.12;
-  let driftTrend = 0.0007;
-
-  const abs7Series = [];
-  const agencySeries = [];
-  const otSeries = [];
-  const driftSeries = [];
-  const maxPts = 64;
-
-  // ops feed buffer
-  const feedBuf = [];
-  function pushEvent(sev, html){
-    const t = new Date().toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
-    feedBuf.unshift({ sev, html: `<b>${t}</b> — ${html}` });
-    while (feedBuf.length > 9) feedBuf.pop();
-    renderFeed();
-  }
-  function renderFeed(){
-    feed.innerHTML = '';
-    feedBuf.forEach(e => {
-      const row = document.createElement('div');
-      row.className = 'evt';
-      const dot = document.createElement('span');
-      dot.className = 'sev' + (e.sev==='y'?' y':(e.sev==='r'?' r':''));
-      row.appendChild(dot);
-      const msg = document.createElement('div');
-      msg.style.lineHeight = '1.35';
-      msg.style.minWidth = '0';
-      msg.innerHTML = e.html;
-      row.appendChild(msg);
-      feed.appendChild(row);
-    });
-  }
-
-  function updateDrift(){
-    const shock = (Math.random() < 0.02) ? (0.06 + Math.random()*0.10) : 0;
-    drift = clamp(drift + driftTrend + (Math.random()-0.5)*0.01 + shock, 0.02, 0.92);
-    if (drift > 0.58) driftTrend = -0.0022;
-    else if (drift < 0.16) driftTrend = 0.0010;
-  }
-
-  function features(){
-    return {
-      site: siteEl.value,
-      line: lineEl.value,
-      shift: shiftEl.value,
-      headcount: Number(hcEl.value||0),
-      cover: Number(coverEl.value||0),
-      ratePct: Number(rateEl.value||0),
-      drift
-    };
-  }
-
-  function shiftMultiplier(shift){
-    if (shift === 'Nights') return 1.22;
-    if (shift === 'Weekend') return 1.10;
-    return 1.0;
-  }
-  function lineMultiplier(line){
-    if (line === 'Security') return 1.10;
-    if (line === 'Cleaning') return 1.06;
-    if (line === 'Catering') return 1.03;
-    if (line === 'Maintenance') return 1.08;
-    if (line === 'Reception') return 1.02;
-    if (line === 'Logistics') return 1.07;
-    return 1.0;
-  }
-  function siteMultiplier(site){
-    if (site === 'Northgate') return 1.03;
-    if (site === 'Riverside') return 1.00;
-    if (site === 'Kingston') return 1.05;
-    return 1.0;
-  }
-
-  function predict(f){
-    const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
-    const varBoost = 1 + f.drift*0.9;
-    const mult = shiftMultiplier(f.shift) * lineMultiplier(f.line) * siteMultiplier(f.site);
-    const dailyExp = f.headcount * baseRate * mult;
-
-    const days = 7;
-    const y = [];
-    for (let i=0;i<days;i++){
-      const dayFactor = 1 + 0.08*Math.sin((Date.now()/86400000 + i)/2.6);
-      const weekendFactor = ((new Date(Date.now()+i*86400000)).getDay() % 6 === 0) ? 1.08 : 1.0;
-      const noise = (Math.random()-0.5) * 0.9 * varBoost;
-      const v = Math.max(0, dailyExp * dayFactor * weekendFactor + noise);
-      y.push(v);
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1100px 600px at 20% 10%, rgba(124,58,237,.20), transparent 60%),
+        radial-gradient(900px 500px at 80% 15%, rgba(34,211,238,.18), transparent 60%),
+        radial-gradient(700px 400px at 65% 80%, rgba(253,224,71,.10), transparent 60%),
+        linear-gradient(180deg,var(--bg0),var(--bg1));
+      overflow-x:hidden;
     }
 
-    const abs7 = y.reduce((a,b)=>a+b,0);
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:0 20px}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px;color:rgba(242,244,255,.6)}
 
-    const staffPerShift = Math.max(1, Math.round(f.headcount / 6));
-    const slack = Math.max(1, staffPerShift - f.cover);
-    let riskShifts = 0;
-    let totalGap = 0;
-
-    for (let i=0;i<days;i++){
-      const abs = y[i];
-      const expectedAvailable = staffPerShift - abs;
-      const gap = Math.max(0, f.cover - expectedAvailable);
-      if (gap > Math.max(1, slack*0.35)) riskShifts++;
-      totalGap += gap;
+    /* =====================
+       HEADER
+    ====================== */
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(7,10,18,.6);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 0;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .mark{
+      width:14px;height:14px;border-radius:5px;
+      background:linear-gradient(135deg,var(--a),var(--b),var(--y));
+      box-shadow:0 0 24px rgba(124,58,237,.45);
+    }
+    .menu{display:flex;gap:10px}
+    .menu a{
+      padding:10px 12px;border-radius:999px;
+      font-size:14px;color:rgba(242,244,255,.72);
+    }
+    .menu a:hover{background:rgba(255,255,255,.06);color:var(--text)}
+    .pill{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
     }
 
-    const agencyBias = clamp((f.shift==='Nights'?0.55:0.40) + f.drift*0.25, 0.25, 0.80);
-    const agencyShifts = Math.ceil(totalGap * agencyBias);
-    const otHours = Math.round((totalGap * (1-agencyBias)) * 7.5);
+    /* =====================
+       HERO
+    ====================== */
+    .hero{padding:56px 0 24px}
+    .kicker{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      font-size:13px;color:rgba(242,244,255,.78);
+    }
+    .spark{
+      width:8px;height:8px;border-radius:999px;
+      background:var(--y);
+      box-shadow:0 0 0 0 rgba(253,224,71,.35);
+      animation:spark 2s infinite;
+    }
+    @keyframes spark{
+      0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}
+      70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}
+      100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}
+    }
+    h1{
+      font-size:44px;line-height:1.05;letter-spacing:-1px;
+      margin:16px 0 10px;
+    }
+    .grad{
+      background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--m));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .lead{max-width:100ch;font-size:16px;color:rgba(242,244,255,.74)}
 
-    const conf = clamp((0.88 - f.drift*0.55) * (1 - Math.abs(baseRate-0.07)*1.8), 0.18, 0.92);
-
-    const band = y.map(v => {
-      const half = (0.65 + f.drift*0.6) * (0.55 + (1-conf));
-      return { lo: Math.max(0, v*(1-half)), hi: v*(1+half) };
-    });
-
-    const anomaly = (f.shift==='Nights' && f.ratePct > 7.8 && f.drift > 0.32) || (riskShifts >= 4 && f.drift > 0.45);
-
-    return { y, band, abs7, riskShifts, agencyShifts, otHours, conf, drift: f.drift, anomaly };
-  }
-
-  function prescriptions(out, f){
-    const items = [];
-    const highRisk = out.riskShifts >= 4;
-    const midRisk = out.riskShifts >= 2;
-    const nights = f.shift === 'Nights';
-    const weekend = f.shift === 'Weekend';
-
-    if (highRisk){
-      items.push({
-        title: 'Activate float pool + redeploy internal cover',
-        body: `Reassign <b>${Math.min(6, Math.ceil(out.riskShifts*1.2))}</b> staff across ${f.line} to protect high-risk days. Prioritise ${nights?'Nights':'peak demand'} shifts.`,
-        lift: 0.16
-      });
-    } else if (midRisk){
-      items.push({
-        title: 'Pre-emptive rota adjustment (targeted)',
-        body: `Stagger starts and move <b>${Math.min(4, Math.ceil(out.riskShifts*0.9))}</b> shifts to reduce cover gaps without overstaffing.`,
-        lift: 0.11
-      });
+    /* =====================
+       PRIVACY STRIP
+    ====================== */
+    .privacy{
+      margin-top:16px;
+      display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+      padding:14px;border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+    }
+    .lock{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      background:rgba(34,211,238,.12);
+      border:1px solid rgba(34,211,238,.28);
     }
 
-    if (out.agencyShifts >= 6){
-      items.push({
-        title: 'Agency booking pack (reduce lead time)',
-        body: `Book <b>${out.agencyShifts}</b> agency shifts now for ${f.site} / ${f.line} / ${f.shift}. Lock rates before demand spikes.`,
-        lift: 0.12
-      });
-    } else if (out.agencyShifts > 0){
-      items.push({
-        title: 'Micro-agency top-up',
-        body: `Book <b>${out.agencyShifts}</b> shifts to plug expected gaps while keeping overtime contained.`,
-        lift: 0.08
-      });
+    /* =====================
+       WORK GRID
+    ====================== */
+    .section{padding:20px 0 64px}
+    .workGrid{
+      display:grid;
+      grid-template-columns: 1.4fr .6fr;
+      gap:16px;
+      align-items:start;
     }
 
-    if (out.otHours >= 25){
-      items.push({
-        title: 'Overtime guardrails + fatigue check',
-        body: `Cap overtime to avoid fatigue: propose <b>${Math.round(out.otHours*0.65)}</b> OT hours + the rest via agency/float.`,
-        lift: 0.09
-      });
+    /* =====================
+       LEFT: BOARD
+    ====================== */
+    .board{
+      border-radius:calc(var(--radius) + 6px);
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      min-height:620px;
+      overflow:hidden;
+      position:relative;
     }
-
-    if (f.drift > 0.50){
-      items.push({
-        title: 'Drift response: refresh features + retrain window',
-        body: `Pattern shift detected. Trigger a retrain and validate against the last 8 weeks for ${f.site} / ${f.line}.`,
-        lift: 0.10
-      });
-    } else if (f.drift > 0.34){
-      items.push({
-        title: 'Investigate drivers (early warning)',
-        body: `Drift rising: check policy changes, shift swaps, and events impacting ${f.line}.`,
-        lift: 0.07
-      });
+    .topbar{
+      height:56px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.2);
     }
-
-    if (nights || weekend){
-      items.push({
-        title: 'Shift incentive recommendation',
-        body: `Offer a short incentive for ${f.shift} to reduce last-minute absence risk and improve fill rate.`,
-        lift: 0.06
-      });
+    .chip{
+      font-size:12px;padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      white-space:nowrap;
     }
+    .chip.live{border-color:rgba(34,211,238,.3);background:rgba(34,211,238,.1)}
+    .chip.warn{border-color:rgba(253,224,71,.3);background:rgba(253,224,71,.1)}
+    .chip.bad{border-color:rgba(255,90,90,.3);background:rgba(255,90,90,.1)}
 
-    while (items.length < 3){
-      items.push({
-        title: 'Validate cover assumptions',
-        body: `Review required cover vs demand. Tune ${f.line} cover requirement to reduce unnecessary agency usage.`,
-        lift: 0.05
-      });
+    .boardBody{
+      display:grid;
+      grid-template-rows: 1fr 260px;
+      height:calc(100% - 56px);
     }
+    canvas{width:100%;height:100%;display:block}
 
-    items.sort((a,b)=>b.lift-a.lift);
-    return items.slice(0,3);
-  }
+    /* =====================
+       RIGHT: KPIS
+    ====================== */
+    .panel{
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      box-shadow:0 18px 60px rgba(0,0,0,.35);
+      padding:14px;
+    }
+    .panel h3{margin:0 0 4px;font-size:15px}
+    .kpis{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+    .kpi{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(0,0,0,.16);
+      padding:12px;
+    }
+    .kpi .l{font-size:12px;color:rgba(242,244,255,.68)}
+    .kpi .v{font-size:22px;font-weight:800;margin-top:4px}
 
-  function renderNBA(items){
-    nba.innerHTML = '';
-    items.forEach((it, idx) => {
-      const el = document.createElement('div');
-      el.className = 'nbaCard';
-      const width = Math.round(clamp(it.lift, 0, 0.18)/0.18 * 100);
-      el.innerHTML = `
-        <div class="nbaTop">
-          <div class="nbaTitle">${idx+1}. ${it.title}</div>
-          <span class="badge">Impact ${(it.lift*100).toFixed(0)}%</span>
+    /* =====================
+       RESPONSIVE
+    ====================== */
+    @media (max-width:1100px){
+      .workGrid{grid-template-columns:1fr}
+      h1{font-size:38px}
+    }
+    @media (max-width:520px){
+      h1{font-size:32px}
+      .kpis{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="/">
+      <span class="mark"></span><span>Clarifyd</span>
+    </a>
+    <nav class="menu">
+      <a href="/services.html">Services</a>
+      <a href="/work.html" class="pill">Work</a>
+      <a href="/contact.html" class="pill">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="kicker"><span class="spark"></span> AbsenceAI — workforce intelligence</div>
+      <h1>
+        Forecast absences. Protect cover.
+        <span class="grad">Reduce agency spend</span>.
+      </h1>
+      <p class="lead">
+        A realistic delivery story: predict absences by <strong>site</strong>,
+        <strong>service line</strong> and <strong>shift</strong>,
+        surface rota risk early, and generate actions schedulers can execute immediately.
+      </p>
+
+      <div class="privacy">
+        <div class="lock">🔒</div>
+        <div>
+          <strong>Privacy-first.</strong> All computation runs in your browser.<br>
+          <span class="tiny">No uploads. No storage. Refresh clears everything.</span>
         </div>
-        <div class="nbaBody">${it.body}</div>
-        <div class="bar"><i style="width:${width}%"></i></div>
-      `;
-      nba.appendChild(el);
-    });
-  }
-
-  function drawForecast(out){
-    const { w, h } = fitCanvas(c1, ctx1);
-    ctx1.clearRect(0,0,w,h);
-
-    const g = ctx1.createRadialGradient(w*0.55, h*0.35, 10, w*0.55, h*0.55, Math.max(w,h));
-    g.addColorStop(0, 'rgba(0,0,0,0)');
-    g.addColorStop(1, 'rgba(0,0,0,0.35)');
-    ctx1.fillStyle = g;
-    ctx1.fillRect(0,0,w,h);
-
-    ctx1.fillStyle = 'rgba(242,244,255,0.78)';
-    ctx1.font = '700 12px ui-sans-serif, system-ui';
-    ctx1.fillText('Absences forecast (next 7 days) — by shift', 12, 18);
-
-    const pad = 14;
-    const top = 34;
-    const boxW = w - pad*2;
-    const boxH = h - top - 20;
-
-    ctx1.strokeStyle = 'rgba(255,255,255,0.10)';
-    ctx1.strokeRect(pad, top, boxW, boxH);
-
-    ctx1.strokeStyle = 'rgba(255,255,255,0.06)';
-    ctx1.lineWidth = 1;
-    for (let k=0;k<=6;k++){
-      const y = top + (k/6)*boxH;
-      ctx1.beginPath(); ctx1.moveTo(pad, y); ctx1.lineTo(pad+boxW, y); ctx1.stroke();
-    }
-
-    const yMax = Math.max(6, ...out.band.map(b=>b.hi));
-    const yMin = 0;
-    const X = i => pad + (i/6)*boxW;
-    const Y = v => top + (1 - (v-yMin)/(yMax-yMin))*boxH;
-
-    ctx1.globalAlpha = 0.9;
-    ctx1.fillStyle = 'rgba(34,211,238,0.10)';
-    ctx1.beginPath();
-    ctx1.moveTo(X(0), Y(out.band[0].hi));
-    for (let i=1;i<7;i++) ctx1.lineTo(X(i), Y(out.band[i].hi));
-    for (let i=6;i>=0;i--) ctx1.lineTo(X(i), Y(out.band[i].lo));
-    ctx1.closePath();
-    ctx1.fill();
-    ctx1.globalAlpha = 1;
-
-    ctx1.strokeStyle = 'rgba(253,224,71,0.78)';
-    ctx1.lineWidth = 2.3;
-    ctx1.beginPath();
-    for (let i=0;i<7;i++){
-      const x = X(i), y = Y(out.y[i]);
-      if (i===0) ctx1.moveTo(x,y); else ctx1.lineTo(x,y);
-    }
-    ctx1.stroke();
-
-    for (let i=0;i<7;i++){
-      ctx1.fillStyle = 'rgba(253,224,71,0.80)';
-      ctx1.beginPath();
-      ctx1.arc(X(i), Y(out.y[i]), 3.0, 0, Math.PI*2);
-      ctx1.fill();
-    }
-
-    ctx1.fillStyle = 'rgba(242,244,255,0.60)';
-    ctx1.font = '600 11px ui-sans-serif, system-ui';
-    for (let i=0;i<7;i++){
-      const d = new Date(Date.now()+i*86400000);
-      const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
-      ctx1.fillText(lbl, X(i)-12, top+boxH+14);
-    }
-
-    ctx1.fillStyle = 'rgba(242,244,255,0.70)';
-    ctx1.font = '700 12px ui-sans-serif, system-ui';
-    const s = `${out.abs7.toFixed(1)} absences / 7d • ${out.riskShifts} at-risk shifts`;
-    ctx1.fillText(s, pad+10, top+18);
-  }
-
-  function drawHeatmap(out, f){
-    const { w, h } = fitCanvas(c2, ctx2);
-    ctx2.clearRect(0,0,w,h);
-
-    const g = ctx2.createRadialGradient(w*0.60, h*0.30, 10, w*0.55, h*0.55, Math.max(w,h));
-    g.addColorStop(0, 'rgba(0,0,0,0)');
-    g.addColorStop(1, 'rgba(0,0,0,0.35)');
-    ctx2.fillStyle = g;
-    ctx2.fillRect(0,0,w,h);
-
-    ctx2.fillStyle = 'rgba(242,244,255,0.78)';
-    ctx2.font = '700 12px ui-sans-serif, system-ui';
-    ctx2.fillText('Service-line heatmap (expected absences)', 12, 18);
-
-    const pad = 14;
-    const top = 34;
-    const boxW = w - pad*2;
-    const boxH = h - top - 18;
-
-    ctx2.strokeStyle = 'rgba(255,255,255,0.10)';
-    ctx2.strokeRect(pad, top, boxW, boxH);
-
-    const cols = 7;
-    const rows = 6;
-    const cw = boxW / cols;
-    const rh = boxH / rows;
-
-    const lineOrder = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
-    const maxV = 10 + (f.headcount/30);
-
-    for (let r=0;r<rows;r++){
-      for (let c=0;c<cols;c++){
-        const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
-        const mult = shiftMultiplier(f.shift) * lineMultiplier(lineOrder[r]) * siteMultiplier(f.site);
-        const dayFactor = 1 + 0.06*Math.sin((Date.now()/86400000 + c)/2.3);
-        const v = (f.headcount / (lineOrder[r]===f.line ? 1.0 : 1.15)) * baseRate * mult * dayFactor;
-        const heat = clamp(v / maxV, 0, 1);
-
-        let col = `rgba(163,255,176,${0.08 + 0.22*heat})`;
-        if (heat > 0.55) col = `rgba(253,224,71,${0.10 + 0.26*heat})`;
-        if (heat > 0.78) col = `rgba(255,90,90,${0.10 + 0.28*heat})`;
-
-        ctx2.fillStyle = col;
-        ctx2.fillRect(pad + c*cw + 2, top + r*rh + 2, cw - 4, rh - 4);
-      }
-    }
-
-    ctx2.fillStyle = 'rgba(242,244,255,0.62)';
-    ctx2.font = '600 11px ui-sans-serif, system-ui';
-    for (let c=0;c<cols;c++){
-      const d = new Date(Date.now()+c*86400000);
-      const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
-      ctx2.fillText(lbl, pad + c*cw + 8, top-6);
-    }
-    for (let r=0;r<rows;r++){
-      ctx2.fillText(lineOrder[r], 12, top + r*rh + 18);
-    }
-
-    const x = w*0.74, y = 10, bw = w*0.23, bh = 10;
-    ctx2.fillStyle = 'rgba(0,0,0,0.22)';
-    ctx2.fillRect(x, y, bw, bh);
-
-    let col = 'rgba(163,255,176,0.55)';
-    if (f.drift > 0.35) col = 'rgba(253,224,71,0.55)';
-    if (f.drift > 0.55) col = 'rgba(255,90,90,0.55)';
-    ctx2.fillStyle = col;
-    ctx2.fillRect(x, y, bw*f.drift, bh);
-
-    ctx2.strokeStyle = 'rgba(255,255,255,0.14)';
-    ctx2.strokeRect(x, y, bw, bh);
-
-    ctx2.fillStyle = 'rgba(242,244,255,0.70)';
-    ctx2.font = '700 11px ui-sans-serif, system-ui';
-    ctx2.fillText('Drift', x, y + bh + 14);
-
-    if (out.anomaly){
-      ctx2.fillStyle = 'rgba(255,90,90,0.85)';
-      ctx2.font = '800 12px ui-sans-serif, system-ui';
-      ctx2.fillText('Anomaly detected', x, y + bh + 30);
-    }
-  }
-
-  function drawSpark(ctx, canvasEl, series, stroke, fill){
-    const { w, h } = fitSmall(ctx, canvasEl);
-    ctx.clearRect(0,0,w,h);
-
-    const g = ctx.createRadialGradient(w*0.35, h*0.20, 8, w*0.55, h*0.55, Math.max(w,h));
-    g.addColorStop(0, 'rgba(255,255,255,0.05)');
-    g.addColorStop(1, 'rgba(0,0,0,0.20)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,w,h);
-
-    if (series.length < 2) return;
-
-    const min = Math.min(...series);
-    const max = Math.max(...series);
-    const pad = 6;
-    const X = i => pad + (i/(series.length-1))*(w - pad*2);
-    const Y = v => pad + (1 - (v-min)/Math.max(1e-6, (max-min)))*(h - pad*2);
-
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let i=0;i<series.length;i++){
-      const x = X(i), y = Y(series[i]);
-      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-
-    ctx.globalAlpha = 0.22;
-    ctx.fillStyle = fill;
-    ctx.beginPath();
-    ctx.moveTo(X(0), h-pad);
-    for (let i=0;i<series.length;i++) ctx.lineTo(X(i), Y(series[i]));
-    ctx.lineTo(X(series.length-1), h-pad);
-    ctx.closePath();
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  }
-
-  function setAsOf(){
-    const dt = new Date();
-    const s = dt.toLocaleString(undefined, { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
-    asof.textContent = 'As of ' + s;
-  }
-
-  function driftUI(){
-    kDrift.textContent = (drift*100).toFixed(0) + '%';
-    if (drift < 0.35){
-      kDriftSub.textContent = 'Stable';
-      chipWarn.style.display = 'none'; chipBad.style.display = 'none';
-      lg2.textContent = 'Stable';
-    } else if (drift < 0.55){
-      kDriftSub.textContent = 'Investigate shift';
-      chipWarn.style.display = ''; chipBad.style.display = 'none';
-      lg2.textContent = 'Rising';
-    } else {
-      kDriftSub.textContent = 'Alert: retrain recommended';
-      chipWarn.style.display = 'none'; chipBad.style.display = '';
-      lg2.textContent = 'Critical';
-    }
-  }
-
-  function setStateText(){
-    crumb.textContent = `AbsenceAI / ${siteEl.value} / ${lineEl.value} / ${shiftEl.value}`;
-  }
-
-  async function runOnce(source){
-    const t0 = now();
-    chipState.textContent = 'Running';
-    rt.textContent = '—';
-    setAsOf();
-    setStateText();
-
-    const f = features();
-
-    await new Promise(r => setTimeout(r, 120 + Math.random()*220));
-    const out = predict(f);
-
-    kAbs7.textContent = out.abs7.toFixed(1);
-    kAbsSub.textContent = `${f.headcount} HC • ${f.ratePct.toFixed(1)}% recent`;
-
-    kRiskShifts.textContent = String(out.riskShifts);
-    kRiskSub.textContent = `Cover ${f.cover}/shift • shift ${f.shift}`;
-
-    kAgency.textContent = String(out.agencyShifts);
-    kOT.textContent = String(out.otHours);
-
-    kConf.textContent = Math.round(out.conf*100) + '%';
-    kConfSub.textContent = out.conf > 0.72 ? 'Good signal' : (out.conf > 0.50 ? 'Some uncertainty' : 'Low certainty');
-
-    driftUI();
-
-    setRing(ringRisk, ringRiskTxt, clamp(out.riskShifts/7, 0, 1));
-    setRing(ringConf, ringConfTxt, out.conf);
-
-    abs7Series.push(out.abs7);
-    agencySeries.push(out.agencyShifts);
-    otSeries.push(out.otHours);
-    driftSeries.push(drift);
-    while (abs7Series.length > maxPts){
-      abs7Series.shift(); agencySeries.shift(); otSeries.shift(); driftSeries.shift();
-    }
-
-    drawSpark(spAbs, spAbsEl, abs7Series, 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
-    drawSpark(spAgency, spAgencyEl, agencySeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
-    drawSpark(spOT, spOTEl, otSeries, 'rgba(34,211,238,0.70)', 'rgba(34,211,238,0.55)');
-    drawSpark(spDrift, spDriftEl, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
-
-    const i = abs7Series.length-1;
-    const prevAbs = abs7Series[i-1] ?? out.abs7;
-    const prevAg = agencySeries[i-1] ?? out.agencyShifts;
-    const prevOT = otSeries[i-1] ?? out.otHours;
-    const prevDr = driftSeries[i-1] ?? drift;
-
-    setDelta(dAbs, out.abs7 - prevAbs);
-    setDelta(dAgency, out.agencyShifts - prevAg);
-    setDelta(dOT, out.otHours - prevOT);
-    setDeltaPct(dDrift, drift - prevDr);
-
-    dConf.textContent = out.conf > 0.70 ? '↑ stable' : (out.conf > 0.50 ? '≈' : '↓');
-    dConf.classList.remove('up','down','flat');
-    dConf.classList.add(out.conf > 0.70 ? 'up' : (out.conf > 0.50 ? 'flat' : 'down'));
-
-    drawForecast(out);
-    drawHeatmap(out, f);
-
-    lg1.textContent = `${out.abs7.toFixed(1)} abs/7d • ${out.riskShifts} risk shifts • ${Math.round(out.conf*100)}% conf`;
-
-    const acts = prescriptions(out, f);
-    renderNBA(acts);
-    nbaBadge.textContent = out.riskShifts >= 4 ? 'Cover risk' : (out.riskShifts >= 2 ? 'Watchlist' : 'Stable');
-
-    if (source === 'boot'){
-      pushEvent('g', `Loaded demo view for <b>${f.site}</b> / <b>${f.line}</b> / <b>${f.shift}</b>. Forecast running.`);
-    } else if (source === 'manual'){
-      pushEvent('g', `Scenario updated: <b>${f.headcount} HC</b>, <b>${f.cover} cover</b>, <b>${f.ratePct.toFixed(1)}%</b> recent rate.`);
-    }
-
-    if (out.anomaly){
-      pushEvent('r', `<b>Anomaly</b>: pattern shift detected on <b>${f.shift}</b> (${f.line}). Recommend immediate cover action.`);
-    } else if (out.riskShifts >= 4){
-      pushEvent('y', `Cover risk rising: <b>${out.riskShifts}</b> shifts at risk in next 7 days. Consider float pool + agency.`);
-    } else if (drift > 0.52 && Math.random() < 0.45){
-      pushEvent('y', `Drift rising for ${f.site}/${f.line}. Validate drivers before schedule publish.`);
-    } else if (Math.random() < 0.22){
-      pushEvent('g', `Forecast stable: expected absences <b>${out.abs7.toFixed(1)}</b> over 7 days.`);
-    }
-
-    if (out.riskShifts >= 5){
-      chipBad.style.display = '';
-      chipWarn.style.display = 'none';
-    } else if (out.riskShifts >= 3){
-      chipWarn.style.display = '';
-      chipBad.style.display = 'none';
-    }
-
-    const ms = Math.round(now() - t0);
-    rt.textContent = `${ms}ms • ${source}`;
-    chipState.textContent = 'Live';
-
-    return out;
-  }
-
-  // streaming behaviour
-  let live = true;
-  let timer = null;
-
-  function nudgeInputs(){
-    const rate = Number(rateEl.value||0);
-    const hc = Number(hcEl.value||0);
-    const cover = Number(coverEl.value||0);
-
-    rateEl.value = clamp(rate + (Math.random()-0.5)*0.35 + (Math.random()<0.06 ? 0.6 : 0), 0.8, 16).toFixed(1);
-
-    if (Math.random() < 0.05){
-      hcEl.value = clamp(hc + (Math.random()<0.5 ? -2 : 2), 8, 480);
-    }
-    if (Math.random() < 0.05){
-      coverEl.value = clamp(cover + (Math.random()<0.5 ? -1 : 1), 2, 180);
-    }
-
-    if (shiftEl.value === 'Nights' && Math.random() < 0.10){
-      rateEl.value = clamp(Number(rateEl.value)+0.3, 0.8, 16).toFixed(1);
-    }
-  }
-
-  function startStream(){
-    if (timer) return;
-    chipLive.style.display = '';
-    btnPause.textContent = 'Pause';
-
-    const loop = async () => {
-      if (!live) return;
-      updateDrift();
-      nudgeInputs();
-      await runOnce('stream');
-      timer = setTimeout(loop, 950);
-    };
-    timer = setTimeout(loop, 380);
-  }
-
-  function stopStream(){
-    if (timer){ clearTimeout(timer); timer = null; }
-    chipLive.style.display = 'none';
-    btnPause.textContent = 'Resume';
-  }
-
-  btnPause.addEventListener('click', () => {
-    live = !live;
-    if (live) startStream(); else stopStream();
-  });
-
-  btnRun.addEventListener('click', () => runOnce('manual'));
-
-  [siteEl, lineEl].forEach(el => el.addEventListener('change', () => renderTable()));
-  [siteEl, lineEl, shiftEl].forEach(el => el.addEventListener('change', () => {
-    setStateText();
-    pushEvent('g', `View changed: <b>${siteEl.value}</b> / <b>${lineEl.value}</b> / <b>${shiftEl.value}</b>.`);
-  }));
-
-  function initFromDemo(){
-    siteEl.value = 'Northgate';
-    lineEl.value = 'Security';
-    shiftEl.value = 'Nights';
-    hcEl.value = 86;
-    coverEl.value = 24;
-    rateEl.value = 6.8;
-  }
-
-  // Debounced resize so “resize rerun” doesn’t spam and cause layout weirdness
-  let resizeTO = null;
-  window.addEventListener('resize', () => {
-    if (resizeTO) clearTimeout(resizeTO);
-    resizeTO = setTimeout(() => runOnce('resize'), 120);
-  });
-
-  // Boot
-  (async function boot(){
-    initFromDemo();
-    renderTable();
-    setAsOf();
-    setStateText();
-    pushEvent('g', 'AbsenceAI started. Generating first forecast…');
-    await runOnce('boot');
-    startStream();
-  })();
-
-  console.assert(!!c1 && !!c2, 'Missing canvases');
-})();
+        <span class="chip">Client-side compute</span>
+        <span class="chip">Static hosting</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container workGrid">
+      <!-- LEFT -->
+      <div class="board">
+        <div class="topbar">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="chip">AbsenceAI / Live rota risk</span>
+            <span class="chip live">Streaming</span>
+            <span class="chip warn">Risk rising</span>
+          </div>
+          <span class="chip">Simulated model (ONNX-ready)</span>
+        </div>
+        <div class="boardBody">
+          <canvas></canvas>
+          <canvas></canvas>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <aside class="panel">
+        <h3>What the scheduler sees</h3>
+        <p class="tiny muted">Business KPIs → operational decisions.</p>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="l">Expected absences (7d)</div>
+            <div class="v">42.6</div>
+          </div>
+          <div class="kpi">
+            <div class="l">At-risk shifts</div>
+            <div class="v">4</div>
+          </div>
+          <div class="kpi">
+            <div class="l">Agency shifts needed</div>
+            <div class="v">9</div>
+          </div>
+          <div class="kpi">
+            <div class="l">Forecast confidence</div>
+            <div class="v">71%</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer style="padding:32px 0">
+  <div class="container"
+       style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+              border-top:1px solid rgba(255,255,255,.1);padding-top:16px">
+    <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
+    <div class="tiny">© <span id="year"></span></div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
 </script>
+</body>
+</html>
