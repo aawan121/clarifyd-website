@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Clarifyd | Data Science & AI</title>
-  <meta name="description" content="Clarifyd: data science training and contract delivery." />
+  <meta name="description" content="Clarifyd: data science training and contract delivery across ML, MLOps, and LLMs." />
+
+  <!-- Basic SEO -->
+  <meta name="theme-color" content="#070A12" />
+  <link rel="canonical" href="https://clarifyd.co.uk/" />
 
   <!-- Organisation schema for Google -->
   <script type="application/ld+json">
@@ -102,14 +106,14 @@
       border-bottom: 1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(12px);
     }
-    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0 }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight: 720; letter-spacing: .2px; text-decoration:none }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0; gap: 12px }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight: 720; letter-spacing: .2px; text-decoration:none; white-space:nowrap }
     .mark{
       width: 14px; height: 14px; border-radius: 5px;
       background: linear-gradient(135deg, var(--accentA), var(--accentB), var(--accentY));
       box-shadow: 0 0 28px var(--glowA);
     }
-    .menu{ display:flex; gap: 18px; align-items:center }
+    .menu{ display:flex; gap: 10px; align-items:center; flex-wrap:wrap; justify-content:flex-end }
     .menu a{
       text-decoration: none;
       font-size: 14px;
@@ -139,12 +143,14 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.35);
       font-size: 13px;
       color: rgba(242,244,255,.78);
+      max-width: 100%;
     }
     .pulse{
       width: 8px; height: 8px; border-radius: 99px;
       background: var(--accentB);
       box-shadow: 0 0 0 0 rgba(34,211,238,.55);
       animation: pulse 1.8s ease-in-out infinite;
+      flex: 0 0 auto;
     }
     @keyframes pulse{
       0%{ box-shadow: 0 0 0 0 rgba(34,211,238,.55) }
@@ -152,16 +158,30 @@
       100%{ box-shadow: 0 0 0 0 rgba(34,211,238,0) }
     }
 
-    h1{ font-size: 54px; line-height: 1.05; letter-spacing: -1.2px; margin: 18px 0 12px }
+    h1{
+      font-size: 54px;
+      line-height: 1.05;
+      letter-spacing: -1.2px;
+      margin: 18px 0 12px;
+    }
     .gradient-text{
       background: linear-gradient(90deg, var(--accentA), var(--accentB), var(--accentY), var(--accentC));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-    .lead{ font-size: 18px; color: rgba(242,244,255,.74); max-width: 68ch; margin: 0 0 16px }
+    .lead{
+      font-size: 18px;
+      color: rgba(242,244,255,.74);
+      max-width: 70ch;
+      margin: 0 0 16px;
+    }
 
-    .cta{ display:flex; gap: 12px; flex-wrap: wrap; align-items:center; margin-top: 10px }
+    .cta{
+      display:flex; gap: 12px;
+      flex-wrap: wrap; align-items:center;
+      margin-top: 10px;
+    }
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
       padding: 12px 16px;
@@ -172,8 +192,12 @@
       color: var(--text);
       box-shadow: 0 16px 50px rgba(0,0,0,.38);
       transition: transform .16s ease, background .2s ease, border-color .2s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
+    .btn:active{ transform: translateY(0px) }
     .btn.primary{
       background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));
       border-color: transparent;
@@ -188,6 +212,10 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
+      white-space: nowrap;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow: ellipsis;
     }
 
     /* Visual showpiece */
@@ -199,7 +227,6 @@
       box-shadow: var(--shadow);
       overflow:hidden;
       transform: translate3d(0,0,0);
-      will-change: transform;
       user-select:none;
       touch-action:none;
     }
@@ -216,7 +243,7 @@
     }
     #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
 
-    /* ✅ Mobile-safe sizing */
+    /* Mobile-safe sizing */
     .visual-wide{
       width: 100%;
       min-height: 640px;
@@ -232,7 +259,10 @@
       background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
       pointer-events:none;
     }
-    .mini-head{ position:relative; z-index:2; display:flex; align-items:flex-start; justify-content:space-between; gap: 10px }
+    .mini-head{
+      position:relative; z-index:2;
+      display:flex; align-items:flex-start; justify-content:space-between; gap: 10px;
+    }
     .badge{
       font-size:12px;
       padding: 8px 10px;
@@ -240,7 +270,7 @@
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.20);
       color: rgba(242,244,255,.78);
-      max-width: 56ch;
+      max-width: min(56ch, 92vw);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -252,7 +282,7 @@
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.18);
       color: rgba(242,244,255,.72);
-      max-width: 52ch;
+      max-width: min(52ch, 92vw);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -275,7 +305,8 @@
       display:flex; align-items:center; gap:8px;
       cursor:pointer;
       user-select:none;
-      transition: background .2s ease, border-color .2s ease;
+      transition: background .2s ease, border-color .2s ease, transform .2s ease;
+      -webkit-tap-highlight-color: transparent;
     }
     .pilltag:hover{ background: rgba(255,255,255,.08) }
     .pilltag:focus{ outline: 2px solid rgba(253,224,71,.22); outline-offset: 2px }
@@ -296,7 +327,7 @@
       border-top: 1px solid rgba(255,255,255,.08);
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
-    .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap: 14px; margin-bottom: 18px }
+    .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap: 14px; margin-bottom: 18px; flex-wrap:wrap }
     .section-head h2{ margin:0; font-size: 34px; letter-spacing: -.5px }
     .grid-2{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px }
 
@@ -308,7 +339,6 @@
       padding: 20px;
       overflow:hidden;
       transform: translate3d(0,0,0);
-      will-change: transform;
     }
     .cardlink{ text-decoration:none; display:block }
     .panel:hover{ border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06) }
@@ -328,6 +358,82 @@
     .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease }
     .reveal.is-visible{ opacity: 1; transform: translateY(0) }
 
+    /* Booking modal */
+    .modalOverlay{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      display:none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .modalOverlay.show{ display:flex; }
+    .modal{
+      width: min(560px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      box-shadow: 0 30px 120px rgba(0,0,0,.65);
+      overflow:hidden;
+      position: relative;
+    }
+    .modalHead{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+    }
+    .modalHead b{ font-size: 14px; letter-spacing: .2px }
+    .x{
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: rgba(242,244,255,.82);
+      cursor:pointer;
+    }
+    .modalBody{ padding: 14px 16px 16px; }
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .field label{
+      display:block;
+      font-size: 12px;
+      color: rgba(242,244,255,.72);
+      margin: 0 0 6px;
+    }
+    .input, textarea, select{
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.84);
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline: none;
+      font: inherit;
+    }
+    textarea{ grid-column: 1 / -1; min-height: 110px; resize: vertical; }
+    .modalActions{
+      display:flex; gap: 10px; flex-wrap:wrap;
+      margin-top: 12px;
+      align-items:center;
+      justify-content: flex-end;
+    }
+    .note{
+      font-size: 12px;
+      color: rgba(242,244,255,.64);
+      line-height: 1.35;
+      margin-top: 10px;
+    }
+
     @media (max-width: 980px){
       h1{ font-size: 44px }
       .grid-2{ grid-template-columns: 1fr }
@@ -337,13 +443,18 @@
       .badge{ max-width: 40ch; }
       .commentary{ max-width: 40ch; }
     }
+    @media (max-width: 620px){
+      .formGrid{ grid-template-columns: 1fr; }
+    }
     @media (max-width: 520px){
+      .hero{ padding-top: 64px }
       .visual-wide{ min-height: 560px; height: 74svh; }
       .visual-ui::after{ height: 78px; }
       .stage{ left: 10px; right: 10px; bottom: 10px; padding: 8px; }
       .badge{ max-width: 34ch; }
       .commentary{ max-width: 30ch; }
       h1{ font-size: 38px }
+      .lead{ font-size: 16px }
     }
     @media (prefers-reduced-motion: reduce){
       .pulse{ animation: none !important }
@@ -377,17 +488,26 @@
       <div class="container hero-grid">
         <div class="reveal">
           <div class="kicker"><span class="pulse" aria-hidden="true"></span> Data Science • ML • MLOps • LLMs</div>
-          <h1>Make data <span class="gradient-text">useful</span>.<br/>Ship models with <span class="gradient-text">confidence</span>.</h1>
-          <p class="lead">Training and contract delivery—built for real-world deployment, not demos.</p>
+
+          <h1>
+            Make data <span class="gradient-text">useful</span>.<br/>
+            Ship models with <span class="gradient-text">confidence</span>.
+          </h1>
+
+          <p class="lead">
+            Training and contract delivery for teams that need measurable outcomes:
+            clearer decisions, safer deployments, and models that keep working after launch.
+          </p>
 
           <div class="cta">
-            <a class="btn primary" href="/contact.html">Enquire</a>
+            <button class="btn primary" id="btnBook" type="button">Book a call</button>
             <a class="btn" href="/services.html">Services</a>
             <a class="btn" href="/work.html">Work</a>
           </div>
 
           <div class="trust">
             <div class="chip">UK • London / Remote</div>
+            <div class="chip">Privacy-first demos • client-side compute</div>
             <div class="chip">hello@clarifyd.co.uk</div>
           </div>
         </div>
@@ -430,26 +550,26 @@
         </div>
 
         <div class="grid-2">
-          <a class="panel cardlink reveal" href="/training.html">
+          <a class="panel cardlink reveal" href="/training.html" aria-label="Training">
             <div class="top">
               <div>
                 <h3 style="margin:0 0 6px;">Training</h3>
-                <div class="muted">Traditional DS, MLOps, LLMs.</div>
+                <div class="muted">Traditional DS, MLOps, LLMs—focused on practical delivery.</div>
               </div>
               <div class="tag">Capability</div>
             </div>
-            <div class="muted" style="margin-top:12px;">Workshops • mentoring • templates</div>
+            <div class="muted" style="margin-top:12px;">Workshops • mentoring • templates • code review</div>
           </a>
 
-          <a class="panel cardlink reveal" href="/delivery.html">
+          <a class="panel cardlink reveal" href="/delivery.html" aria-label="Delivery">
             <div class="top">
               <div>
                 <h3 style="margin:0 0 6px;">Delivery</h3>
-                <div class="muted">Contracts and builds.</div>
+                <div class="muted">Contracts and builds that ship end-to-end.</div>
               </div>
               <div class="tag">Delivery</div>
             </div>
-            <div class="muted" style="margin-top:12px;">Forecasting • analytics • LLM prototypes</div>
+            <div class="muted" style="margin-top:12px;">Forecasting • analytics • RAG/evals • monitoring</div>
           </a>
         </div>
       </div>
@@ -463,7 +583,10 @@
               <h3 style="margin:0 0 6px;">Fast start</h3>
               <div class="muted">Clear scope → short milestones → clean handover.</div>
             </div>
-            <a class="btn" href="/contact.html">Get started</a>
+            <button class="btn" id="btnBook2" type="button">Book a call</button>
+          </div>
+          <div class="tiny muted" style="margin-top:12px;">
+            Prefer email? <a href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;border-bottom:1px solid rgba(255,255,255,.18)">hello@clarifyd.co.uk</a>
           </div>
         </div>
       </div>
@@ -480,6 +603,64 @@
       </div>
     </footer>
   </main>
+
+  <!-- Booking modal (mailto-forwarded “booking request”) -->
+  <div class="modalOverlay" id="bookOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+      <div class="modalHead">
+        <b id="bookTitle">Book a call (sends an email)</b>
+        <button class="x" id="bookClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="muted" style="font-size:13px; line-height:1.45;">
+          Fill this in and we’ll open your email app with everything pre-written to <b>hello@clarifyd.co.uk</b>.
+          Nothing is stored.
+        </div>
+
+        <div class="formGrid" style="margin-top:12px;">
+          <div class="field">
+            <label for="bkName">Name</label>
+            <input class="input" id="bkName" autocomplete="name" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label for="bkCompany">Company</label>
+            <input class="input" id="bkCompany" autocomplete="organization" placeholder="Company (optional)" />
+          </div>
+
+          <div class="field">
+            <label for="bkEmail">Email</label>
+            <input class="input" id="bkEmail" autocomplete="email" inputmode="email" placeholder="you@company.com" />
+          </div>
+          <div class="field">
+            <label for="bkTopic">Topic</label>
+            <select class="input" id="bkTopic">
+              <option value="Training">Training (DS / MLOps / LLMs)</option>
+              <option value="Delivery">Delivery (project / contract)</option>
+              <option value="MLOps">MLOps help</option>
+              <option value="Model build">Model build / optimisation</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field" style="grid-column:1/-1;">
+            <label for="bkTimes">Ideal times (include timezone)</label>
+            <input class="input" id="bkTimes" placeholder="e.g. Tue 10–12, Thu 14–16 (UK)" />
+          </div>
+
+          <textarea id="bkNotes" placeholder="What are you trying to achieve? Any constraints (data, stack, timeline)?"></textarea>
+        </div>
+
+        <div class="modalActions">
+          <button class="btn" id="bookCancel" type="button">Cancel</button>
+          <button class="btn primary" id="bookSend" type="button">Open email</button>
+        </div>
+
+        <div class="note">
+          Tip: if you have a Calendly/Cal.com link later, you can swap this button to open that page instead.
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
 (() => {
@@ -523,6 +704,95 @@
   window.addEventListener('resize', onScroll);
   onScroll();
 
+  // ========= booking modal -> mailto =========
+  const overlay = document.getElementById('bookOverlay');
+  const btnBook = document.getElementById('btnBook');
+  const btnBook2 = document.getElementById('btnBook2');
+  const closeBtn = document.getElementById('bookClose');
+  const cancelBtn = document.getElementById('bookCancel');
+  const sendBtn = document.getElementById('bookSend');
+
+  const bkName = document.getElementById('bkName');
+  const bkCompany = document.getElementById('bkCompany');
+  const bkEmail = document.getElementById('bkEmail');
+  const bkTopic = document.getElementById('bkTopic');
+  const bkTimes = document.getElementById('bkTimes');
+  const bkNotes = document.getElementById('bkNotes');
+
+  let lastFocus = null;
+
+  function openModal(){
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+    setTimeout(() => bkName && bkName.focus(), 30);
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    if (!overlay) return;
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function escapeMailto(s){
+    return encodeURIComponent((s || '').trim());
+  }
+  function buildMailto(){
+    const name = (bkName?.value || '').trim();
+    const company = (bkCompany?.value || '').trim();
+    const email = (bkEmail?.value || '').trim();
+    const topic = (bkTopic?.value || 'Booking').trim();
+    const times = (bkTimes?.value || '').trim();
+    const notes = (bkNotes?.value || '').trim();
+
+    const subject = `Booking request — ${topic}${company ? ` (${company})` : ''}`;
+    const bodyLines = [
+      `Hi Clarifyd,`,
+      ``,
+      `I'd like to book a call about: ${topic}`,
+      ``,
+      `Name: ${name || '—'}`,
+      `Company: ${company || '—'}`,
+      `Email: ${email || '—'}`,
+      `Ideal times: ${times || '—'}`,
+      ``,
+      `Context / goals:`,
+      `${notes || '—'}`,
+      ``,
+      `Thanks!`
+    ];
+    const body = bodyLines.join('\n');
+    return `mailto:hello@clarifyd.co.uk?subject=${escapeMailto(subject)}&body=${escapeMailto(body)}`;
+  }
+
+  function wireModal(){
+    if (!overlay) return;
+
+    [btnBook, btnBook2].forEach(b => b && b.addEventListener('click', openModal));
+    closeBtn && closeBtn.addEventListener('click', closeModal);
+    cancelBtn && cancelBtn.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!overlay.classList.contains('show')) return;
+      if (e.key === 'Escape') closeModal();
+    });
+
+    sendBtn && sendBtn.addEventListener('click', () => {
+      const url = buildMailto();
+      // open mail client
+      window.location.href = url;
+      // keep the modal open for a moment so the user sees feedback
+      setTimeout(closeModal, 350);
+    });
+  }
+  wireModal();
+
   // ========= showpiece animation =========
   const host = document.getElementById('vizHost');
   const canvas = document.getElementById('viz');
@@ -538,7 +808,7 @@
     "Streaming signals into a usable dataset.",
     "Cleaning & segregation: noise out, structure in.",
     "Training: mini-batches update a model core; structure emerges.",
-    "Validation: AUC rises as uncertainty collapses into CLARIFYD.",
+    "Validation: metrics rise as uncertainty collapses into CLARIFYD.",
     "Deployment: the model lands on Earth.",
     "Monitoring: drift watch + health signals stay green."
   ];
@@ -676,9 +946,11 @@
   const stageDur = prefersReduced ? 2900 : 2450;
   function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
   function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
+
+  // IMPORTANT FIX: validate reaches 100% earlier and holds, so “CLARIFYD” stays fully visible longer
   function validateProgress(t){
-    const u = (t % stageDur) / stageDur;   // Reach 100% by ~78% of the stage, then hold fully clarified   
-    const k = Math.min(1, u / 0.78);
+    const u = (t % stageDur) / stageDur;
+    const k = Math.min(1, u / 0.70);     // reach full by 70%
     return easeInOut(k);
   }
   function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
@@ -703,24 +975,8 @@
     return `rgba(163,255,176,${a})`;
   }
 
-  // Cursor-follow key point
-  let mx = 0.5, my = 0.5;
-  function updatePointer(clientX, clientY){
-    if (!host) return;
-    const r = host.getBoundingClientRect();
-    mx = clamp((clientX - r.left) / r.width, 0, 1);
-    my = clamp((clientY - r.top) / r.height, 0, 1);
-  }
-  if (host){
-    host.addEventListener('pointermove', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
-    host.addEventListener('pointerdown', (e) => updatePointer(e.clientX, e.clientY), { passive:true });
-    host.addEventListener('touchstart', (e) => {
-      const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
-    }, { passive:true });
-    host.addEventListener('touchmove', (e) => {
-      const t = e.touches && e.touches[0]; if (t) updatePointer(t.clientX, t.clientY);
-    }, { passive:true });
-  }
+  // ✅ Removed “weird cursor datapoint”: no pointer-follow steering
+  // (We keep pointer listeners off entirely.)
 
   // cinematic train config
   const TRAIN = {
@@ -763,9 +1019,6 @@
       });
     }
 
-    // key datapoint
-    points[0].cls = 3;
-
     // Ingest: stream from left
     for (let i=0;i<N;i++){
       const p = points[i];
@@ -801,7 +1054,7 @@
       p.train.y = t.y + randn()*1.2;
     }
 
-    // Validate: slight split
+    // Validate: slight split (will collapse back into train targets)
     for (let i=0;i<N;i++){
       const p = points[i];
       const left = (i % 2 === 0);
@@ -1065,39 +1318,37 @@
       const p = points[i];
       if (p.alpha < 0.03) continue;
 
-      const isKey = (i===0);
       const isOut = (si === 1) && p.out;
 
       let cls;
-      if (isKey) cls = 3;
-      else if (isOut) cls = 4;
+      if (isOut) cls = 4;
       else if (si === 1) cls = p.grp;
       else if (si === 5) cls = 6;
       else cls = p.cls;
 
       // Train: highlight current mini-batch
       let boost = 1.0;
-      if (si === 2 && i !== 0 && activeBatch >= 0){
+      if (si === 2 && activeBatch >= 0){
         if (inBatch(i, activeBatch)) boost = 1.35;
       }
 
-      const a = (isKey ? 0.95 : 0.70) * p.alpha * (0.75 + 0.25*boost);
-      const r = isKey ? (isCoarse ? 3.0 : 2.7) : (isCoarse ? 1.45 : 1.25);
+      const a = 0.70 * p.alpha * (0.75 + 0.25*boost);
+      const r = (isCoarse ? 1.45 : 1.25);
 
       // smooth Ingest->Clean colour blend
       const blendToClean = (si === 0) ? mix : 0;
       const baseCls = p.cls;
       const cleanCls = p.grp;
 
-      const glowA = (isKey ? 0.16 : 0.055) * p.alpha * boost;
+      const glowA = 0.055 * p.alpha * boost;
 
       // cheap glow (skip on chrome / reduced)
       if (!IS_CHROME && !prefersReduced) {
         ctx.fillStyle = colorFor(cls, glowA);
-        ctx.beginPath(); ctx.arc(p.x, p.y, isKey ? 14 : 7, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI*2); ctx.fill();
       }
 
-      if (!isKey && si === 0) {
+      if (si === 0) {
         ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
         ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
 
@@ -1159,7 +1410,7 @@
       // TRAIN: belts -> batch -> core + hint of word
       if (si === 2) {
         const tp = trainProgress(t);
-        const active = (i !== 0) && inBatch(i, b);
+        const active = inBatch(i, b);
 
         const lane = p.grp;
         const beltY = H * TRAIN.lanesY[lane];
@@ -1233,22 +1484,8 @@
       }
     }
 
-    // key datapoint follows cursor
-    const kp = points[0];
-    const steerX = W * (0.08 + mx*0.84);
-    const steerY = H * (0.08 + my*0.84);
-    kp.x = lerp(kp.x, steerX, 0.16);
-    kp.y = lerp(kp.y, steerY, 0.16);
-
     drawConnections(si, t);
     drawPoints(si, mix, t);
-
-    // key point halo
-    ctx.strokeStyle = 'rgba(163,255,176,0.35)';
-    ctx.lineWidth = 1.7;
-    ctx.beginPath();
-    ctx.arc(kp.x, kp.y, isCoarse ? 24 : 26, -Math.PI*0.15, Math.PI*0.35);
-    ctx.stroke();
 
     requestAnimationFrame(draw);
   }
