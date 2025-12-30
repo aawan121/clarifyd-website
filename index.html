@@ -676,7 +676,11 @@
   const stageDur = prefersReduced ? 2900 : 2450;
   function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
   function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
-  function validateProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+  function validateProgress(t){
+    const u = (t % stageDur) / stageDur;   // Reach 100% by ~78% of the stage, then hold fully clarified   
+    const k = Math.min(1, u / 0.78);
+    return easeInOut(k);
+  }
   function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
 
   function aucValue(t){
@@ -1204,7 +1208,7 @@
           x: lerp(p.validate.x, p.train.x, vp),
           y: lerp(p.validate.y, p.train.y, vp)
         };
-        const amp = (1 - vp) * Math.min(W, H) * 0.030;
+        const amp = (1 - vp) * (1 - vp) * Math.min(W, H) * 0.040;
         target = { x: base.x + Math.sin(t/120 + p.seed)*amp, y: base.y + Math.cos(t/140 + p.seed*1.31)*amp };
       }
 
