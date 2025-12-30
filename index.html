@@ -378,7 +378,7 @@
     <!-- Full-width showpiece animation -->
     <section class="section" style="padding-top: 10px;">
       <div class="container">
-        <div class="visual visual-wide reveal" id="vizHost" data-tilt aria-label="MLOps showpiece visual">
+        <div class="visual visual-wide reveal" id="vizHost" aria-label="MLOps showpiece visual">
           <canvas id="viz"></canvas>
 
           <div class="visual-ui">
@@ -500,29 +500,6 @@
   window.addEventListener('scroll', onScroll, { passive:true });
   window.addEventListener('resize', onScroll);
   onScroll();
-
-  // Tilt on showpiece (disabled on coarse pointers / reduced motion)
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-
-  const tiltCard = document.querySelector('[data-tilt]');
-  if (tiltCard && !prefersReduced && !isCoarse) {
-    let raf = null;
-    tiltCard.addEventListener('mousemove', (e) => {
-      const r = tiltCard.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - 0.5;
-      const py = (e.clientY - r.top) / r.height - 0.5;
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rx = (-py * 4.2).toFixed(2);
-        const ry = (px * 6.2).toFixed(2);
-        tiltCard.style.transform = `perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-      });
-    });
-    tiltCard.addEventListener('mouseleave', () => {
-      tiltCard.style.transform = 'translate3d(0,0,0)';
-    });
-  }
 
   // ========= showpiece animation =========
   const host = document.getElementById('vizHost');
