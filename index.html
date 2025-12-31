@@ -1,426 +1,1519 @@
-<!-- FILE: index.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Clarifyd — Make data useful</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Clarifyd | Data Science & AI</title>
+  <meta name="description" content="Clarifyd: data science training and contract delivery across ML, MLOps, and LLMs." />
 
-  <meta name="description" content="Clarifyd — practical data training and delivery. Data literacy, applied data science, MLOps and LLM work designed for real-world use." />
-  <meta name="theme-color" content="#0b0f14" />
+  <!-- Basic SEO -->
+  <meta name="theme-color" content="#070A12" />
+  <link rel="canonical" href="https://clarifyd.co.uk/" />
 
-  <meta property="og:title" content="Clarifyd — Make data useful" />
-  <meta property="og:description" content="Practical data training and delivery — designed for real-world use, not slide decks." />
-  <meta property="og:type" content="website" />
-
-  <meta name="twitter:card" content="summary_large_image" />
+  <!-- Organisation schema for Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Clarifyd",
+    "url": "https://clarifyd.co.uk",
+    "email": "hello@clarifyd.co.uk",
+    "foundingLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "GB"
+      }
+    }
+  }
+  </script>
 
   <style>
     :root{
-      --bg:#0b0f14;
-      --panel:#0f1621;
-      --text:#e7eef7;
-      --muted:#a8b3c3;
-      --line:rgba(255,255,255,.10);
-      --accent:#7dd3fc;
-      --accent2:#a78bfa;
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --text:#F2F4FF;
+      --muted: rgba(242,244,255,.72);
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 22px;
+      --max: 1160px;
+      --accentA: #7C3AED; /* purple */
+      --accentB: #22D3EE; /* cyan */
+      --accentC: #A3FFB0; /* mint */
+      --accentY: #FDE047; /* yellow */
+      --glowA: rgba(124,58,237,.45);
     }
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box }
+    html,body{ margin:0; padding:0 }
     body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
       background:
-        radial-gradient(1200px 800px at 10% -10%, rgba(125,211,252,.18), transparent 55%),
-        radial-gradient(900px 700px at 90% 10%, rgba(167,139,250,.20), transparent 55%),
-        linear-gradient(180deg, #0b0f14 0%, #0a0e13 100%);
-      color:var(--text);
-      line-height:1.45;
+        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
     }
-    a{color:inherit}
-    .wrap{max-width:1180px; margin:0 auto; padding:28px 20px 80px}
-    header{
-      display:flex; align-items:center; justify-content:space-between;
-      position:sticky; top:0; z-index:10;
-      background:rgba(11,15,20,.75); backdrop-filter: blur(12px);
-      border-bottom:1px solid var(--line);
-    }
-    header .inner{max-width:1180px; width:100%; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .brand{display:flex; gap:10px; align-items:center; font-weight:800; letter-spacing:.4px; text-decoration:none}
-    .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow:0 0 0 8px rgba(125,211,252,.10)}
-    nav{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-weight:650}
-    nav a{padding:8px 12px; border-radius:12px; text-decoration:none}
-    nav a:hover{background:rgba(255,255,255,.08); color:var(--text)}
-    .btn{display:inline-flex; align-items:center; justify-content:center; padding:11px 16px; border-radius:14px; border:1px solid var(--line); text-decoration:none; font-weight:850; background:rgba(255,255,255,.04); transition:transform .25s ease, box-shadow .25s ease}
-    .btn.primary{border-color:rgba(125,211,252,.55); background:linear-gradient(180deg, rgba(125,211,252,.22), rgba(125,211,252,.10))}
-    .btn:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.28)}
+    a{ color: inherit }
+    .container{ max-width:var(--max); margin:0 auto; padding:0 22px }
+    .muted{ color: var(--muted) }
+    .tiny{ font-size: 12px; color: rgba(242,244,255,.62) }
 
-    .hero{padding:48px 0 18px}
-    .pill{display:inline-flex; gap:10px; align-items:center; color:var(--muted); font-weight:800; font-size:12px; border:1px solid var(--line); padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.03)}
-    .h1{font-size:52px; line-height:1.02; margin:18px 0 12px; letter-spacing:-.8px}
-    .sub{font-size:18px; color:var(--muted); max-width:60ch; margin:0 0 20px}
-    .cta{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
-    .micro{margin-top:14px; color:var(--muted); font-size:13px}
-
-    .grid{display:grid; gap:18px}
-    @media (min-width: 960px){
-      .grid.two{grid-template-columns: 1.2fr .8fr}
-      .grid.three{grid-template-columns: repeat(3, 1fr)}
+    /* Parallax background layers */
+    .parallax-layer{
+      position: fixed; inset: -18vh -18vw;
+      pointer-events: none; z-index: 0;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+      opacity: .9;
     }
-    .card{border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:20px; padding:20px; transition:transform .25s ease, box-shadow .25s ease}
-    .card:hover{transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
-    .card h3{margin:0 0 6px; font-size:18px}
-    .card p{margin:0; color:var(--muted)}
-    .kicker{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.4px; text-transform:uppercase}
-    .section{margin-top:48px}
-    .section h2{margin:0 0 14px; font-size:26px; letter-spacing:-.4px}
-
-    /* showpiece styling */
-    .showpiece .top{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap}
-    .showpiece .tag{
-      font-size:12px; font-weight:900; letter-spacing:.4px; text-transform:uppercase;
-      padding:8px 12px; border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-    }
-    .mlops-embed{
-      margin-top:18px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
+    .layer-a{
       background:
-        radial-gradient(700px 420px at 20% 10%, rgba(125,211,252,.10), transparent 60%),
-        radial-gradient(700px 420px at 80% 20%, rgba(167,139,250,.10), transparent 60%),
-        rgba(255,255,255,.02);
-      padding:18px;
+        radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);
+      filter: blur(14px);
+    }
+    .layer-b{
+      background:
+        radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),
+        radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);
+      filter: blur(18px);
+      opacity: .65;
+    }
+    .layer-c{
+      background:
+        radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);
+      filter: blur(26px);
+      opacity: .45;
+    }
+    .bg-grid{
+      position: fixed; inset: 0; pointer-events: none; opacity: .20;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+      z-index: 1;
+    }
+
+    main{ position: relative; z-index: 2 }
+
+    /* header */
+    .site-header{
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(7,10,18,.55);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0; gap: 12px }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight: 720; letter-spacing: .2px; text-decoration:none; white-space:nowrap }
+    .mark{
+      width: 14px; height: 14px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--accentA), var(--accentB), var(--accentY));
+      box-shadow: 0 0 28px var(--glowA);
+    }
+    .menu{ display:flex; gap: 10px; align-items:center; flex-wrap:wrap; justify-content:flex-end }
+    .menu a{
+      text-decoration: none;
+      font-size: 14px;
+      color: rgba(242,244,255,.72);
+      padding: 10px 10px;
+      border-radius: 999px;
+      transition: background .2s ease, color .2s ease;
+    }
+    .menu a:hover{ color: var(--text); background: rgba(255,255,255,.06) }
+    .pill{
+      padding: 10px 14px !important;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    /* hero */
+    .hero{ padding: 78px 0 18px }
+    .hero-grid{ display:grid; grid-template-columns: 1fr; gap: 18px; align-items: start }
+
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      font-size: 13px;
+      color: rgba(242,244,255,.78);
+      max-width: 100%;
+    }
+    .pulse{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: var(--accentB);
+      box-shadow: 0 0 0 0 rgba(34,211,238,.55);
+      animation: pulse 1.8s ease-in-out infinite;
+      flex: 0 0 auto;
+    }
+    @keyframes pulse{
+      0%{ box-shadow: 0 0 0 0 rgba(34,211,238,.55) }
+      70%{ box-shadow: 0 0 0 12px rgba(34,211,238,0) }
+      100%{ box-shadow: 0 0 0 0 rgba(34,211,238,0) }
+    }
+
+    h1{
+      font-size: 54px;
+      line-height: 1.05;
+      letter-spacing: -1.2px;
+      margin: 18px 0 12px;
+    }
+    .gradient-text{
+      background: linear-gradient(90deg, var(--accentA), var(--accentB), var(--accentY), var(--accentC));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .lead{
+      font-size: 18px;
+      color: rgba(242,244,255,.74);
+      max-width: 70ch;
+      margin: 0 0 16px;
+    }
+
+    .cta{
+      display:flex; gap: 12px;
+      flex-wrap: wrap; align-items:center;
+      margin-top: 10px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      text-decoration:none;
+      color: var(--text);
+      box-shadow: 0 16px 50px rgba(0,0,0,.38);
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
+    .btn:active{ transform: translateY(0px) }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));
+      border-color: transparent;
+      box-shadow: 0 22px 90px rgba(124,58,237,.25), 0 20px 70px rgba(34,211,238,.18);
+    }
+
+    .trust{ display:flex; gap:10px; flex-wrap: wrap; margin-top: 16px }
+    .chip{
+      font-size: 13px;
+      color: rgba(242,244,255,.72);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      white-space: nowrap;
+      max-width: 100%;
       overflow:hidden;
+      text-overflow: ellipsis;
     }
-    .mlops-grid{display:grid; gap:16px; align-items:center}
-    @media (min-width: 960px){ .mlops-grid{grid-template-columns: 1fr 1.2fr} }
-    .mlops-meta{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:13px; margin:0 0 10px}
-    .mlops-meta .chip{border:1px solid var(--line); background:rgba(255,255,255,.03); padding:6px 10px; border-radius:999px; font-weight:800}
-    .mlops-legend{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; color:var(--muted); font-size:12px}
-    .mlops-legend span{border:1px solid var(--line); background:rgba(255,255,255,.03); padding:6px 10px; border-radius:999px; font-weight:800}
-    .mlops-svg{width:100%; height:auto; display:block}
 
-    footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap}
-    footer a{color:var(--muted); text-decoration:none}
-    footer a:hover{color:var(--text)}
+    /* Visual showpiece */
+    .visual{
+      position: relative;
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+      user-select:none;
+      touch-action:none;
+    }
+    .visual::before{
+      content:"";
+      position:absolute; inset:-120px -160px;
+      background:
+        radial-gradient(closest-side at 40% 30%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(closest-side at 70% 55%, rgba(34,211,238,.26), transparent 62%),
+        radial-gradient(closest-side at 55% 80%, rgba(253,224,71,.14), transparent 60%);
+      filter: blur(14px);
+      opacity: .95;
+      pointer-events:none;
+    }
+    #viz{ position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.96 }
+
+    /* Mobile-safe sizing */
+    .visual-wide{
+      width: 100%;
+      min-height: 640px;
+      height: clamp(560px, 72svh, 860px);
+    }
+
+    /* overlay UI */
+    .visual-ui{ position:absolute; inset:0; padding: 14px; pointer-events:none }
+    .visual-ui > *{ pointer-events:auto }
+    .visual-ui::after{
+      content:"";
+      position:absolute; left:0; right:0; bottom:0; height: 140px;
+      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
+      pointer-events:none;
+    }
+    .mini-head{
+      position:relative; z-index:2;
+      display:flex; align-items:flex-start; justify-content:space-between; gap: 10px;
+    }
+    .badge{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: rgba(242,244,255,.78);
+      max-width: min(56ch, 92vw);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .commentary{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.72);
+      max-width: min(52ch, 92vw);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: .92;
+    }
+
+    .stage{
+      position:absolute; left:14px; right:14px; bottom:14px; z-index:2;
+      display:flex; gap:8px; flex-wrap:wrap; padding: 10px;
+      border-radius: 16px; border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10); backdrop-filter: blur(10px);
+    }
+    .pilltag{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(242,244,255,.76);
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: background .2s ease, border-color .2s ease, transform .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pilltag:hover{ background: rgba(255,255,255,.08) }
+    .pilltag:focus{ outline: 2px solid rgba(253,224,71,.22); outline-offset: 2px }
+    .dot{ width:8px; height:8px; border-radius:999px; background: rgba(242,244,255,.28) }
+    .pilltag.active{ border-color: rgba(253,224,71,.35); background: rgba(253,224,71,.08) }
+    .pilltag.active .dot{ background: var(--accentY); box-shadow: 0 0 24px rgba(253,224,71,.35) }
+    .pilltag.locked{ border-color: rgba(34,211,238,.35); background: rgba(34,211,238,.08) }
+    .pilltag.locked .dot{ background: rgba(34,211,238,.95); box-shadow: 0 0 24px rgba(34,211,238,.35) }
+
+    /* sections */
+    .section{ padding: 56px 0 }
+    .section.alt{
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(800px 500px at 85% 30%, rgba(34,211,238,.14), transparent 58%),
+        radial-gradient(700px 500px at 55% 80%, rgba(253,224,71,.08), transparent 60%),
+        rgba(255,255,255,.02);
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap: 14px; margin-bottom: 18px; flex-wrap:wrap }
+    .section-head h2{ margin:0; font-size: 34px; letter-spacing: -.5px }
+    .grid-2{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px }
+
+    .panel{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      padding: 20px;
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+    }
+    .cardlink{ text-decoration:none; display:block }
+    .panel:hover{ border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06) }
+
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap: 12px }
+    .tag{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.74);
+      white-space: nowrap;
+    }
+
+    /* reveal */
+    .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease }
+    .reveal.is-visible{ opacity: 1; transform: translateY(0) }
+
+    /* Booking modal */
+    .modalOverlay{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      display:none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .modalOverlay.show{ display:flex; }
+    .modal{
+      width: min(560px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      box-shadow: 0 30px 120px rgba(0,0,0,.65);
+      overflow:hidden;
+      position: relative;
+    }
+    .modalHead{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+    }
+    .modalHead b{ font-size: 14px; letter-spacing: .2px }
+    .x{
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: rgba(242,244,255,.82);
+      cursor:pointer;
+    }
+    .modalBody{ padding: 14px 16px 16px; }
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .field label{
+      display:block;
+      font-size: 12px;
+      color: rgba(242,244,255,.72);
+      margin: 0 0 6px;
+    }
+    .input, textarea, select{
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(242,244,255,.84);
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline: none;
+      font: inherit;
+    }
+    textarea{ grid-column: 1 / -1; min-height: 110px; resize: vertical; }
+    .modalActions{
+      display:flex; gap: 10px; flex-wrap:wrap;
+      margin-top: 12px;
+      align-items:center;
+      justify-content: flex-end;
+    }
+    .note{
+      font-size: 12px;
+      color: rgba(242,244,255,.64);
+      line-height: 1.35;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 980px){
+      h1{ font-size: 44px }
+      .grid-2{ grid-template-columns: 1fr }
+      .menu{ gap: 10px }
+      .menu a{ padding: 10px 8px }
+      .visual-wide{ min-height: 560px; height: clamp(520px, 70svh, 780px); }
+      .badge{ max-width: 40ch; }
+      .commentary{ max-width: 40ch; }
+    }
+    @media (max-width: 620px){
+      .formGrid{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px){
+      .hero{ padding-top: 64px }
+      .visual-wide{ min-height: 560px; height: 74svh; }
+      .visual-ui::after{ height: 78px; }
+      .stage{ left: 10px; right: 10px; bottom: 10px; padding: 8px; }
+      .badge{ max-width: 34ch; }
+      .commentary{ max-width: 30ch; }
+      h1{ font-size: 38px }
+      .lead{ font-size: 16px }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .pulse{ animation: none !important }
+      .reveal{ transition:none !important }
+    }
   </style>
 </head>
+
 <body>
-  <header>
-    <div class="inner">
-      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
-      <nav>
-        <a href="services.html">Services</a>
-        <a href="work.html">Work</a>
-        <a class="btn" href="contact.html">Contact</a>
+  <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
+  <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
+  <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/">
+        <span class="mark" aria-hidden="true"></span>
+        <span>Clarifyd</span>
+      </a>
+      <nav class="menu" aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/work.html">Work</a>
+        <a href="/contact.html" class="pill">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="wrap">
-    <!-- HERO -->
+  <main>
     <section class="hero">
-      <div class="grid two">
-        <div>
-          <div class="pill">UK • London / Remote • Data Science • ML • MLOps • LLMs</div>
-          <div class="h1">Make data useful.</div>
-          <p class="sub">
-            Practical data training and delivery — designed for real-world use, not slide decks.
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="kicker"><span class="pulse" aria-hidden="true"></span> Data Science • ML • MLOps • LLMs</div>
+
+          <h1>
+            Make data <span class="gradient-text">useful</span>.<br/>
+            Ship models with <span class="gradient-text">confidence</span>.
+          </h1>
+
+          <p class="lead">
+            Training and contract delivery for teams that need measurable outcomes:
+            clearer decisions, safer deployments, and models that keep working after launch.
           </p>
+
           <div class="cta">
-            <a class="btn primary" href="contact.html">Email us</a>
-            <a class="btn" href="services.html">Explore services</a>
-            <a class="btn" href="work.html">See the demo</a>
+            <button class="btn primary" id="btnBook" type="button">Book a call</button>
+            <a class="btn" href="/services.html">Services</a>
+            <a class="btn" href="/work.html">Work</a>
           </div>
-          <div class="micro">Enterprise-aware • Teaching-first • Built for handover</div>
-        </div>
 
-        <div class="card" aria-label="Visual overview">
-          <div class="kicker">At a glance</div>
-          <h3>From learning to delivery</h3>
-          <svg viewBox="0 0 420 240" width="100%" height="240" role="img" aria-label="Literacy and delivery pathways (animated)">
-            <defs>
-              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#7dd3fc" />
-                <stop offset="100%" stop-color="#a78bfa" />
-              </linearGradient>
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="4" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            <g opacity="0.35">
-              <circle cx="210" cy="140" r="70" fill="none" stroke="url(#g)" stroke-width="2">
-                <animate attributeName="r" from="60" to="78" dur="2.8s" repeatCount="indefinite" />
-                <animate attributeName="opacity" from="0.5" to="0.15" dur="2.8s" repeatCount="indefinite" />
-              </circle>
-            </g>
-
-            <g fill="none" stroke="url(#g)" stroke-width="2" filter="url(#glow)">
-              <rect x="20" y="30" rx="14" ry="14" width="150" height="60" />
-              <rect x="250" y="30" rx="14" ry="14" width="150" height="60" />
-              <rect x="135" y="130" rx="14" ry="14" width="150" height="60" />
-            </g>
-
-            <g fill="none" stroke="url(#g)" stroke-width="2" stroke-linecap="round">
-              <path d="M170 60 L250 60" stroke-dasharray="6 10">
-                <animate attributeName="stroke-dashoffset" from="0" to="-80" dur="1.6s" repeatCount="indefinite" />
-              </path>
-              <path d="M325 90 L210 130" stroke-dasharray="6 10">
-                <animate attributeName="stroke-dashoffset" from="0" to="-80" dur="1.9s" repeatCount="indefinite" />
-              </path>
-              <path d="M95 90 L210 130" stroke-dasharray="6 10">
-                <animate attributeName="stroke-dashoffset" from="0" to="-80" dur="2.1s" repeatCount="indefinite" />
-              </path>
-            </g>
-
-            <g fill="#e7eef7" font-size="12" text-anchor="middle" font-weight="600">
-              <text x="95" y="65">Data literacy</text>
-              <text x="325" y="65">Delivery & analytics</text>
-              <text x="210" y="165">Applied data science</text>
-            </g>
-
-            <text x="210" y="215" text-anchor="middle" fill="#a8b3c3" font-size="12">
-              Multiple entry points • one living system
-            </text>
-          </svg>
+          <div class="trust">
+            <div class="chip">UK • London / Remote</div>
+            <div class="chip">Privacy-first demos • client-side compute</div>
+            <div class="chip">hello@clarifyd.co.uk</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- SERVICES: quick gateways -->
-    <section class="section" id="services">
-      <h2>What we do</h2>
-      <p class="sub" style="max-width:60ch">Training builds understanding. Consultancy builds reliable outcomes. Both are iterative — both improve with each loop.</p>
+    <!-- Full-width showpiece animation -->
+    <section class="section" style="padding-top: 10px;">
+      <div class="container">
+        <div class="visual visual-wide reveal" id="vizHost" aria-label="MLOps showpiece visual">
+          <canvas id="viz"></canvas>
 
-      <div class="grid two">
-        <div class="card" style="background:linear-gradient(135deg, rgba(125,211,252,.18), rgba(255,255,255,.03));">
-          <div class="kicker">Training & literacy</div>
-          <h3>How understanding improves</h3>
-          <p>Exposure → practice → reflection → connection. Each pass builds stronger intuition.</p>
-          <div style="margin-top:14px">
-            <a class="btn primary" href="training.html">Explore training →</a>
-          </div>
-        </div>
-
-        <div class="card" style="background:linear-gradient(135deg, rgba(167,139,250,.18), rgba(255,255,255,.03));">
-          <div class="kicker">Consultancy & delivery</div>
-          <h3>How execution improves</h3>
-          <p>Scope → build → measure → refine. Direction creates reliability.</p>
-          <div style="margin-top:14px">
-            <a class="btn primary" href="consultancy.html">Explore consultancy →</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="cta" style="margin-top:18px">
-        <a class="btn" href="services.html">View the full services map →</a>
-        <a class="btn" href="work.html">See the demo →</a>
-      </div>
-    </section>
-
-    <!-- Credibility -->
-    <section class="section" id="experience">
-      <h2>Built for real environments</h2>
-      <p class="sub" style="max-width:60ch">Both training and consultancy are designed to work inside real organisational constraints — not idealised demos.</p>
-
-      <div class="grid two">
-        <div class="card">
-          <div class="kicker">Training</div>
-          <h3>Enterprise-aware learning</h3>
-          <p>Programmes are designed for mixed skill levels, limited time, and real-world tooling. We focus on confidence, intuition, and repeatable practice — not abstract exercises.</p>
-        </div>
-
-        <div class="card">
-          <div class="kicker">Consultancy</div>
-          <h3>Enterprise-ready delivery</h3>
-          <p>Delivery work is scoped to fit governance, security, and access constraints. Outputs prioritise maintainability, documentation, and clean handover to internal teams.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SHOWPIECE -->
-    <section class="section" id="how">
-      <div class="card showpiece">
-        <div class="top">
-          <div>
-            <div class="kicker">How we think</div>
-            <h2 style="margin:2px 0 6px">A practical view of the ML lifecycle</h2>
-            <div class="cta" style="margin-top:10px">
-              <a class="btn primary" href="services.html#engagement">Explore the lifecycle →</a>
-              <a class="btn" href="training.html#formats">See how this becomes a training module</a>
-            </div>
-            <p class="sub" style="margin:0; max-width:72ch">
-              This lifecycle is used in training and project work to help teams connect the dots from ingest → deployment → monitoring.
-              It’s a showpiece, but also a teaching tool: clarity over complexity.
-            </p>
-          </div>
-          <div class="tag">Showpiece</div>
-        </div>
-
-        <div class="mlops-embed" aria-label="MLOps lifecycle showpiece animation">
-          <div class="mlops-meta">
-            <span class="chip">End-to-end thinking</span>
-            <span class="chip">Delivery + training tool</span>
-            <span class="chip">Built for handover</span>
-          </div>
-
-          <div class="mlops-grid">
-            <div>
-              <h3 style="margin:0 0 6px; font-size:18px">MLOps lifecycle (practical loop)</h3>
-              <p style="margin:0; color:var(--muted)">
-                Ingest → Clean → Train → Validate → Deploy → Monitor. The “signal” moves continuously — like real systems: always learning, always observed.
-              </p>
-              <div class="mlops-legend" aria-hidden="true">
-                <span>ingest</span><span>clean</span><span>train</span><span>validate</span><span>deploy</span><span>monitor</span>
+          <div class="visual-ui">
+            <div class="mini-head">
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+                <div class="badge">MLOps cycle</div>
+                <div class="badge" id="mode">Ingest</div>
               </div>
+              <div class="commentary" id="commentary">Streaming signals into a usable dataset.</div>
             </div>
 
-            <svg class="mlops-svg" viewBox="0 0 560 360" role="img" aria-label="Animated MLOps lifecycle ring with six stages">
-              <defs>
-                <linearGradient id="mlg" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7dd3fc"/>
-                  <stop offset="100%" stop-color="#a78bfa"/>
-                </linearGradient>
-
-                <filter id="mlGlow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="4" result="b"/>
-                  <feMerge>
-                    <feMergeNode in="b"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-
-                <marker id="mlArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#7dd3fc"/>
-                </marker>
-
-                <path id="mlOrbit" d="
-                  M 280 70
-                  A 120 120 0 0 1 400 130
-                  A 120 120 0 0 1 400 230
-                  A 120 120 0 0 1 280 290
-                  A 120 120 0 0 1 160 230
-                  A 120 120 0 0 1 160 130
-                  A 120 120 0 0 1 280 70
-                  Z" />
-              </defs>
-
-              <g opacity="0.30">
-                <circle cx="280" cy="180" r="150" fill="none" stroke="url(#mlg)" stroke-width="2">
-                  <animate attributeName="r" from="140" to="162" dur="3.2s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" from="0.35" to="0.12" dur="3.2s" repeatCount="indefinite"/>
-                </circle>
-              </g>
-
-              <g fill="none" stroke="url(#mlg)" stroke-width="4" stroke-linecap="round" filter="url(#mlGlow)">
-                <path d="M280 70 A120 120 0 0 1 400 130" stroke-dasharray="8 10" marker-end="url(#mlArrow)">
-                  <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="2.2s" repeatCount="indefinite"/>
-                </path>
-                <path d="M400 130 A120 120 0 0 1 400 230" stroke-dasharray="8 10" marker-end="url(#mlArrow)">
-                  <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="2.2s" repeatCount="indefinite"/>
-                </path>
-                <path d="M400 230 A120 120 0 0 1 280 290" stroke-dasharray="8 10" marker-end="url(#mlArrow)">
-                  <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="2.2s" repeatCount="indefinite"/>
-                </path>
-                <path d="M280 290 A120 120 0 0 1 160 230" stroke-dasharray="8 10" marker-end="url(#mlArrow)">
-                  <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="2.2s" repeatCount="indefinite"/>
-                </path>
-                <path d="M160 230 A120 120 0 0 1 160 130" stroke-dasharray="8 10" marker-end="url(#mlArrow)">
-                  <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="2.2s" repeatCount="indefinite"/>
-                </path>
-                <path d="M160 130 A120 120 0 0 1 280 70" stroke-dasharray="8 10" marker-end="url(#mlArrow)">
-                  <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="2.2s" repeatCount="indefinite"/>
-                </path>
-              </g>
-
-              <g filter="url(#mlGlow)">
-                <circle r="6" fill="#e7eef7">
-                  <animateMotion dur="5.2s" repeatCount="indefinite" rotate="auto">
-                    <mpath href="#mlOrbit" />
-                  </animateMotion>
-                </circle>
-              </g>
-
-              <g font-size="12" font-weight="900" text-anchor="middle" dominant-baseline="middle">
-                <g transform="translate(280 40)">
-                  <rect x="-46" y="-14" width="92" height="28" rx="14" fill="rgba(11,15,20,.65)" stroke="rgba(255,255,255,.12)"/>
-                  <text fill="url(#mlg)" x="0" y="1">ingest</text>
-                </g>
-                <g transform="translate(430 120)">
-                  <rect x="-46" y="-14" width="92" height="28" rx="14" fill="rgba(11,15,20,.65)" stroke="rgba(255,255,255,.12)"/>
-                  <text fill="url(#mlg)" x="0" y="1">clean</text>
-                </g>
-                <g transform="translate(430 240)">
-                  <rect x="-46" y="-14" width="92" height="28" rx="14" fill="rgba(11,15,20,.65)" stroke="rgba(255,255,255,.12)"/>
-                  <text fill="url(#mlg)" x="0" y="1">train</text>
-                </g>
-                <g transform="translate(280 320)">
-                  <rect x="-56" y="-14" width="112" height="28" rx="14" fill="rgba(11,15,20,.65)" stroke="rgba(255,255,255,.12)"/>
-                  <text fill="url(#mlg)" x="0" y="1">validate</text>
-                </g>
-                <g transform="translate(130 240)">
-                  <rect x="-46" y="-14" width="92" height="28" rx="14" fill="rgba(11,15,20,.65)" stroke="rgba(255,255,255,.12)"/>
-                  <text fill="url(#mlg)" x="0" y="1">deploy</text>
-                </g>
-                <g transform="translate(130 120)">
-                  <rect x="-52" y="-14" width="104" height="28" rx="14" fill="rgba(11,15,20,.65)" stroke="rgba(255,255,255,.12)"/>
-                  <text fill="url(#mlg)" x="0" y="1">monitor</text>
-                </g>
-              </g>
-
-              <g text-anchor="middle">
-                <text x="280" y="178" fill="#e7eef7" font-weight="900" font-size="16">production loop</text>
-                <text x="280" y="202" fill="#a8b3c3" font-weight="700" font-size="12">measure → refine → repeat</text>
-              </g>
-            </svg>
+            <div class="stage" aria-label="Stages">
+              <div class="pilltag" role="button" tabindex="0" data-stage="0" aria-label="Ingest"><span class="dot"></span>Ingest</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="1" aria-label="Clean"><span class="dot"></span>Clean</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="2" aria-label="Train"><span class="dot"></span>Train</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="3" aria-label="Validate"><span class="dot"></span>Validate</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="4" aria-label="Deploy"><span class="dot"></span>Deploy</div>
+              <div class="pilltag" role="button" tabindex="0" data-stage="5" aria-label="Monitor"><span class="dot"></span>Monitor</div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="contact">
-      <h2>Start a conversation</h2>
-      <div class="grid two">
-        <div class="card">
-          <h3>Talk through your goal</h3>
-          <p>Tell us what you’re trying to achieve. We’ll suggest a short, low-risk first step (pilot, workshop, or review).</p>
-          <div class="cta" style="margin-top:12px">
-            <a class="btn primary" href="contact.html">Email us →</a>
-            <a class="btn" href="work.html">See the demo →</a>
-          </div>
-          <div class="micro">No forms required — start with a message.</div>
+    <section class="section alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Our services</h2>
+          <p class="muted">Capability uplift or project delivery—same standard: measurable outcomes.</p>
         </div>
-        <div class="card">
-          <h3>What to include</h3>
-          <p style="margin-bottom:10px">To get a useful reply quickly, include:</p>
-          <ul style="margin:0; padding-left:18px; color:var(--muted)">
-            <li>Who this is for (team, cohort, audience)</li>
-            <li>Current skill level + constraints (time, tools, access)</li>
-            <li>Your goal (decision, dashboard, deployment, upskilling)</li>
-            <li>Ideal timeline</li>
-          </ul>
+
+        <div class="grid-2">
+          <a class="panel cardlink reveal" href="/training.html" aria-label="Training">
+            <div class="top">
+              <div>
+                <h3 style="margin:0 0 6px;">Training</h3>
+                <div class="muted">Traditional DS, MLOps, LLMs—focused on practical delivery.</div>
+              </div>
+              <div class="tag">Capability</div>
+            </div>
+            <div class="muted" style="margin-top:12px;">Workshops • mentoring • templates • code review</div>
+          </a>
+
+          <a class="panel cardlink reveal" href="/delivery.html" aria-label="Delivery">
+            <div class="top">
+              <div>
+                <h3 style="margin:0 0 6px;">Delivery</h3>
+                <div class="muted">Contracts and builds that ship end-to-end.</div>
+              </div>
+              <div class="tag">Delivery</div>
+            </div>
+            <div class="muted" style="margin-top:12px;">Forecasting • analytics • RAG/evals • monitoring</div>
+          </a>
         </div>
       </div>
     </section>
 
-    <footer>
-      <div>© <span id="year"></span> Clarifyd</div>
-      <div style="display:flex; gap:12px; flex-wrap:wrap">
-        <a href="privacy.html">Privacy</a>
-        <span>•</span>
-        <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
+    <section class="section">
+      <div class="container">
+        <div class="panel reveal">
+          <div class="top" style="align-items:center;">
+            <div>
+              <h3 style="margin:0 0 6px;">Fast start</h3>
+              <div class="muted">Clear scope → short milestones → clean handover.</div>
+            </div>
+            <button class="btn" id="btnBook2" type="button">Book a call</button>
+          </div>
+          <div class="tiny muted" style="margin-top:12px;">
+            Prefer email? <a href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;border-bottom:1px solid rgba(255,255,255,.18)">hello@clarifyd.co.uk</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="section alt" style="padding:26px 0 38px;">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
+        <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
+          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
+          <span class="tiny">© <span id="year"></span></span>
+        </div>
       </div>
     </footer>
   </main>
 
+  <!-- Booking modal (mailto-forwarded “booking request”) -->
+  <div class="modalOverlay" id="bookOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+      <div class="modalHead">
+        <b id="bookTitle">Book a call (sends an email)</b>
+        <button class="x" id="bookClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="muted" style="font-size:13px; line-height:1.45;">
+          Fill this in and we’ll open your email app with everything pre-written to <b>hello@clarifyd.co.uk</b>.
+          Nothing is stored.
+        </div>
+
+        <div class="formGrid" style="margin-top:12px;">
+          <div class="field">
+            <label for="bkName">Name</label>
+            <input class="input" id="bkName" autocomplete="name" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label for="bkCompany">Company</label>
+            <input class="input" id="bkCompany" autocomplete="organization" placeholder="Company (optional)" />
+          </div>
+
+          <div class="field">
+            <label for="bkEmail">Email</label>
+            <input class="input" id="bkEmail" autocomplete="email" inputmode="email" placeholder="you@company.com" />
+          </div>
+          <div class="field">
+            <label for="bkTopic">Topic</label>
+            <select class="input" id="bkTopic">
+              <option value="Training">Training (DS / MLOps / LLMs)</option>
+              <option value="Delivery">Delivery (project / contract)</option>
+              <option value="MLOps">MLOps help</option>
+              <option value="Model build">Model build / optimisation</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field" style="grid-column:1/-1;">
+            <label for="bkTimes">Ideal times (include timezone)</label>
+            <input class="input" id="bkTimes" placeholder="e.g. Tue 10–12, Thu 14–16 (UK)" />
+          </div>
+
+          <textarea id="bkNotes" placeholder="What are you trying to achieve? Any constraints (data, stack, timeline)?"></textarea>
+        </div>
+
+        <div class="modalActions">
+          <button class="btn" id="bookCancel" type="button">Cancel</button>
+          <button class="btn primary" id="bookSend" type="button">Open email</button>
+        </div>
+
+        <div class="note">
+          Tip: if you have a Calendly/Cal.com link later, you can swap this button to open that page instead.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+(() => {
+  'use strict';
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+
+  // ========= basics =========
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  // Reveal
+  const revealItems = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.12 });
+  revealItems.forEach(el => io.observe(el));
+
+  // Parallax background layers
+  const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+  let latestY = 0, ticking = false;
+  function applyParallax(){
+    const y = latestY;
+    for (const el of layers) {
+      const s = parseFloat(el.getAttribute('data-parallax') || '0.1');
+      el.style.transform = `translate3d(0, ${-y * s}px, 0)`;
+    }
+    ticking = false;
+  }
+  function onScroll(){
+    latestY = window.scrollY || 0;
+    if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  // ========= booking modal -> mailto =========
+  const overlay = document.getElementById('bookOverlay');
+  const btnBook = document.getElementById('btnBook');
+  const btnBook2 = document.getElementById('btnBook2');
+  const closeBtn = document.getElementById('bookClose');
+  const cancelBtn = document.getElementById('bookCancel');
+  const sendBtn = document.getElementById('bookSend');
+
+  const bkName = document.getElementById('bkName');
+  const bkCompany = document.getElementById('bkCompany');
+  const bkEmail = document.getElementById('bkEmail');
+  const bkTopic = document.getElementById('bkTopic');
+  const bkTimes = document.getElementById('bkTimes');
+  const bkNotes = document.getElementById('bkNotes');
+
+  let lastFocus = null;
+
+  function openModal(){
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+    setTimeout(() => bkName && bkName.focus(), 30);
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    if (!overlay) return;
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function escapeMailto(s){
+    return encodeURIComponent((s || '').trim());
+  }
+  function buildMailto(){
+    const name = (bkName?.value || '').trim();
+    const company = (bkCompany?.value || '').trim();
+    const email = (bkEmail?.value || '').trim();
+    const topic = (bkTopic?.value || 'Booking').trim();
+    const times = (bkTimes?.value || '').trim();
+    const notes = (bkNotes?.value || '').trim();
+
+    const subject = `Booking request — ${topic}${company ? ` (${company})` : ''}`;
+    const bodyLines = [
+      `Hi Clarifyd,`,
+      ``,
+      `I'd like to book a call about: ${topic}`,
+      ``,
+      `Name: ${name || '—'}`,
+      `Company: ${company || '—'}`,
+      `Email: ${email || '—'}`,
+      `Ideal times: ${times || '—'}`,
+      ``,
+      `Context / goals:`,
+      `${notes || '—'}`,
+      ``,
+      `Thanks!`
+    ];
+    const body = bodyLines.join('\n');
+    return `mailto:hello@clarifyd.co.uk?subject=${escapeMailto(subject)}&body=${escapeMailto(body)}`;
+  }
+
+  function wireModal(){
+    if (!overlay) return;
+
+    [btnBook, btnBook2].forEach(b => b && b.addEventListener('click', openModal));
+    closeBtn && closeBtn.addEventListener('click', closeModal);
+    cancelBtn && cancelBtn.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!overlay.classList.contains('show')) return;
+      if (e.key === 'Escape') closeModal();
+    });
+
+    sendBtn && sendBtn.addEventListener('click', () => {
+      const url = buildMailto();
+      // open mail client
+      window.location.href = url;
+      // keep the modal open for a moment so the user sees feedback
+      setTimeout(closeModal, 350);
+    });
+  }
+  wireModal();
+
+  // ========= showpiece animation =========
+  const host = document.getElementById('vizHost');
+  const canvas = document.getElementById('viz');
+  const ctx = canvas ? canvas.getContext('2d', { alpha:true, desynchronized:true }) : null;
+  const IS_CHROME = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
+
+  const stageEls = Array.from(document.querySelectorAll('.pilltag'));
+  const modeEl = document.getElementById('mode');
+  const commentaryEl = document.getElementById('commentary');
+
+  const STAGES = ['Ingest','Clean','Train','Validate','Deploy','Monitor'];
+  const COMMENTS = [
+    "Streaming signals into a usable dataset.",
+    "Cleaning & segregation: noise out, structure in.",
+    "Training: mini-batches update a model core; structure emerges.",
+    "Validation: metrics rise as uncertainty collapses into CLARIFYD.",
+    "Deployment: the model lands on Earth.",
+    "Monitoring: drift watch + health signals stay green."
+  ];
+
+  // Hover preview does NOT stop auto-cycle; click locks for 5s
+  let hoverStage = null;
+  let lockedStage = null;
+  let lockedUntil = 0;
+
+  function setStageUI(i){
+    stageEls.forEach(el => {
+      const idx = Number(el.dataset.stage);
+      el.classList.toggle('active', idx === i);
+      el.classList.toggle('locked', lockedStage !== null && idx === lockedStage);
+    });
+    if (modeEl) modeEl.textContent = STAGES[i] || 'MLOps';
+    if (commentaryEl) commentaryEl.textContent = COMMENTS[i] || "";
+  }
+
+  function nowMs(){ return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
+  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  stageEls.forEach(el => {
+    const i = Number(el.dataset.stage);
+
+    el.addEventListener('mouseenter', () => { if (!isCoarse) hoverStage = i; });
+    el.addEventListener('mouseleave', () => { if (!isCoarse) hoverStage = null; });
+    el.addEventListener('focus', () => { if (!isCoarse) hoverStage = i; });
+    el.addEventListener('blur', () => { if (!isCoarse) hoverStage = null; });
+
+    el.addEventListener('click', () => {
+      lockedStage = i;
+      lockedUntil = nowMs() + 5000;
+      setStageUI(i);
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.click();
+      }
+    });
+  });
+
+  // ---- particles ----
+  const points = [];
+  const N = (window.innerWidth < 900) ? 900 : 1200;
+  const links = 140;
+  let frame = 0;
+
+  let W=0,H=0,DPR=1;
+  function calcDPR(){
+    const dpr = window.devicePixelRatio || 1;
+    const cap = prefersReduced ? 1 : (isCoarse ? 1.25 : 1.5);
+    return Math.min(dpr, cap);
+  }
+  function resizeCanvas(){
+    if (!canvas || !ctx || !host) return;
+    DPR = calcDPR();
+    const r = host.getBoundingClientRect();
+    W = Math.max(280, Math.floor(r.width || window.innerWidth));
+    H = Math.max(340, Math.floor(r.height || 560));
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.width = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function randn(){
+    let u=0,v=0;
+    while(u===0) u=Math.random();
+    while(v===0) v=Math.random();
+    return Math.sqrt(-2.0*Math.log(u))*Math.cos(2.0*Math.PI*v);
+  }
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+
+  // word targets (auto-fit CLARIFYD)
+  let wordTargets = [];
+  function buildWordTargets(text){
+    const oc = document.createElement('canvas');
+    const octx = oc.getContext('2d');
+    const scale = Math.min(2, DPR);
+
+    oc.width  = Math.floor(W * 0.92 * scale);
+    oc.height = Math.floor(H * 0.52 * scale);
+
+    octx.clearRect(0,0,oc.width, oc.height);
+    octx.textBaseline = 'middle';
+    octx.textAlign = 'center';
+
+    let size = Math.floor(oc.height * 0.62);
+    while (size > 22) {
+      octx.font = `900 ${size}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
+      if (octx.measureText(text).width <= oc.width * 0.92) break;
+      size -= 8;
+    }
+
+    octx.fillStyle = '#000';
+    octx.fillText(text, oc.width/2, oc.height/2);
+
+    const img = octx.getImageData(0,0,oc.width, oc.height).data;
+    const coords = [];
+    const step = Math.max(3, Math.floor(6 * scale));
+
+    for (let y=0;y<oc.height;y+=step){
+      for (let x=0;x<oc.width;x+=step){
+        const idx=(y*oc.width+x)*4;
+        if (img[idx+3] > 10) coords.push({x,y});
+      }
+    }
+
+    const padX = W * (isCoarse ? 0.07 : 0.10);
+    const padY = H * (isCoarse ? 0.18 : 0.24);
+    const sx = (W - padX*2) / oc.width;
+    const sy = (H - padY*2) / oc.height;
+    const s  = Math.min(sx, sy) * 0.98;
+
+    const ox = W*0.50;
+    const oy = H*0.50;
+
+    for (let i=coords.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [coords[i], coords[j]] = [coords[j], coords[i]];
+    }
+
+    return coords.map(p => ({
+      x: ox + (p.x - oc.width/2) * (s/scale),
+      y: oy + (p.y - oc.height/2) * (s/scale)
+    }));
+  }
+
+  // timing
+  const stageDur = prefersReduced ? 2900 : 2450;
+  function autoStageIndex(t){ return Math.floor((t / stageDur) % STAGES.length); }
+  function stageMix(t){ return easeInOut((t % stageDur) / stageDur); }
+
+  // IMPORTANT FIX: validate reaches 100% earlier and holds, so “CLARIFYD” stays fully visible longer
+  function validateProgress(t){
+    const u = (t % stageDur) / stageDur;
+    const k = Math.min(1, u / 0.70);     // reach full by 70%
+    return easeInOut(k);
+  }
+  function trainProgress(t){ return easeInOut((t % stageDur) / stageDur); }
+
+  function aucValue(t){
+    const p = validateProgress(t);
+    const wiggle = Math.sin(t/260) * 0.01;
+    return clamp(0.58 + 0.38*p + wiggle, 0, 0.999);
+  }
+  function lossValue(t){
+    const p = trainProgress(t);
+    const wiggle = Math.sin(t/240) * 0.015;
+    return clamp(1.25 - 0.85*p + wiggle, 0.18, 1.35);
+  }
+
+  function colorFor(c, a){
+    if (c===0) return `rgba(124,58,237,${a})`;
+    if (c===1) return `rgba(34,211,238,${a})`;
+    if (c===2) return `rgba(253,224,71,${a})`;
+    if (c===4) return `rgba(255,90,90,${a})`;
+    if (c===6) return `rgba(163,255,176,${a})`;
+    return `rgba(163,255,176,${a})`;
+  }
+
+  // ✅ Removed “weird cursor datapoint”: no pointer-follow steering
+  // (We keep pointer listeners off entirely.)
+
+  // cinematic train config
+  const TRAIN = {
+    size: 78,
+    period: 760,
+    lanesY: [0.44, 0.56, 0.68],
+    beltX0: 0.12,
+    beltX1: 0.58,
+    batchBox: { x: 0.60, y: 0.18, w: 0.18, h: 0.13 },
+    core: { x: 0.74, y: 0.52, r: 0.11 },
+  };
+  function batchIndex(t, maxB){ return Math.floor((t / TRAIN.period) % maxB); }
+  function inBatch(i, b){ return (i >= b*TRAIN.size && i < (b*TRAIN.size + TRAIN.size)); }
+
+  function initParticles(){
+    if (!canvas || !ctx) return;
+    resizeCanvas();
+    points.length = 0;
+
+    for (let i=0;i<N;i++){
+      const f = clamp(randn()*0.70, -1, 1);
+      const grp = (f < -0.25) ? 0 : (f > 0.25 ? 2 : 1);
+      points.push({
+        x: W*0.5 + randn()*W*0.20,
+        y: H*0.56 + randn()*H*0.16,
+        vx: (Math.random()-.5)*0.18,
+        vy: (Math.random()-.5)*0.18,
+        alpha: 1,
+        cls: i%3,
+        f, grp,
+        ingest: {x:0,y:0},
+        clean:  {x:0,y:0},
+        train:  {x:0,y:0},
+        validate:{x:0,y:0},
+        deploy: {x:0,y:0},
+        monitor:{x:0,y:0},
+        earth: null,
+        out: false,
+        seed: Math.random()*1000,
+      });
+    }
+
+    // Ingest: stream from left
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const lane = (i % 10) / 9;
+      p.ingest.x = -W*0.15 + Math.random()*W*0.10;
+      p.ingest.y = H*0.16 + lane * H*0.68 + randn()*H*0.012;
+    }
+
+    // Clean: segregate + quarantine
+    const cy = H*0.56;
+    const ry = H*0.24;
+    const laneX = [W*0.32, W*0.50, W*0.68];
+
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      p.out = Math.abs(p.f) > 0.92;
+      if (p.out) {
+        p.clean.x = W*0.88 + randn()*W*0.012;
+        p.clean.y = H*0.26 + Math.random()*H*0.56;
+      } else {
+        p.clean.x = laneX[p.grp] + randn()*W*0.022;
+        p.clean.y = cy + randn()*ry*0.42;
+      }
+    }
+
+    // Train: CLARIFYD
+    wordTargets = buildWordTargets('CLARIFYD');
+    if (wordTargets.length < 120) wordTargets = points.map(p => ({x:p.clean.x, y:p.clean.y}));
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const t = wordTargets[i % wordTargets.length];
+      p.train.x = t.x + randn()*1.2;
+      p.train.y = t.y + randn()*1.2;
+    }
+
+    // Validate: slight split (will collapse back into train targets)
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const left = (i % 2 === 0);
+      p.validate.x = p.train.x + (left ? -W*0.05 : W*0.05);
+      p.validate.y = p.train.y + (left ? -H*0.03 : H*0.03);
+    }
+
+    // Deploy: Earth sphere
+    const earthCx = W*0.70;
+    const earthCy = H*0.56;
+    const earthR  = Math.min(W,H)*0.24;
+
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const u = (i + 0.5) / N;
+      const v = (i * 0.6180339887) % 1;
+      const lat = Math.acos(1 - 2*u) - Math.PI/2;
+      const lon = v * Math.PI * 2;
+      p.earth = { lat, lon };
+      p.deploy.x = earthCx + Math.cos(lat)*Math.cos(lon) * earthR;
+      p.deploy.y = earthCy + Math.sin(lat) * earthR;
+    }
+
+    // Monitor: stable wave path + per-point phase
+    for (let i=0;i<N;i++){
+      const p = points[i];
+      const u = i/(N-1);
+      p.monitor.x = W*0.10 + u * W*0.80;
+      p.monitor.y = H*0.58 + Math.sin(u*Math.PI*4) * (H*0.10) + (randn()*H*0.015);
+    }
+  }
+
+  function targetForStage(p, s){
+    switch(s){
+      case 0: return p.ingest;
+      case 1: return p.clean;
+      case 2: return p.train;
+      case 3: return p.validate;
+      case 4: return p.deploy;
+      case 5: return p.monitor;
+      default: return p.clean;
+    }
+  }
+
+  function drawVignette(){
+    const g = ctx.createRadialGradient(W*0.55, H*0.38, 50, W*0.55, H*0.55, Math.max(W,H));
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,.35)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  function drawEarth(t){
+    const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
+
+    const g = ctx.createRadialGradient(cx-r*0.25, cy-r*0.35, r*0.20, cx, cy, r);
+    g.addColorStop(0, 'rgba(34,211,238,0.16)');
+    g.addColorStop(1, 'rgba(34,211,238,0.03)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+
+    // meridians
+    const rot = (t/1400) % (Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    for (let k=0;k<6;k++){
+      const a = (k/6)*Math.PI*2 + rot;
+      ctx.beginPath();
+      for (let s=0;s<=64;s++){
+        const th = (s/64)*Math.PI*2;
+        const x = cx + Math.cos(th)*Math.cos(a) * r;
+        const y = cy + Math.sin(th) * r;
+        if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+
+    // deployment arc into globe
+    const sx = W*0.22, sy = H*0.44;
+    const ex = cx - r*0.65, ey = cy - r*0.15;
+    ctx.strokeStyle = 'rgba(253,224,71,0.14)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.quadraticCurveTo((sx+ex)/2, sy - r*0.9, ex, ey);
+    ctx.stroke();
+
+    const tt = (t/1200) % 1;
+    const qx = (1-tt)*(1-tt)*sx + 2*(1-tt)*tt*((sx+ex)/2) + tt*tt*ex;
+    const qy = (1-tt)*(1-tt)*sy + 2*(1-tt)*tt*(sy - r*0.9) + tt*tt*ey;
+    ctx.fillStyle = 'rgba(253,224,71,0.75)';
+    ctx.beginPath(); ctx.arc(qx, qy, 2.8, 0, Math.PI*2); ctx.fill();
+  }
+
+  function drawValidateOverlay(t){
+    const s = (Math.sin(t/900)+1)/2;
+    const p = validateProgress(t);
+    const auc = aucValue(t);
+
+    const x = W*0.74, y = H*0.14, w = W*0.20, h = 12;
+
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.fillRect(x, y, w, h);
+
+    const v = clamp(0.15 + 0.80*p + s*0.03, 0, 1);
+    ctx.fillStyle = 'rgba(34,211,238,0.55)';
+    ctx.fillRect(x, y, w*v, h);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.strokeRect(x, y, w, h);
+
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = 'rgba(242,244,255,0.78)';
+    ctx.fillText('AUC', x, y - 6);
+
+    ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = `rgba(253,224,71,${0.70 + 0.20*p})`;
+    ctx.fillText(auc.toFixed(3), x + 38, y - 6);
+  }
+
+  function drawTrainOverlay(t){
+    const tp = trainProgress(t);
+    const loss = lossValue(t);
+
+    // belts
+    ctx.lineWidth = 1;
+    for (let k=0;k<3;k++){
+      const y = H * TRAIN.lanesY[k];
+      ctx.strokeStyle = `rgba(255,255,255,${0.06 + 0.05*(1-tp)})`;
+      ctx.beginPath(); ctx.moveTo(W*TRAIN.beltX0, y); ctx.lineTo(W*TRAIN.beltX1, y); ctx.stroke();
+
+      // ticks moving
+      const tickN = 18;
+      for (let n=0;n<tickN;n++){
+        const u = (n/tickN);
+        const speed = (t/700) % 1;
+        const x = W*(TRAIN.beltX0 + ((u + speed)%1) * (TRAIN.beltX1-TRAIN.beltX0));
+        ctx.strokeStyle = 'rgba(253,224,71,0.12)';
+        ctx.beginPath(); ctx.moveTo(x, y-5); ctx.lineTo(x, y+5); ctx.stroke();
+      }
+    }
+
+    // batch window
+    const bb = TRAIN.batchBox;
+    const bx = W*bb.x, by = H*bb.y, bw = W*bb.w, bh = H*bb.h;
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.strokeRect(bx, by, bw, bh);
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = 'rgba(242,244,255,0.72)';
+    ctx.fillText('mini-batch', bx + 10, by + 18);
+
+    // model core
+    const cx = W*TRAIN.core.x, cy = H*TRAIN.core.y, r = Math.min(W,H)*TRAIN.core.r;
+    const g = ctx.createRadialGradient(cx-r*0.35, cy-r*0.35, r*0.25, cx, cy, r);
+    g.addColorStop(0, `rgba(124,58,237,${0.18 + 0.22*tp})`);
+    g.addColorStop(1, 'rgba(124,58,237,0.03)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(34,211,238,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+
+    // pulse ring
+    const pulse = (t % TRAIN.period) / TRAIN.period;
+    ctx.strokeStyle = `rgba(34,211,238,${0.26*(1-pulse)})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, r + pulse*(r*1.25), 0, Math.PI*2); ctx.stroke();
+
+    // loss HUD
+    const hx = W*0.74, hy = H*0.14, hw = W*0.20, hh = 12;
+    ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(hx, hy, hw, hh);
+    const fit = clamp(1 - (loss - 0.18) / (1.35 - 0.18), 0, 1);
+    ctx.fillStyle = `rgba(124,58,237,${0.35 + 0.35*tp})`; ctx.fillRect(hx, hy, hw*fit, hh);
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.strokeRect(hx, hy, hw, hh);
+    ctx.font = '600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = 'rgba(242,244,255,0.78)'; ctx.fillText('Loss', hx, hy - 6);
+    ctx.font = '700 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.fillStyle = `rgba(253,224,71,${0.55 + 0.30*tp})`; ctx.fillText(loss.toFixed(3), hx + 42, hy - 6);
+  }
+
+  function drawMonitorOverlay(t){
+    const baseY = H*0.30;
+    const amp = H*0.06;
+    const left = W*0.10, right = W*0.90;
+
+    ctx.strokeStyle = 'rgba(163,255,176,0.10)';
+    ctx.lineWidth = 1.2;
+
+    ctx.beginPath();
+    for (let i=0;i<=80;i++){
+      const u = i/80;
+      const x = lerp(left, right, u);
+      const y = baseY + Math.sin(u*Math.PI*6 + t/900) * amp * 0.35;
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // sweeping cursor
+    const sweep = (t/1200) % 1;
+    const sx = lerp(left, right, sweep);
+    ctx.strokeStyle = 'rgba(253,224,71,0.10)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(sx, H*0.24);
+    ctx.lineTo(sx, H*0.82);
+    ctx.stroke();
+
+    // occasional drift pulse
+    const pulse = (Math.sin(t/620) + 1)/2;
+    ctx.fillStyle = `rgba(255,90,90,${0.05 + 0.08*pulse})`;
+    ctx.beginPath();
+    ctx.arc(lerp(left, right, 0.75), baseY + Math.sin(t/500)*amp*0.25, 10 + 10*pulse, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function effectiveStage(t){
+    const now = nowMs();
+    if (lockedStage !== null && now >= lockedUntil) lockedStage = null;
+    const auto = autoStageIndex(t);
+    if (lockedStage !== null) return lockedStage;
+    if (hoverStage !== null) return hoverStage;
+    return auto;
+  }
+
+  function drawConnections(si, t){
+    if ((si === 2 || si === 3) && (frame % 2 === 0)) {
+      ctx.lineWidth = 1;
+      const strength = (si === 2) ? (0.40 + 0.60*trainProgress(t)) : validateProgress(t);
+      for (let i=0;i<links;i++){
+        const a = points[(i*7) % points.length];
+        const b = points[(i*19 + 33) % points.length];
+        if (a.alpha < 0.15 || b.alpha < 0.15) continue;
+        const dx = a.x-b.x, dy = a.y-b.y;
+        const d2 = dx*dx + dy*dy;
+        if (d2 < 200*200){
+          const d = Math.sqrt(d2);
+          const alpha = (1 - d/200) * 0.20 * strength;
+          ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function drawPoints(si, mix, t){
+    let activeBatch = -1, maxB = 0;
+    if (si === 2){
+      maxB = Math.ceil(points.length / TRAIN.size);
+      activeBatch = batchIndex(t, maxB);
+    }
+
+    for (let i=0;i<points.length;i++){
+      const p = points[i];
+      if (p.alpha < 0.03) continue;
+
+      const isOut = (si === 1) && p.out;
+
+      let cls;
+      if (isOut) cls = 4;
+      else if (si === 1) cls = p.grp;
+      else if (si === 5) cls = 6;
+      else cls = p.cls;
+
+      // Train: highlight current mini-batch
+      let boost = 1.0;
+      if (si === 2 && activeBatch >= 0){
+        if (inBatch(i, activeBatch)) boost = 1.35;
+      }
+
+      const a = 0.70 * p.alpha * (0.75 + 0.25*boost);
+      const r = (isCoarse ? 1.45 : 1.25);
+
+      // smooth Ingest->Clean colour blend
+      const blendToClean = (si === 0) ? mix : 0;
+      const baseCls = p.cls;
+      const cleanCls = p.grp;
+
+      const glowA = 0.055 * p.alpha * boost;
+
+      // cheap glow (skip on chrome / reduced)
+      if (!IS_CHROME && !prefersReduced) {
+        ctx.fillStyle = colorFor(cls, glowA);
+        ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI*2); ctx.fill();
+      }
+
+      if (si === 0) {
+        ctx.fillStyle = colorFor(baseCls, a * (1 - blendToClean));
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+
+        ctx.fillStyle = colorFor(cleanCls, a * blendToClean);
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+      } else {
+        ctx.fillStyle = colorFor(cls, a);
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+      }
+    }
+  }
+
+  function draw(t){
+    if (!canvas || !ctx) return;
+
+    frame++;
+    const si = effectiveStage(t);
+    const mix = stageMix(t);
+    setStageUI(si);
+
+    ctx.clearRect(0,0,W,H);
+    drawVignette();
+
+    // Deploy: rotate earth targets
+    if (si === 4) {
+      const cx = W*0.70, cy = H*0.56, r = Math.min(W,H)*0.24;
+      const rot = (t/1400) % (Math.PI*2);
+      for (let i=0;i<points.length;i++){
+        const p = points[i];
+        if (!p.earth) continue;
+        const lat = p.earth.lat;
+        const lon = p.earth.lon + rot;
+        p.deploy.x = cx + Math.cos(lat)*Math.cos(lon) * r;
+        p.deploy.y = cy + Math.sin(lat) * r;
+      }
+      drawEarth(t);
+    }
+
+    // overlays
+    if (si === 2) drawTrainOverlay(t);
+    if (si === 3) drawValidateOverlay(t);
+    if (si === 5) drawMonitorOverlay(t);
+
+    // update particles
+    const maxB = Math.ceil(points.length / TRAIN.size);
+    const b = (si === 2) ? batchIndex(t, maxB) : -1;
+
+    for (let i=0;i<points.length;i++){
+      const p = points[i];
+
+      if (si !== 0) { p.x += p.vx; p.y += p.vy; }
+
+      // fade out outliers during Clean
+      if (si === 1) p.alpha = lerp(p.alpha, p.out ? 0.0 : 1.0, 0.07);
+      else p.alpha = lerp(p.alpha, 1.0, 0.04);
+
+      let target = targetForStage(p, si);
+
+      // TRAIN: belts -> batch -> core + hint of word
+      if (si === 2) {
+        const tp = trainProgress(t);
+        const active = inBatch(i, b);
+
+        const lane = p.grp;
+        const beltY = H * TRAIN.lanesY[lane];
+        const phase = (p.seed * 0.0007 + (t/900)) % 1;
+        const beltX = W*(TRAIN.beltX0 + phase * (TRAIN.beltX1 - TRAIN.beltX0));
+
+        const base = {
+          x: lerp(p.clean.x, beltX, 0.60),
+          y: lerp(p.clean.y, beltY, 0.70)
+        };
+
+        const hint = clamp(0.18 + 0.55*tp, 0, 0.78);
+        const towardWord = { x: p.train.x, y: p.train.y };
+
+        if (active) {
+          const u = (t % TRAIN.period) / TRAIN.period;
+          const eased = easeInOut(u);
+
+          const bb = TRAIN.batchBox;
+          const mid = { x: W*(bb.x + bb.w*0.50), y: H*(bb.y + bb.h*0.55) + (lane-1)*H*0.02 };
+          const core = { x: W*TRAIN.core.x, y: H*TRAIN.core.y };
+
+          const x1 = lerp(base.x, mid.x, eased);
+          const y1 = lerp(base.y, mid.y, eased);
+          const x2 = lerp(mid.x, core.x, eased);
+          const y2 = lerp(mid.y, core.y, eased);
+
+          const split = 0.55;
+          const x = (eased < split) ? lerp(base.x, x1, eased/split) : lerp(x1, x2, (eased-split)/(1-split));
+          const y = (eased < split) ? lerp(base.y, y1, eased/split) : lerp(y1, y2, (eased-split)/(1-split));
+
+          const jit = (1 - tp) * Math.min(W,H) * 0.006;
+          target = { x: x + Math.sin(t/90 + p.seed)*jit, y: y + Math.cos(t/110 + p.seed)*jit };
+        } else {
+          const x = lerp(base.x, towardWord.x, hint);
+          const y = lerp(base.y, towardWord.y, hint);
+          const noise = (1 - tp) * Math.min(W,H) * 0.010;
+          target = { x: x + Math.sin(t/140 + p.seed)*noise, y: y + Math.cos(t/160 + p.seed*1.1)*noise };
+        }
+      }
+
+      // VALIDATE: noisy -> clarify into CLARIFYD as AUC improves
+      if (si === 3) {
+        const vp = validateProgress(t);
+        const base = {
+          x: lerp(p.validate.x, p.train.x, vp),
+          y: lerp(p.validate.y, p.train.y, vp)
+        };
+        const amp = (1 - vp) * (1 - vp) * Math.min(W, H) * 0.040;
+        target = { x: base.x + Math.sin(t/120 + p.seed)*amp, y: base.y + Math.cos(t/140 + p.seed*1.31)*amp };
+      }
+
+      // MONITOR: animated drift around wave
+      if (si === 5) {
+        const u = i/(points.length-1);
+        const drift = Math.sin(t/900 + u*Math.PI*2) * (H*0.010);
+        const jitter = Math.sin(t/260 + p.seed) * (H*0.004);
+        target = { x: p.monitor.x, y: p.monitor.y + drift + jitter };
+      }
+
+      // Ingest: stream -> clean smooth blend
+      if (si === 0) {
+        const into = targetForStage(p, 1);
+        const tx = lerp(target.x, into.x, mix);
+        const ty = lerp(target.y, into.y, mix);
+        p.x = lerp(p.x, tx, 0.08);
+        p.y = lerp(p.y, ty, 0.08);
+      } else {
+        p.x = lerp(p.x, target.x, 0.06);
+        p.y = lerp(p.y, target.y, 0.06);
+      }
+    }
+
+    drawConnections(si, t);
+    drawPoints(si, mix, t);
+
+    requestAnimationFrame(draw);
+  }
+
+  // self-test
+  function selfTest(){
+    console.assert(!!host, 'viz host missing');
+    console.assert(!!canvas, 'Canvas #viz missing');
+    console.assert(stageEls.length === 6, 'Expected 6 stage pills');
+    console.assert(!!modeEl, 'Mode badge missing');
+    console.assert(!!commentaryEl, 'Commentary missing');
+  }
+
+  // Resize hooks (mobile-safe)
+  if ('ResizeObserver' in window && host){
+    const ro = new ResizeObserver(() => { resizeCanvas(); initParticles(); });
+    ro.observe(host);
+  }
+  if (window.visualViewport){
+    window.visualViewport.addEventListener('resize', () => { resizeCanvas(); initParticles(); }, { passive:true });
+  }
+  window.addEventListener('orientationchange', () => setTimeout(() => { resizeCanvas(); initParticles(); }, 70), { passive:true });
+  window.addEventListener('resize', () => { resizeCanvas(); initParticles(); }, { passive:true });
+
+  selfTest();
+  initParticles();
+  requestAnimationFrame(draw);
+})();
   </script>
 </body>
 </html>

@@ -1,112 +1,82 @@
-<!-- FILE: privacy.html -->
-<!doctype html>
+<!-- privacy.html -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Clarifyd — Privacy</title>
-
-  <meta name="description" content="Clarifyd privacy notice. A lightweight website that aims to collect as little data as possible." />
-  <meta name="theme-color" content="#0b0f14" />
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clarifyd | Privacy</title>
+  <meta name="description" content="Privacy policy for Clarifyd." />
   <style>
-    :root{--bg:#0b0f14;--text:#e7eef7;--muted:#a8b3c3;--line:rgba(255,255,255,.10);--accent:#7dd3fc;--accent2:#a78bfa;}
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background:
-        radial-gradient(900px 620px at 20% -10%, rgba(125,211,252,.14), transparent 60%),
-        radial-gradient(900px 620px at 80% 0%, rgba(167,139,250,.16), transparent 60%),
-        linear-gradient(180deg, #0b0f14 0%, #0a0e13 100%);
-      color:var(--text); line-height:1.45;
-    }
+    :root{--bg0:#070A12;--bg1:#0B1022;--text:#F2F4FF;--muted:rgba(242,244,255,.72);--max:860px;--radius:22px;--a:#7C3AED;--b:#22D3EE;--y:#FDE047;--c:#A3FFB0;}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+      background:radial-gradient(1000px 600px at 18% 12%, rgba(124,58,237,.18), transparent 60%),
+      radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.14), transparent 62%),
+      linear-gradient(180deg,var(--bg0),var(--bg1));}
     a{color:inherit}
-    .wrap{max-width:980px; margin:0 auto; padding:22px 20px 84px}
-    header{position:sticky; top:0; z-index:10; background:rgba(11,15,20,.75); backdrop-filter: blur(12px); border-bottom:1px solid var(--line)}
-    header .inner{max-width:1180px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .brand{display:flex; gap:10px; align-items:center; font-weight:850; letter-spacing:.4px; white-space:nowrap; text-decoration:none}
-    .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow:0 0 0 8px rgba(125,211,252,.10)}
-    nav{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-weight:650}
-    nav a{padding:8px 12px; border-radius:12px; text-decoration:none}
-    nav a:hover{background:rgba(255,255,255,.08); color:var(--text)}
-    .btn{display:inline-flex; align-items:center; justify-content:center; padding:11px 16px; border-radius:14px; border:1px solid var(--line); text-decoration:none; font-weight:850; background:rgba(255,255,255,.04); transition:transform .25s ease, box-shadow .25s ease}
-    .btn:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.28)}
-    .kicker{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.4px; text-transform:uppercase}
-    h1{margin:10px 0 10px; font-size:44px; letter-spacing:-.8px; line-height:1.05}
-    .lead{font-size:18px; color:var(--muted); max-width:78ch; margin:0}
-    .card{border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:20px; padding:18px; margin-top:18px}
+    .container{max-width:var(--max);margin:0 auto;padding:0 22px}
     .muted{color:var(--muted)}
-    ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
-    li{margin:6px 0}
-
-    footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap}
-    footer a{color:var(--muted); text-decoration:none}
-    footer a:hover{color:var(--text)}
+    header{position:sticky;top:0;z-index:30;background:rgba(7,10,18,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:720;text-decoration:none}
+    .mark{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--a),var(--b),var(--y));box-shadow:0 0 28px rgba(124,58,237,.45)}
+    .menu a{text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);padding:10px 10px;border-radius:999px}
+    .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
+    .hero{padding:56px 0 18px}
+    h1{font-size:38px;letter-spacing:-1px;margin:0 0 8px}
+    .panel{border:1px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:18px;background:rgba(255,255,255,.05)}
+    p,li{color:rgba(242,244,255,.74);line-height:1.6}
+    footer{padding:26px 0 38px;border-top:1px solid rgba(255,255,255,.10);margin-top:28px}
+    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
   </style>
 </head>
 <body>
   <header>
-    <div class="inner">
-      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
-      <nav>
-        <a href="services.html">Services</a>
-        <a href="work.html">Work</a>
-        <a class="btn" href="contact.html">Contact</a>
+    <div class="container nav">
+      <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
+      <nav class="menu">
+        <a href="/services.html">Services</a>
+        <a href="/contact.html">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="wrap">
-    <div class="kicker">Privacy</div>
-    <h1>Privacy notice</h1>
-    <p class="lead">This is a lightweight website. We aim to collect as little data as possible.</p>
+  <main class="container">
+    <section class="hero">
+      <h1>Privacy</h1>
+      <div class="muted">Last updated: <span id="d"></span></div>
+    </section>
 
-    <div class="card">
-      <div class="kicker">What we collect</div>
-      <p class="muted" style="margin:10px 0 0">
-        By default, we do not run tracking scripts or collect analytics on this site.
-        Like most websites, our hosting provider may keep basic server logs (e.g. IP address, user-agent, requested URL) to operate and secure the service.
-      </p>
-    </div>
+    <div class="panel">
+      <p>This website is a static site hosted on Cloudflare Pages. We do not intentionally collect personal data through this site.</p>
 
-    <div class="card">
-      <div class="kicker">Contact</div>
-      <p class="muted" style="margin:10px 0 0">
-        If you email us, we receive your email address and the contents of your message. We use this only to respond to your enquiry and to follow up about the work you asked about.
-      </p>
-    </div>
+      <h3>Contact</h3>
+      <p>If you email us, we will receive your email address and any information you include. We use this only to respond to your enquiry.</p>
 
-    <div class="card">
-      <div class="kicker">Cookies</div>
-      <p class="muted" style="margin:10px 0 0">
-        This site does not set cookies itself. If you later add analytics or embedded tools, you should update this page and (if required) add a cookie banner.
-      </p>
-    </div>
+      <h3>Cookies & analytics</h3>
+      <p>We do not set tracking cookies by default. If analytics are added in future, this policy will be updated.</p>
 
-    <div class="card">
-      <div class="kicker">Changes</div>
-      <p class="muted" style="margin:10px 0 0">
-        If we change how we handle data (for example, adding privacy-friendly analytics), we will update this notice.
-      </p>
-    </div>
+      <h3>Third parties</h3>
+      <p>Our domain and hosting providers may process technical logs (e.g., IP addresses) to deliver the service and protect against abuse.</p>
 
-    <div class="card">
-      <div class="kicker">Questions</div>
-      <p class="muted" style="margin:10px 0 0">
-        Email: <a href="mailto:hello@clarifyd.co.uk"><strong>hello@clarifyd.co.uk</strong></a>
-      </p>
+      <h3>Your rights</h3>
+      <p>You may request access, correction, or deletion of your personal data by contacting us.</p>
+
+      <p class="tiny">Email: <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a></p>
     </div>
 
     <footer>
-      <div>© <span id="year"></span> Clarifyd</div>
-      <div style="display:flex; gap:12px; flex-wrap:wrap">
-        <a href="privacy.html">Privacy</a><span>•</span><a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
+      <div class="container" style="padding:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
+        <span class="tiny">© <span id="y"></span></span>
       </div>
     </footer>
   </main>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('y').textContent = new Date().getFullYear();
+    const dt = new Date();
+    document.getElementById('d').textContent = dt.toISOString().slice(0,10);
   </script>
 </body>
 </html>
