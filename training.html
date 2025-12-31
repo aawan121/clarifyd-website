@@ -1,9 +1,14 @@
+<!-- FILE: training.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Clarifyd — Training & Data Literacy</title>
+  <title>Clarifyd — Training &amp; Data Literacy</title>
+
+  <meta name="description" content="Data training that improves judgement: literacy for leaders, practical delivery habits for analysts and developers. Workshops, cohorts, tailored programmes." />
+  <meta name="theme-color" content="#0b0f14" />
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -79,7 +84,7 @@
 <body>
   <header>
     <div class="inner">
-      <a class="brand" href="index.html"><span class="dot"></span> Clarifyd</a>
+      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
       <nav>
         <a href="services.html">Services</a>
         <a href="work.html">Work</a>
@@ -93,7 +98,7 @@
       <div class="kicker">Services / Training</div>
       <h1>Training that improves judgement — not just skills.</h1>
       <p class="lead">We help people reason with data confidently: asking better questions, spotting pitfalls, and applying the right methods in the real world.</p>
-      <div class="pillRow">
+      <div class="pillRow" aria-label="Training themes">
         <div class="pill">Data literacy</div>
         <div class="pill">SQL foundations</div>
         <div class="pill">Applied data science</div>
@@ -125,7 +130,7 @@
           <ul>
             <li>Practical exercises (not toy problems)</li>
             <li>Clear takeaways and reusable templates</li>
-            <li>Optional assessments focused on understanding</li>
+            <li>Optional diagnostics focused on understanding</li>
           </ul>
         </div>
       </div>
@@ -137,7 +142,7 @@
 
       <div class="grid two" style="margin-top:12px">
         <div class="card" style="border-color: rgba(125,211,252,.22)">
-          <div class="kicker">For leaders & decision-makers</div>
+          <div class="kicker">For leaders &amp; decision-makers</div>
           <h3>Data literacy for better decisions</h3>
           <p class="muted">Build confidence interpreting metrics, questioning assumptions, and using data responsibly — without turning everyone into an analyst.</p>
           <ul>
@@ -154,7 +159,7 @@
         </div>
 
         <div class="card" style="border-color: rgba(167,139,250,.22)">
-          <div class="kicker">For developers & analysts</div>
+          <div class="kicker">For developers &amp; analysts</div>
           <h3>Build, validate, and ship with confidence</h3>
           <p class="muted">Hands-on training focused on real delivery habits: querying, validation, modelling, and production awareness.</p>
           <ul>
@@ -190,11 +195,11 @@
           <h2>What we cover</h2>
           <div class="grid cards" style="margin-top:12px">
             <div class="card">
-              <h3>Data literacy & reasoning</h3>
+              <h3>Data literacy &amp; reasoning</h3>
               <p class="muted">How to think about data quality, bias, metrics, and uncertainty.</p>
             </div>
             <div class="card">
-              <h3>SQL & working with data</h3>
+              <h3>SQL &amp; working with data</h3>
               <p class="muted">Query patterns, validation habits, joins, aggregation, and performance basics.</p>
             </div>
             <div class="card">
@@ -262,11 +267,15 @@
     </section>
 
     <footer>
-      <div>© Clarifyd</div>
+      <div>© <span id="year"></span> Clarifyd</div>
       <div style="display:flex; gap:12px; flex-wrap:wrap">
-        <a href="privacy.html">Privacy</a><span>•</span><span>Email: hello@clarifyd.co.uk</span>
+        <a href="privacy.html">Privacy</a><span>•</span><a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
       </div>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
