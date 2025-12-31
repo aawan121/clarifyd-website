@@ -1,9 +1,20 @@
+<!-- FILE: index.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clarifyd — Make data useful</title>
+
+  <meta name="description" content="Clarifyd — practical data training and delivery. Data literacy, applied data science, MLOps and LLM work designed for real-world use." />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <meta property="og:title" content="Clarifyd — Make data useful" />
+  <meta property="og:description" content="Practical data training and delivery — designed for real-world use, not slide decks." />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -118,7 +129,7 @@
             Practical data training and delivery — designed for real-world use, not slide decks.
           </p>
           <div class="cta">
-            <a class="btn primary" href="contact.html">Book an intro call</a>
+            <a class="btn primary" href="contact.html">Email us</a>
             <a class="btn" href="services.html">Explore services</a>
             <a class="btn" href="work.html">See the demo</a>
           </div>
@@ -381,7 +392,7 @@
           <p>Tell us what you’re trying to achieve. We’ll suggest a short, low-risk first step (pilot, workshop, or review).</p>
           <div class="cta" style="margin-top:12px">
             <a class="btn primary" href="contact.html">Email us →</a>
-            <a class="btn" href="contact.html">Add a booking link</a>
+            <a class="btn" href="work.html">See the demo →</a>
           </div>
           <div class="micro">No forms required — start with a message.</div>
         </div>
@@ -399,13 +410,17 @@
     </section>
 
     <footer>
-      <div>© Clarifyd</div>
+      <div>© <span id="year"></span> Clarifyd</div>
       <div style="display:flex; gap:12px; flex-wrap:wrap">
         <a href="privacy.html">Privacy</a>
         <span>•</span>
-        <span>Email: hello@clarifyd.co.uk</span>
+        <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
       </div>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
