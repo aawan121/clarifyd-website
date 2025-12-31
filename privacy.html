@@ -1,82 +1,60 @@
-<!-- privacy.html -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Clarifyd | Privacy</title>
-  <meta name="description" content="Privacy policy for Clarifyd." />
-  <style>
-    :root{--bg0:#070A12;--bg1:#0B1022;--text:#F2F4FF;--muted:rgba(242,244,255,.72);--max:860px;--radius:22px;--a:#7C3AED;--b:#22D3EE;--y:#FDE047;--c:#A3FFB0;}
-    *{box-sizing:border-box}html,body{margin:0;padding:0}
-    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
-      background:radial-gradient(1000px 600px at 18% 12%, rgba(124,58,237,.18), transparent 60%),
-      radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.14), transparent 62%),
-      linear-gradient(180deg,var(--bg0),var(--bg1));}
-    a{color:inherit}
-    .container{max-width:var(--max);margin:0 auto;padding:0 22px}
-    .muted{color:var(--muted)}
-    header{position:sticky;top:0;z-index:30;background:rgba(7,10,18,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:720;text-decoration:none}
-    .mark{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--a),var(--b),var(--y));box-shadow:0 0 28px rgba(124,58,237,.45)}
-    .menu a{text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);padding:10px 10px;border-radius:999px}
-    .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
-    .hero{padding:56px 0 18px}
-    h1{font-size:38px;letter-spacing:-1px;margin:0 0 8px}
-    .panel{border:1px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:18px;background:rgba(255,255,255,.05)}
-    p,li{color:rgba(242,244,255,.74);line-height:1.6}
-    footer{padding:26px 0 38px;border-top:1px solid rgba(255,255,255,.10);margin-top:28px}
-    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
-  </style>
+  <meta name="description" content="Privacy policy page." />
+  <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
-  <header>
+  <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
-      <nav class="menu">
-        <a href="/services.html">Services</a>
-        <a href="/contact.html">Contact</a>
+      <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+      <nav class="menu" aria-label="Primary">
+        <a data-page="services.html" href="services.html">Services</a>
+        <a data-page="demos.html" href="demos.html">Demos</a>
+        <a data-page="work.html" href="work.html">Work</a>
+        <a data-page="contact.html" href="contact.html" class="pill">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
+  <main>
     <section class="hero">
-      <h1>Privacy</h1>
-      <div class="muted">Last updated: <span id="d"></span></div>
+      <div class="container">
+        <div class="kicker"><span class="spark" aria-hidden="true"></span> Privacy</div>
+        <h1>Privacy policy (starter)</h1>
+        <p class="lead">Replace this with your final policy text. This page exists so links resolve cleanly.</p>
+      </div>
     </section>
 
-    <div class="panel">
-      <p>This website is a static site hosted on Cloudflare Pages. We do not intentionally collect personal data through this site.</p>
+    <section class="section">
+      <div class="container panel">
+        <div class="panelHead">
+          <div>
+            <h3>Summary</h3>
+            <div class="tiny muted">Minimal collection. No selling data.</div>
+          </div>
+          <span class="badge">Draft</span>
+        </div>
+        <p class="tiny muted" style="margin-top:12px">
+          If you contact us by email, we receive the information you include. Demos are representative; do not enter sensitive information.
+        </p>
+      </div>
+    </section>
 
-      <h3>Contact</h3>
-      <p>If you email us, we will receive your email address and any information you include. We use this only to respond to your enquiry.</p>
-
-      <h3>Cookies & analytics</h3>
-      <p>We do not set tracking cookies by default. If analytics are added in future, this policy will be updated.</p>
-
-      <h3>Third parties</h3>
-      <p>Our domain and hosting providers may process technical logs (e.g., IP addresses) to deliver the service and protect against abuse.</p>
-
-      <h3>Your rights</h3>
-      <p>You may request access, correction, or deletion of your personal data by contacting us.</p>
-
-      <p class="tiny">Email: <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a></p>
-    </div>
-
-    <footer>
-      <div class="container" style="padding:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-        <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
-        <span class="tiny">© <span id="y"></span></span>
+    <footer class="footer">
+      <div class="container footerInner">
+        <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
+          <span class="tiny">© <span id="year"></span></span>
+        </div>
       </div>
     </footer>
   </main>
 
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-    const dt = new Date();
-    document.getElementById('d').textContent = dt.toISOString().slice(0,10);
-  </script>
+  <script src="assets/app.js"></script>
 </body>
 </html>
