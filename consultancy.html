@@ -1,9 +1,14 @@
+<!-- FILE: consultancy.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Clarifyd — Consultancy & Delivery</title>
+  <title>Clarifyd — Consultancy &amp; Delivery</title>
+
+  <meta name="description" content="Consultancy & delivery for analytics and machine learning that survives reality: governance-aware, maintainable, explainable, handover-first." />
+  <meta name="theme-color" content="#0b0f14" />
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -78,7 +83,7 @@
 <body>
   <header>
     <div class="inner">
-      <a class="brand" href="index.html"><span class="dot"></span> Clarifyd</a>
+      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
       <nav>
         <a href="services.html">Services</a>
         <a href="work.html">Work</a>
@@ -92,7 +97,7 @@
       <div class="kicker">Services / Consultancy</div>
       <h1>Delivery that survives reality.</h1>
       <p class="lead">We help teams ship analytics and machine learning work that’s maintainable, explainable, and usable — not a demo that dies after handover.</p>
-      <div class="pillRow">
+      <div class="pillRow" aria-label="Delivery principles">
         <div class="pill">Clear scoping</div>
         <div class="pill">Iterative delivery</div>
         <div class="pill">Governance-aware</div>
@@ -112,19 +117,19 @@
           <h2>Problem types</h2>
           <div class="grid cards" style="margin-top:12px">
             <div class="card">
-              <h3>Forecasting & planning</h3>
+              <h3>Forecasting &amp; planning</h3>
               <p class="muted">Demand, capacity, absence, operational forecasts, and decision support.</p>
             </div>
             <div class="card">
-              <h3>Risk & scoring</h3>
+              <h3>Risk &amp; scoring</h3>
               <p class="muted">Classification and scoring models in regulated contexts with strong validation.</p>
             </div>
             <div class="card">
-              <h3>Behaviour & churn</h3>
+              <h3>Behaviour &amp; churn</h3>
               <p class="muted">Customer behaviour modelling, retention, and driver analysis.</p>
             </div>
             <div class="card">
-              <h3>Vision & signals</h3>
+              <h3>Vision &amp; signals</h3>
               <p class="muted">Computer vision and pattern recognition where labelled data and value exist.</p>
             </div>
           </div>
@@ -154,7 +159,7 @@
           <div class="deliverable">
             <div class="icon">1</div>
             <div>
-              <h3>Clear scope & success measures</h3>
+              <h3>Clear scope &amp; success measures</h3>
               <p class="muted">A short written scope, constraints, and how we’ll measure progress.</p>
             </div>
           </div>
@@ -172,7 +177,7 @@
           <div class="deliverable">
             <div class="icon">3</div>
             <div>
-              <h3>Handover & enablement</h3>
+              <h3>Handover &amp; enablement</h3>
               <p class="muted">Walkthroughs, operating guidance, and a plan for iteration after we leave.</p>
             </div>
           </div>
@@ -234,11 +239,15 @@
     </section>
 
     <footer>
-      <div>© Clarifyd</div>
+      <div>© <span id="year"></span> Clarifyd</div>
       <div style="display:flex; gap:12px; flex-wrap:wrap">
-        <a href="privacy.html">Privacy</a><span>•</span><span>Email: hello@clarifyd.co.uk</span>
+        <a href="privacy.html">Privacy</a><span>•</span><a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
       </div>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
