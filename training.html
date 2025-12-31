@@ -1,240 +1,272 @@
-<!-- training.html -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clarifyd | Training</title>
-  <meta name="description" content="Hands-on training in data science, MLOps, and LLMs." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clarifyd — Training & Data Literacy</title>
   <style>
     :root{
-      --bg0:#070A12; --bg1:#0B1022; --text:#F2F4FF; --muted:rgba(242,244,255,.72);
-      --radius:22px; --max:1160px; --shadow:0 24px 80px rgba(0,0,0,.55);
-      --a:#7C3AED; --b:#22D3EE; --y:#FDE047; --c:#A3FFB0;
+      --bg:#0b0f14;
+      --text:#e7eef7;
+      --muted:#a8b3c3;
+      --line:rgba(255,255,255,.10);
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
     }
-    *{box-sizing:border-box} html,body{margin:0;padding:0}
+    *{box-sizing:border-box}
     body{
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      color:var(--text);
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
-        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+        radial-gradient(900px 620px at 18% -10%, rgba(125,211,252,.14), transparent 60%),
+        radial-gradient(900px 620px at 82% 0%, rgba(167,139,250,.14), transparent 60%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0e13 100%);
+      color:var(--text);
+      line-height:1.45;
     }
     a{color:inherit}
-    .container{max-width:var(--max);margin:0 auto;padding:0 22px}
+    .wrap{max-width:1180px; margin:0 auto; padding:22px 20px 84px}
+    header{position:sticky; top:0; z-index:10; background:rgba(11,15,20,.75); backdrop-filter: blur(12px); border-bottom:1px solid var(--line)}
+    header .inner{max-width:1180px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .brand{display:flex; gap:10px; align-items:center; font-weight:850; letter-spacing:.4px; white-space:nowrap; text-decoration:none}
+    .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow:0 0 0 8px rgba(125,211,252,.10)}
+    nav{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-weight:650}
+    nav a{padding:8px 12px; border-radius:12px; text-decoration:none}
+    nav a:hover{background:rgba(255,255,255,.08); color:var(--text)}
+    .btn{display:inline-flex; align-items:center; justify-content:center; padding:11px 16px; border-radius:14px; border:1px solid var(--line); text-decoration:none; font-weight:850; background:rgba(255,255,255,.04); transition:transform .25s ease, box-shadow .25s ease}
+    .btn.primary{border-color:rgba(125,211,252,.55); background:linear-gradient(180deg, rgba(125,211,252,.22), rgba(125,211,252,.10))}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.28)}
+
+    .hero{padding:34px 0 10px}
+    .kicker{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.4px; text-transform:uppercase}
+    h1{margin:10px 0 10px; font-size:44px; letter-spacing:-.8px; line-height:1.05}
+    h2{margin:0 0 12px; font-size:24px; letter-spacing:-.4px}
+    h3{margin:0 0 8px; font-size:18px}
+    .lead{font-size:18px; color:var(--muted); max-width:78ch; margin:0}
+
+    .section{margin-top:34px}
+    .grid{display:grid; gap:18px}
+    @media (min-width: 960px){
+      .grid.two{grid-template-columns: 1.05fr .95fr}
+      .grid.three{grid-template-columns: repeat(3, 1fr)}
+      .grid.cards{grid-template-columns: repeat(2, 1fr)}
+    }
+
+    .card{border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:20px; padding:18px; transition:transform .25s ease, box-shadow .25s ease}
+    .card:hover{transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
     .muted{color:var(--muted)}
-    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
-    .parallax-layer{position:fixed;inset:-18vh -18vw;pointer-events:none;z-index:0;will-change:transform}
-    .layer-a{background:radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);filter:blur(14px);opacity:.9}
-    .layer-b{background:radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);filter:blur(18px);opacity:.65}
-    .layer-c{background:radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);filter:blur(26px);opacity:.45}
-    .bg-grid{position:fixed;inset:0;pointer-events:none;opacity:.20;z-index:1;
-      background-image:linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size:64px 64px;
-      mask-image:radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
-    }
-    main{position:relative;z-index:2}
+    ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    li{margin:6px 0}
 
-    header{position:sticky;top:0;z-index:30;background:rgba(7,10,18,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:720;letter-spacing:.2px;text-decoration:none}
-    .mark{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--a),var(--b),var(--y));box-shadow:0 0 28px rgba(124,58,237,.45)}
-    .menu{display:flex;gap:18px;align-items:center}
-    .menu a{text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);padding:10px 10px;border-radius:999px;transition:background .2s,color .2s}
-    .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
-    .pill{padding:10px 14px!important;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .pillRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .pill{border:1px solid var(--line); background:rgba(255,255,255,.03); padding:8px 10px; border-radius:999px; color:var(--muted); font-weight:850; font-size:12px}
 
-    .hero{padding:72px 0 26px}
-    .kicker{display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:999px;font-size:13px;color:rgba(242,244,255,.78)}
-    .spark{width:8px;height:8px;border-radius:999px;background:var(--y);box-shadow:0 0 0 0 rgba(253,224,71,.35);animation:spark 2s ease-in-out infinite}
-    @keyframes spark{0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}}
-    h1{font-size:44px;letter-spacing:-1px;line-height:1.06;margin:14px 0 10px}
-    .grad{background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .lead{max-width:72ch;color:rgba(242,244,255,.74);margin:0}
+    .timeline{display:grid; gap:12px; margin-top:12px}
+    .step{border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:14px; background:rgba(255,255,255,.03)}
+    .step .top{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
+    .step .label{font-weight:900}
+    .step .time{color:var(--muted); font-weight:800; font-size:12px}
 
-    .section{padding:44px 0}
-    .section.alt{
-      background:
-        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.18), transparent 60%),
-        radial-gradient(800px 500px at 85% 30%, rgba(34,211,238,.14), transparent 58%),
-        radial-gradient(700px 500px at 55% 80%, rgba(253,224,71,.08), transparent 60%),
-        rgba(255,255,255,.02);
-      border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .panel{
-      border-radius:var(--radius);border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);box-shadow:0 18px 60px rgba(0,0,0,.35);
-      padding:18px;
-    }
-    .panel:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
-    .tag{font-size:12px;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:rgba(242,244,255,.74);white-space:nowrap}
-    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .note{border:1px solid rgba(125,211,252,.18); background:linear-gradient(180deg, rgba(125,211,252,.08), rgba(255,255,255,.02)); border-radius:20px; padding:18px}
+    details{border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:14px; background:rgba(255,255,255,.03)}
+    details + details{margin-top:10px}
+    summary{cursor:pointer; font-weight:900}
 
-    .timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .step{border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);padding:14px;position:relative;overflow:hidden}
-    .step::before{content:"";position:absolute;inset:-50px -80px;background:radial-gradient(closest-side at 20% 20%, rgba(34,211,238,.18), transparent 65%);opacity:.9}
-    .step h4{margin:0 0 6px;font-size:14px;letter-spacing:.2px}
-    .step p{margin:0;color:rgba(242,244,255,.68);font-size:13px;line-height:1.4}
-
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:12px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);text-decoration:none;color:var(--text);
-      box-shadow:0 16px 50px rgba(0,0,0,.38);
-      transition:transform .16s,background .2s,border-color .2s;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
-    .btn.primary{background:linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));border-color:transparent}
-
-    .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
-    .reveal.is-visible{opacity:1;transform:translateY(0)}
-    footer{padding:26px 0 38px}
-
-    @media (max-width: 980px){
-      h1{font-size:38px}
-      .grid-3,.timeline{grid-template-columns:1fr}
-      .menu{gap:10px}
-      .menu a{padding:10px 8px}
-    }
-    @media (prefers-reduced-motion: reduce){
-      .reveal{transition:none!important}
-      .spark{animation:none!important}
-    }
+    footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap}
+    footer a{color:var(--muted); text-decoration:none}
+    footer a:hover{color:var(--text)}
   </style>
 </head>
 <body>
-  <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
-  <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
-  <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
-
   <header>
-    <div class="container nav">
-      <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
-      <nav class="menu" aria-label="Primary">
-        <a href="/services.html">Services</a>
-        <a href="/work.html">Work</a>
-        <a href="/contact.html" class="pill">Contact</a>
+    <div class="inner">
+      <a class="brand" href="index.html"><span class="dot"></span> Clarifyd</a>
+      <nav>
+        <a href="services.html">Services</a>
+        <a href="work.html">Work</a>
+        <a class="btn" href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main>
+  <main class="wrap">
     <section class="hero">
-      <div class="container reveal">
-        <div class="kicker"><span class="spark"></span> Hands-on, production-minded</div>
-        <h1>Training that <span class="grad">sticks</span>.</h1>
-        <p class="lead">Practical learning for teams who need to ship: strong fundamentals, disciplined MLOps, and modern LLM systems.</p>
+      <div class="kicker">Services / Training</div>
+      <h1>Training that improves judgement — not just skills.</h1>
+      <p class="lead">We help people reason with data confidently: asking better questions, spotting pitfalls, and applying the right methods in the real world.</p>
+      <div class="pillRow">
+        <div class="pill">Data literacy</div>
+        <div class="pill">SQL foundations</div>
+        <div class="pill">Applied data science</div>
+        <div class="pill">MLOps awareness</div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap">
+        <a class="btn primary" href="contact.html">Discuss a programme →</a>
+        <a class="btn" href="#formats">See formats</a>
+        <a class="btn" href="services.html">Back to services map</a>
       </div>
     </section>
 
-    <section class="section alt">
-      <div class="container">
-        <div class="grid-3">
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">Data Science Foundations</h3>
-                <div class="muted">EDA → features → modelling → evaluation.</div>
-              </div>
-              <div class="tag">Core</div>
+    <section class="section">
+      <div class="grid two">
+        <div class="card">
+          <div class="kicker">Outcomes</div>
+          <h2>What changes after the training</h2>
+          <ul>
+            <li>Teams ask clearer questions and define “success” better</li>
+            <li>People interpret charts and metrics more reliably</li>
+            <li>Analysts write cleaner queries and validate results</li>
+            <li>Stakeholders understand model limitations and risk</li>
+          </ul>
+        </div>
+        <div class="note">
+          <div class="kicker">Enterprise-aware by design</div>
+          <h2>Built for real constraints</h2>
+          <p class="muted">We design training for mixed skill levels, limited time, and the tools people actually use. Sessions are hands-on, paced, and focused on transfer into day-to-day work.</p>
+          <ul>
+            <li>Practical exercises (not toy problems)</li>
+            <li>Clear takeaways and reusable templates</li>
+            <li>Optional assessments focused on understanding</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="formats">
+      <h2>Training pathways</h2>
+      <p class="lead" style="max-width:78ch">Two tracks, tailored to how different audiences use data. Pick the one that fits — or combine both.</p>
+
+      <div class="grid two" style="margin-top:12px">
+        <div class="card" style="border-color: rgba(125,211,252,.22)">
+          <div class="kicker">For leaders & decision-makers</div>
+          <h3>Data literacy for better decisions</h3>
+          <p class="muted">Build confidence interpreting metrics, questioning assumptions, and using data responsibly — without turning everyone into an analyst.</p>
+          <ul>
+            <li>Metrics, uncertainty, and what “good” looks like</li>
+            <li>Common pitfalls: bias, leakage, spurious patterns</li>
+            <li>How to evaluate analyses and ML claims</li>
+            <li>Practical ways to set up teams for success</li>
+          </ul>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+            <span class="pill">Workshop: 2–4h</span>
+            <span class="pill">Workshop: 1 day</span>
+            <span class="pill">Leadership series</span>
+          </div>
+        </div>
+
+        <div class="card" style="border-color: rgba(167,139,250,.22)">
+          <div class="kicker">For developers & analysts</div>
+          <h3>Build, validate, and ship with confidence</h3>
+          <p class="muted">Hands-on training focused on real delivery habits: querying, validation, modelling, and production awareness.</p>
+          <ul>
+            <li>SQL foundations + validation patterns</li>
+            <li>Feature building, baselines, and evaluation</li>
+            <li>Reproducibility, testing, and monitoring mindset</li>
+            <li>MLOps lifecycle awareness for maintainable systems</li>
+          </ul>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+            <span class="pill">Cohort: 2–6 weeks</span>
+            <span class="pill">Bootcamp: 3–5 days</span>
+            <span class="pill">Role-specific</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="kicker">Tailored</div>
+        <h3>Built to your context</h3>
+        <p class="muted">We can tailor both tracks to your tools, data, and constraints — from non-technical literacy to applied data science delivery.</p>
+        <ul>
+          <li>Tooling-specific (e.g. your SQL environment)</li>
+          <li>Domain-specific scenarios and examples</li>
+          <li>Reusable internal materials and templates</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid two">
+        <div class="card">
+          <div class="kicker">Topics (examples)</div>
+          <h2>What we cover</h2>
+          <div class="grid cards" style="margin-top:12px">
+            <div class="card">
+              <h3>Data literacy & reasoning</h3>
+              <p class="muted">How to think about data quality, bias, metrics, and uncertainty.</p>
             </div>
-            <p class="muted" style="margin:12px 0 0;">Build intuition, avoid common pitfalls, and communicate results clearly.</p>
+            <div class="card">
+              <h3>SQL & working with data</h3>
+              <p class="muted">Query patterns, validation habits, joins, aggregation, and performance basics.</p>
+            </div>
+            <div class="card">
+              <h3>Applied modelling</h3>
+              <p class="muted">From baselines to evaluation: understanding what models can and can’t do.</p>
+            </div>
+            <div class="card">
+              <h3>MLOps awareness</h3>
+              <p class="muted">Lifecycle thinking: deployment risk, monitoring, drift, and maintainability.</p>
+            </div>
+          </div>
+          <p class="muted" style="margin-top:12px">We tailor depth to the audience — from non-technical literacy to applied data science.</p>
+        </div>
+
+        <div class="card">
+          <div class="kicker">Representative programme</div>
+          <h2>Example: graduate cohort (2 weeks)</h2>
+          <p class="muted">A structured programme for early-career analysts entering a regulated, production-oriented environment.</p>
+
+          <div class="timeline">
+            <div class="step">
+              <div class="top"><div class="label">Week 1 — Working with data</div><div class="time">Foundations</div></div>
+              <div class="muted" style="margin-top:6px">SQL foundations, data validation habits, and practical analytics patterns.</div>
+            </div>
+            <div class="step">
+              <div class="top"><div class="label">Week 2 — ML in production</div><div class="time">Applied</div></div>
+              <div class="muted" style="margin-top:6px">Model lifecycle, deployment considerations, monitoring, and responsible iteration.</div>
+            </div>
           </div>
 
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">MLOps & Deployment</h3>
-                <div class="muted">Pipelines, CI/CD, monitoring.</div>
-              </div>
-              <div class="tag">Production</div>
-            </div>
-            <p class="muted" style="margin:12px 0 0;">Make models reliable: versioning, guardrails, and maintainable delivery.</p>
-          </div>
-
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">LLMs & Applied AI</h3>
-                <div class="muted">RAG, evals, prompt systems.</div>
-              </div>
-              <div class="tag">Modern</div>
-            </div>
-            <p class="muted" style="margin:12px 0 0;">Deploy LLM features safely with robust evaluation and cost control.</p>
+          <div class="note" style="margin-top:12px">
+            <div class="kicker">How we measure impact</div>
+            <p class="muted" style="margin:0">Short diagnostics, practical exercises, and observable improvements in how people reason, query, and validate.</p>
           </div>
         </div>
       </div>
     </section>
 
     <section class="section">
-      <div class="container">
-        <div class="section-head reveal" style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px">
-          <h2 style="margin:0;font-size:28px;letter-spacing:-.4px">How it runs</h2>
-          <p class="muted" style="margin:0">A format that fits your team.</p>
-        </div>
+      <h2>FAQ</h2>
+      <details>
+        <summary>Do you train non-technical audiences?</summary>
+        <div class="muted" style="margin-top:10px">Yes — literacy sessions are designed for decision-makers and cross-functional teams. The aim is confidence, interpretation, and better questions.</div>
+      </details>
+      <details>
+        <summary>Can you tailor content to our tools and datasets?</summary>
+        <div class="muted" style="margin-top:10px">Yes. Tailored programmes can align to your stack (e.g. SQL environment, notebook tooling) and your domain scenarios.</div>
+      </details>
+      <details>
+        <summary>Is this classroom-style or hands-on?</summary>
+        <div class="muted" style="margin-top:10px">Hands-on by default. We combine short explanations with exercises and guided reflection so people understand the “why”, not just the steps.</div>
+      </details>
+    </section>
 
-        <div class="timeline">
-          <div class="step reveal"><h4>1) Assess</h4><p>Baseline, goals, and the reality of your stack.</p></div>
-          <div class="step reveal"><h4>2) Teach</h4><p>Hands-on sessions with real patterns.</p></div>
-          <div class="step reveal"><h4>3) Apply</h4><p>Exercises that map to your work.</p></div>
-          <div class="step reveal"><h4>4) Embed</h4><p>Templates, review, and follow-up.</p></div>
-        </div>
-
-        <div class="panel reveal" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-          <div>
-            <h3 style="margin:0 0 6px;">Want a tailored plan?</h3>
-            <div class="muted">Tell me your objectives and I’ll propose a structure.</div>
-          </div>
-          <a class="btn primary" href="/contact.html">Contact</a>
+    <section class="section" id="contact">
+      <div class="card" style="padding:22px">
+        <div class="kicker">Next step</div>
+        <h2 style="margin-top:6px">Tell us who the training is for.</h2>
+        <p class="lead" style="margin:0 0 16px">Share the audience, current level, tools, and timeline — we’ll suggest a format and a sensible syllabus outline.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap">
+          <a class="btn primary" href="contact.html">Email us →</a>
+          <a class="btn" href="services.html">Back to services map</a>
         </div>
       </div>
     </section>
 
-    <footer class="section alt">
-      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
-        <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
-        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
-          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
-          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
-          <span class="tiny">© <span id="year"></span></span>
-        </div>
+    <footer>
+      <div>© Clarifyd</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap">
+        <a href="privacy.html">Privacy</a><span>•</span><span>Email: hello@clarifyd.co.uk</span>
       </div>
     </footer>
   </main>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const items = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries)=>{
-      for (const e of entries){
-        if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-      }
-    },{threshold:.12});
-    items.forEach(el=>io.observe(el));
-
-    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-    let latestY=0, ticking=false;
-    function apply(){
-      const y = latestY;
-      for (const el of layers){
-        const s = parseFloat(el.getAttribute('data-parallax')||'0.1');
-        el.style.transform = `translate3d(0, ${-y*s}px, 0)`;
-      }
-      ticking=false;
-    }
-    function onScroll(){
-      latestY = window.scrollY || 0;
-      if (!ticking){ requestAnimationFrame(apply); ticking=true; }
-    }
-    window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', onScroll);
-    onScroll();
-  </script>
 </body>
 </html>
