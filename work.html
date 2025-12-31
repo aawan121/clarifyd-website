@@ -196,8 +196,10 @@
       pointer-events:none;
       z-index:0;
     }
+
+    /* ✅ Simplified topbar: no jumping "Streaming" / "Engine simulated" chips */
     .topbar{
-      position:absolute; left:0; right:0; top:0; height: 58px;
+      position:absolute; left:0; right:0; top:0; height: 54px;
       display:flex; align-items:center; justify-content:space-between; gap: 10px;
       padding: 10px 12px;
       border-bottom: 1px solid rgba(255,255,255,.08);
@@ -215,18 +217,17 @@
       color: rgba(242,244,255,.72);
       white-space:nowrap;
     }
-    .chip.live{ border-color: rgba(34,211,238,.28); background: rgba(34,211,238,.08); }
     .chip.warn{ border-color: rgba(253,224,71,.28); background: rgba(253,224,71,.08); }
     .chip.bad{ border-color: rgba(255,90,90,.28); background: rgba(255,90,90,.08); }
 
     .boardBody{
-      position:absolute; inset:58px 0 0 0;
+      position:absolute; inset:54px 0 0 0;
       display:grid;
       grid-template-rows: 1fr 270px;
       z-index: 1;
     }
 
-    /* ✅ FIX: panes are flex-columns; legends are BELOW canvases, not floating on borders */
+    /* ✅ Panes are flex-columns; legends are BELOW canvases */
     .pane{
       position: relative;
       display:flex;
@@ -235,7 +236,6 @@
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
     .pane:last-child{ border-bottom: none; }
-
     .canvasWrap{
       position: relative;
       flex: 1 1 auto;
@@ -548,15 +548,8 @@
         <div class="leftStack">
           <section class="board" aria-label="AbsenceAI dashboard visuals">
             <div class="topbar">
-              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <span class="crumb" id="crumb">AbsenceAI / Live rota risk</span>
-                <span class="chip" id="chipState">Idle</span>
-                <span class="chip live" id="chipLive">Streaming</span>
-                <span class="chip warn" id="chipWarn" style="display:none;">Risk rising</span>
-                <span class="chip bad" id="chipBad" style="display:none;">Cover alert</span>
-              </div>
+              <div class="crumb" id="crumb">AbsenceAI / Live rota risk</div>
               <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <span class="chip" id="engineBadge">Engine: simulated (ONNX-ready)</span>
                 <span class="chip" id="rt">—</span>
                 <button class="btn" id="btnPause" type="button">Pause</button>
               </div>
@@ -736,7 +729,7 @@
 
             <div class="feed">
               <div class="feedHead">
-                <span>Live ops feed</span>
+                <span>Ops feed</span>
                 <span class="tiny muted" id="feedHint">Auto-updating</span>
               </div>
               <div class="feedList" id="feed"></div>
@@ -747,7 +740,7 @@
             <div class="panelHead">
               <div>
                 <h3>Prescriptions (Next Best Actions)</h3>
-                <div class="tiny muted">Not theory: actions schedulers can execute today.</div>
+                <div class="tiny muted">Actions schedulers can execute today.</div>
               </div>
               <span class="badge" id="nbaBadge">—</span>
             </div>
@@ -755,8 +748,7 @@
             <div class="nba" id="nba"></div>
 
             <div class="subNote">
-              <strong>Production swap:</strong> train your forecasting model offline (e.g., gradient boosting / LSTM),
-              export to ONNX, load with <span class="pill2">onnxruntime-web</span>, keep the same UI.
+              <strong>Production swap:</strong> train offline, export to ONNX, load with <span class="pill2">onnxruntime-web</span>, keep the same UI.
             </div>
           </section>
         </aside>
@@ -813,10 +805,6 @@
     const coverEl = document.getElementById('cover');
     const rateEl = document.getElementById('rate');
 
-    const chipState = document.getElementById('chipState');
-    const chipLive = document.getElementById('chipLive');
-    const chipWarn = document.getElementById('chipWarn');
-    const chipBad  = document.getElementById('chipBad');
     const rt = document.getElementById('rt');
     const lg1 = document.getElementById('lg1');
     const lg2 = document.getElementById('lg2');
@@ -860,10 +848,10 @@
     const ctx2 = c2.getContext('2d');
 
     // Sparklines
-    const spAbs = document.getElementById('spAbs').getContext('2d');
-    const spAgency = document.getElementById('spAgency').getContext('2d');
-    const spOT = document.getElementById('spOT').getContext('2d');
-    const spDrift = document.getElementById('spDrift').getContext('2d');
+    const spAbsCtx = document.getElementById('spAbs').getContext('2d');
+    const spAgencyCtx = document.getElementById('spAgency').getContext('2d');
+    const spOTCtx = document.getElementById('spOT').getContext('2d');
+    const spDriftCtx = document.getElementById('spDrift').getContext('2d');
 
     function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
     function lerp(a,b,t){ return a+(b-a)*t; }
@@ -895,7 +883,7 @@
       el.textContent = s;
       el.classList.remove('up','down','flat');
       if (Math.abs(val) < 0.2) el.classList.add('flat');
-      else if (val > 0) el.classList.add('down'); // more absences / more risk => "down"
+      else if (val > 0) el.classList.add('down');
       else el.classList.add('up');
     }
     function setDeltaPct(el, valPct){
@@ -913,7 +901,7 @@
       txtEl.textContent = Math.round(v*100) + '%';
     }
 
-    // ---- Demo dataset (last 14 days rows) ----
+    // ---- Demo dataset ----
     const demoSites = ['Northgate','Riverside','Kingston'];
     const demoLines = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
     const demoShifts = ['Days','Nights','Weekend'];
@@ -924,12 +912,10 @@
       const dd = String(d.getDate()).padStart(2,'0');
       return `${yy}-${mm}-${dd}`;
     }
-
     function seededNoise(seed){
       const x = Math.sin(seed*999.13) * 10000;
       return x - Math.floor(x);
     }
-
     function buildDemoRows(){
       const rows = [];
       const today = new Date();
@@ -959,7 +945,6 @@
       }
       return rows;
     }
-
     const demoRows = buildDemoRows();
 
     function renderTable(){
@@ -1001,7 +986,7 @@
     }
     btnDemo.addEventListener('click', () => downloadText('AbsenceAI_demo.csv', demoCSV()));
 
-    // ---- Live model story (forecast + drift + actions) ----
+    // ---- Live story ----
     let drift = 0.12;
     let driftTrend = 0.0007;
 
@@ -1228,6 +1213,8 @@
 
       ctx1.fillStyle = 'rgba(242,244,255,0.78)';
       ctx1.font = '700 12px ui-sans-serif, system-ui';
+      ctx1.textBaseline = 'alphabetic';
+      ctx1.textAlign = 'left';
       ctx1.fillText('Absences forecast (next 7 days) — by shift', 12, 18);
 
       const pad = 14;
@@ -1287,13 +1274,19 @@
 
       ctx1.fillStyle = 'rgba(242,244,255,0.70)';
       ctx1.font = '700 12px ui-sans-serif, system-ui';
-      const s = `${out.abs7.toFixed(1)} absences / 7d • ${out.riskShifts} at-risk shifts`;
+      const s = `${out.abs7.toFixed(1)} abs/7d • ${out.riskShifts} at-risk shifts`;
       ctx1.fillText(s, pad+10, top+18);
     }
 
+    /* ✅ FIX: heatmap label alignment (explicit baseline/align + fixed left label gutter) */
     function drawHeatmap(out, f){
       const { w, h } = fitCanvas(c2, ctx2);
       ctx2.clearRect(0,0,w,h);
+
+      // Always reset text state for this canvas so it never inherits anything
+      ctx2.save();
+      ctx2.textAlign = 'left';
+      ctx2.textBaseline = 'middle';
 
       const g = ctx2.createRadialGradient(w*0.60, h*0.30, 10, w*0.55, h*0.55, Math.max(w,h));
       g.addColorStop(0, 'rgba(0,0,0,0)');
@@ -1303,29 +1296,39 @@
 
       ctx2.fillStyle = 'rgba(242,244,255,0.78)';
       ctx2.font = '700 12px ui-sans-serif, system-ui';
+      ctx2.textBaseline = 'alphabetic';
       ctx2.fillText('Service-line heatmap (expected absences)', 12, 18);
 
+      // Layout: left label gutter + grid region
       const pad = 14;
-      const top = 34;
-      const boxW = w - pad*2;
-      const boxH = h - top - 18;
-
-      ctx2.strokeStyle = 'rgba(255,255,255,0.10)';
-      ctx2.strokeRect(pad, top, boxW, boxH);
+      const top = 40;
+      const bottomPad = 16;
 
       const cols = 7;
       const rows = 6;
-      const cw = boxW / cols;
-      const rh = boxH / rows;
+
+      const labelGutter = Math.max(108, Math.floor(w * 0.18)); // keeps service line text stable
+      const gridX = pad + labelGutter;
+      const gridW = (w - pad) - gridX;
+      const gridH = h - top - bottomPad;
+
+      const cw = gridW / cols;
+      const rh = gridH / rows;
+
+      // Grid border
+      ctx2.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx2.strokeRect(gridX, top, gridW, gridH);
 
       const lineOrder = ['Security','Cleaning','Catering','Maintenance','Reception','Logistics'];
       const maxV = 10 + (f.headcount/30);
+
+      // Cells
       for (let r=0;r<rows;r++){
         for (let c=0;c<cols;c++){
           const baseRate = clamp((f.ratePct/100), 0.005, 0.22);
           const mult = shiftMultiplier(f.shift) * lineMultiplier(lineOrder[r]) * siteMultiplier(f.site);
           const dayFactor = 1 + 0.06*Math.sin((Date.now()/86400000 + c)/2.3);
-          const v = (f.headcount/ (lineOrder[r]===f.line ? 1.0 : 1.15)) * baseRate * mult * dayFactor;
+          const v = (f.headcount / (lineOrder[r]===f.line ? 1.0 : 1.15)) * baseRate * mult * dayFactor;
           const heat = clamp(v / maxV, 0, 1);
 
           let col = `rgba(163,255,176,${0.08 + 0.22*heat})`;
@@ -1333,44 +1336,57 @@
           if (heat > 0.78) col = `rgba(255,90,90,${0.10 + 0.28*heat})`;
 
           ctx2.fillStyle = col;
-          ctx2.fillRect(pad + c*cw + 2, top + r*rh + 2, cw - 4, rh - 4);
+          ctx2.fillRect(gridX + c*cw + 2, top + r*rh + 2, cw - 4, rh - 4);
         }
       }
 
+      // Column labels
       ctx2.fillStyle = 'rgba(242,244,255,0.62)';
       ctx2.font = '600 11px ui-sans-serif, system-ui';
+      ctx2.textBaseline = 'alphabetic';
       for (let c=0;c<cols;c++){
         const d = new Date(Date.now()+c*86400000);
         const lbl = d.toLocaleDateString(undefined, { weekday:'short' });
-        ctx2.fillText(lbl, pad + c*cw + 8, top-6);
-      }
-      for (let r=0;r<rows;r++){
-        const lbl = lineOrder[r];
-        ctx2.fillText(lbl, 12, top + r*rh + 18);
+        ctx2.fillText(lbl, gridX + c*cw + 8, top - 10);
       }
 
-      const x = w*0.74, y = 10, bw = w*0.23, bh = 10;
+      // Row labels (vertically centred per row)
+      ctx2.textBaseline = 'middle';
+      for (let r=0;r<rows;r++){
+        const cy = top + r*rh + rh/2;
+        ctx2.fillText(lineOrder[r], pad, cy);
+      }
+
+      // Drift mini bar (top-right)
+      const bx = gridX + gridW - Math.min(180, Math.floor(gridW*0.32));
+      const by = 10;
+      const bw = Math.min(180, Math.floor(gridW*0.32));
+      const bh = 10;
+
       ctx2.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx2.fillRect(x, y, bw, bh);
+      ctx2.fillRect(bx, by, bw, bh);
 
       let dcol = 'rgba(163,255,176,0.55)';
       if (f.drift > 0.35) dcol = 'rgba(253,224,71,0.55)';
       if (f.drift > 0.55) dcol = 'rgba(255,90,90,0.55)';
       ctx2.fillStyle = dcol;
-      ctx2.fillRect(x, y, bw*f.drift, bh);
+      ctx2.fillRect(bx, by, bw*f.drift, bh);
 
       ctx2.strokeStyle = 'rgba(255,255,255,0.14)';
-      ctx2.strokeRect(x, y, bw, bh);
+      ctx2.strokeRect(bx, by, bw, bh);
 
       ctx2.fillStyle = 'rgba(242,244,255,0.70)';
       ctx2.font = '700 11px ui-sans-serif, system-ui';
-      ctx2.fillText('Drift', x, y + bh + 14);
+      ctx2.textBaseline = 'alphabetic';
+      ctx2.fillText('Drift', bx, by + bh + 14);
 
       if (out.anomaly){
         ctx2.fillStyle = 'rgba(255,90,90,0.85)';
         ctx2.font = '800 12px ui-sans-serif, system-ui';
-        ctx2.fillText('Anomaly detected', x, y + bh + 30);
+        ctx2.fillText('Anomaly detected', bx, by + bh + 30);
       }
+
+      ctx2.restore();
     }
 
     function drawSpark(ctx, canvasEl, series, stroke, fill){
@@ -1421,15 +1437,12 @@
       kDrift.textContent = (drift*100).toFixed(0) + '%';
       if (drift < 0.35){
         kDriftSub.textContent = 'Stable';
-        chipWarn.style.display = 'none'; chipBad.style.display = 'none';
         lg2.textContent = 'Stable';
       } else if (drift < 0.55){
         kDriftSub.textContent = 'Investigate shift';
-        chipWarn.style.display = ''; chipBad.style.display = 'none';
         lg2.textContent = 'Rising';
       } else {
         kDriftSub.textContent = 'Alert: retrain recommended';
-        chipWarn.style.display = 'none'; chipBad.style.display = '';
         lg2.textContent = 'Critical';
       }
     }
@@ -1440,8 +1453,7 @@
 
     async function runOnce(source){
       const t0 = now();
-      chipState.textContent = 'Running';
-      rt.textContent = '—';
+      rt.textContent = '…';
       setAsOf();
       setStateText();
 
@@ -1453,7 +1465,7 @@
       kAbsSub.textContent = `${f.headcount} HC • ${f.ratePct.toFixed(1)}% recent`;
 
       kRiskShifts.textContent = String(out.riskShifts);
-      kRiskSub.textContent = `Cover ${f.cover}/shift • shift ${f.shift}`;
+      kRiskSub.textContent = `Cover ${f.cover}/shift • ${f.shift}`;
 
       kAgency.textContent = String(out.agencyShifts);
       kOT.textContent = String(out.otHours);
@@ -1475,10 +1487,10 @@
         abs7Series.shift(); agencySeries.shift(); otSeries.shift(); driftSeries.shift();
       }
 
-      drawSpark(spAbs, spAbs.canvas, abs7Series, 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
-      drawSpark(spAgency, spAgency.canvas, agencySeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
-      drawSpark(spOT, spOT.canvas, otSeries, 'rgba(34,211,238,0.70)', 'rgba(34,211,238,0.55)');
-      drawSpark(spDrift, spDrift.canvas, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
+      drawSpark(spAbsCtx, spAbsCtx.canvas, abs7Series, 'rgba(253,224,71,0.75)', 'rgba(253,224,71,0.55)');
+      drawSpark(spAgencyCtx, spAgencyCtx.canvas, agencySeries, 'rgba(255,90,90,0.65)', 'rgba(253,224,71,0.55)');
+      drawSpark(spOTCtx, spOTCtx.canvas, otSeries, 'rgba(34,211,238,0.70)', 'rgba(34,211,238,0.55)');
+      drawSpark(spDriftCtx, spDriftCtx.canvas, driftSeries, 'rgba(124,58,237,0.70)', 'rgba(34,211,238,0.55)');
 
       const i = abs7Series.length-1;
       const prevAbs = abs7Series[i-1] ?? out.abs7;
@@ -1504,33 +1516,23 @@
       nbaBadge.textContent = out.riskShifts >= 4 ? 'Cover risk' : (out.riskShifts >= 2 ? 'Watchlist' : 'Stable');
 
       if (source === 'boot'){
-        pushEvent('g', `Loaded demo view for <b>${f.site}</b> / <b>${f.line}</b> / <b>${f.shift}</b>. Forecast running.`);
+        pushEvent('g', `Loaded demo view for <b>${f.site}</b> / <b>${f.line}</b> / <b>${f.shift}</b>.`);
       } else if (source === 'manual'){
-        pushEvent('g', `Scenario updated: <b>${f.headcount} HC</b>, <b>${f.cover} cover</b>, <b>${f.ratePct.toFixed(1)}%</b> recent rate.`);
+        pushEvent('g', `Scenario updated: <b>${f.headcount} HC</b>, <b>${f.cover} cover</b>, <b>${f.ratePct.toFixed(1)}%</b> rate.`);
       }
 
       if (out.anomaly){
-        pushEvent('r', `<b>Anomaly</b>: absence pattern shift detected on <b>${f.shift}</b> (${f.line}). Recommend immediate cover action.`);
+        pushEvent('r', `<b>Anomaly</b>: pattern shift detected on <b>${f.shift}</b> (${f.line}).`);
       } else if (out.riskShifts >= 4){
-        pushEvent('y', `Cover risk rising: <b>${out.riskShifts}</b> shifts at risk in next 7 days. Consider float pool + agency.`);
+        pushEvent('y', `Cover risk rising: <b>${out.riskShifts}</b> shifts at risk in next 7 days.`);
       } else if (drift > 0.52 && Math.random() < 0.45){
-        pushEvent('y', `Drift rising for ${f.site}/${f.line}. Validate driver features before next schedule publish.`);
+        pushEvent('y', `Drift rising for ${f.site}/${f.line}. Validate drivers before publish.`);
       } else if (Math.random() < 0.22){
         pushEvent('g', `Forecast stable: expected absences <b>${out.abs7.toFixed(1)}</b> over 7 days.`);
       }
 
-      if (out.riskShifts >= 5){
-        chipBad.style.display = '';
-        chipWarn.style.display = 'none';
-      } else if (out.riskShifts >= 3){
-        chipWarn.style.display = '';
-        chipBad.style.display = 'none';
-      }
-
       const ms = Math.round(now() - t0);
-      rt.textContent = `${ms}ms • ${source}`;
-      chipState.textContent = 'Live';
-
+      rt.textContent = `${ms}ms`;
       return out;
     }
 
@@ -1558,7 +1560,6 @@
 
     function startStream(){
       if (timer) return;
-      chipLive.style.display = '';
       btnPause.textContent = 'Pause';
       const loop = async () => {
         if (!live) return;
@@ -1572,7 +1573,6 @@
 
     function stopStream(){
       if (timer){ clearTimeout(timer); timer = null; }
-      chipLive.style.display = 'none';
       btnPause.textContent = 'Resume';
     }
 
@@ -1587,6 +1587,7 @@
     [siteEl, lineEl, shiftEl].forEach(el => el.addEventListener('change', () => {
       setStateText();
       pushEvent('g', `View changed: <b>${siteEl.value}</b> / <b>${lineEl.value}</b> / <b>${shiftEl.value}</b>.`);
+      runOnce('manual');
     }));
 
     function initFromDemo(){
@@ -1598,7 +1599,7 @@
       rateEl.value = 6.8;
     }
 
-    // ✅ Important: redraw on resize without breaking canvases
+    // Resize redraw (keeps heatmap labels stable)
     let resizeTimer = null;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
