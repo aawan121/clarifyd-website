@@ -1,254 +1,305 @@
-<!-- services.html -->
-<!DOCTYPE html>
+<!-- FILE: services.html -->
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clarifyd | Services</title>
-  <meta name="description" content="Clarifyd services: training and delivery across data science, MLOps, and LLMs." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clarifyd — Services</title>
+
+  <meta name="description" content="Clarifyd services map: choose a starting point for training & data literacy, consultancy & delivery, or view the Work demo." />
+  <meta name="theme-color" content="#0b0f14" />
+
   <style>
     :root{
-      --bg0:#070A12; --bg1:#0B1022; --text:#F2F4FF; --muted:rgba(242,244,255,.72);
-      --radius:22px; --max:1160px; --shadow:0 24px 80px rgba(0,0,0,.55);
-      --a:#7C3AED; --b:#22D3EE; --y:#FDE047; --c:#A3FFB0;
+      --bg:#0b0f14;
+      --text:#e7eef7;
+      --muted:#a8b3c3;
+      --line:rgba(255,255,255,.10);
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
     }
-    *{box-sizing:border-box} html,body{margin:0;padding:0}
+    *{box-sizing:border-box}
     body{
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      color:var(--text);
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
-        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+        radial-gradient(900px 620px at 20% -10%, rgba(125,211,252,.14), transparent 60%),
+        radial-gradient(900px 620px at 80% 0%, rgba(167,139,250,.16), transparent 60%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0e13 100%);
+      color:var(--text);
+      line-height:1.45;
     }
     a{color:inherit}
-    .container{max-width:var(--max);margin:0 auto;padding:0 22px}
+    .wrap{max-width:1180px; margin:0 auto; padding:22px 20px 80px}
+    header{position:sticky; top:0; z-index:10; background:rgba(11,15,20,.75); backdrop-filter: blur(12px); border-bottom:1px solid var(--line)}
+    header .inner{max-width:1180px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .brand{display:flex; gap:10px; align-items:center; font-weight:850; letter-spacing:.4px; white-space:nowrap; text-decoration:none}
+    .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow:0 0 0 8px rgba(125,211,252,.10)}
+    nav{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-weight:650}
+    nav a{padding:8px 12px; border-radius:12px; text-decoration:none}
+    nav a:hover{background:rgba(255,255,255,.08); color:var(--text)}
+
+    .btn{display:inline-flex; align-items:center; justify-content:center; padding:11px 16px; border-radius:14px; border:1px solid var(--line); text-decoration:none; font-weight:850; background:rgba(255,255,255,.04); transition:transform .25s ease, box-shadow .25s ease}
+    .btn.primary{border-color:rgba(125,211,252,.55); background:linear-gradient(180deg, rgba(125,211,252,.22), rgba(125,211,252,.10))}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.28)}
+
+    .hero{padding:32px 0 10px}
+    .kicker{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.4px; text-transform:uppercase}
+    h1{margin:10px 0 10px; font-size:42px; letter-spacing:-.7px; line-height:1.06}
+    h2{margin:0 0 12px; font-size:24px; letter-spacing:-.4px}
+    h3{margin:0 0 8px; font-size:18px}
+    .lead{font-size:18px; color:var(--muted); max-width:75ch; margin:0}
+
+    .section{margin-top:34px}
+    .grid{display:grid; gap:18px}
+    @media (min-width: 960px){
+      .grid.two{grid-template-columns: 1fr 1fr}
+      .grid.three{grid-template-columns: repeat(3, 1fr)}
+      .grid.split{grid-template-columns: 1.1fr .9fr}
+    }
+
+    .card{border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:20px; padding:18px; transition:transform .25s ease, box-shadow .25s ease}
+    .card:hover{transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
     .muted{color:var(--muted)}
-    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
-    .parallax-layer{position:fixed;inset:-18vh -18vw;pointer-events:none;z-index:0;will-change:transform}
-    .layer-a{background:radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);filter:blur(14px);opacity:.9}
-    .layer-b{background:radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);filter:blur(18px);opacity:.65}
-    .layer-c{background:radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);filter:blur(26px);opacity:.45}
-    .bg-grid{position:fixed;inset:0;pointer-events:none;opacity:.20;z-index:1;
-      background-image:linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size:64px 64px;
-      mask-image:radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+    ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    li{margin:6px 0}
+
+    .jump{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .pill{border:1px solid var(--line); background:rgba(255,255,255,.03); padding:8px 10px; border-radius:999px; color:var(--muted); font-weight:850; font-size:12px; text-decoration:none}
+    .pill:hover{background:rgba(255,255,255,.06); color:var(--text)}
+
+    .menu{display:grid; gap:14px}
+    .menu a{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      padding:16px;
+      text-decoration:none;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      transition:transform .25s ease, box-shadow .25s ease;
     }
-    main{position:relative;z-index:2}
+    .menu a:hover{transform:translateY(-3px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
+    .menu .left{min-width:0}
+    .menu .title{font-weight:900; font-size:16px}
+    .menu .desc{color:var(--muted); margin-top:4px}
+    .menu .arrow{color:rgba(255,255,255,.75); font-weight:900}
 
-    header{position:sticky;top:0;z-index:30;background:rgba(7,10,18,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:720;letter-spacing:.2px;text-decoration:none}
-    .mark{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--a),var(--b),var(--y));box-shadow:0 0 28px rgba(124,58,237,.45)}
-    .menu{display:flex;gap:18px;align-items:center}
-    .menu a{text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);padding:10px 10px;border-radius:999px;transition:background .2s,color .2s}
-    .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
-    .pill{padding:10px 14px!important;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);box-shadow:0 10px 30px rgba(0,0,0,.35)}
-
-    .hero{padding:72px 0 26px}
-    .kicker{display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:999px;font-size:13px;color:rgba(242,244,255,.78)}
-    .spark{width:8px;height:8px;border-radius:999px;background:var(--y);box-shadow:0 0 0 0 rgba(253,224,71,.35);animation:spark 2s ease-in-out infinite}
-    @keyframes spark{0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}}
-    h1{font-size:44px;letter-spacing:-1px;line-height:1.06;margin:14px 0 10px}
-    .grad{background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .lead{max-width:72ch;color:rgba(242,244,255,.74);margin:0}
-
-    .section{padding:44px 0}
-    .section.alt{
-      background:
-        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.18), transparent 60%),
-        radial-gradient(800px 500px at 85% 30%, rgba(34,211,238,.14), transparent 58%),
-        radial-gradient(700px 500px at 55% 80%, rgba(253,224,71,.08), transparent 60%),
-        rgba(255,255,255,.02);
-      border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
-    .section-head h2{margin:0;font-size:28px;letter-spacing:-.4px}
-
-    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
     .panel{
-      border-radius:var(--radius);border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);box-shadow:0 18px 60px rgba(0,0,0,.35);
+      border:1px solid rgba(125,211,252,.16);
+      background:linear-gradient(180deg, rgba(125,211,252,.06), rgba(255,255,255,.02));
+      border-radius:20px;
       padding:18px;
     }
-    .panel:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
-    .tag{font-size:12px;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:rgba(242,244,255,.74);white-space:nowrap}
-    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-    .bullets{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px}
-    .bullets li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18)}
-    .ico{width:10px;height:10px;border-radius:999px;margin-top:6px;flex:0 0 auto}
-    .ico.a{background:rgba(124,58,237,.9);box-shadow:0 0 18px rgba(124,58,237,.25)}
-    .ico.b{background:rgba(34,211,238,.95);box-shadow:0 0 18px rgba(34,211,238,.22)}
-    .ico.y{background:rgba(253,224,71,.95);box-shadow:0 0 18px rgba(253,224,71,.20)}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:12px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);text-decoration:none;color:var(--text);
-      box-shadow:0 16px 50px rgba(0,0,0,.38);
-      transition:transform .16s,background .2s,border-color .2s;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
-    .btn.primary{background:linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));border-color:transparent}
 
-    .timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .step{border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);padding:14px;position:relative;overflow:hidden}
-    .step::before{content:"";position:absolute;inset:-50px -80px;background:radial-gradient(closest-side at 20% 20%, rgba(34,211,238,.18), transparent 65%);opacity:.9}
-    .step h4{margin:0 0 6px;font-size:14px;letter-spacing:.2px}
-    .step p{margin:0;color:rgba(242,244,255,.68);font-size:13px;line-height:1.4}
-
-    .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
-    .reveal.is-visible{opacity:1;transform:translateY(0)}
-
-    footer{padding:26px 0 38px}
-    @media (max-width: 980px){
-      h1{font-size:38px}
-      .grid-2,.timeline{grid-template-columns:1fr}
-      .menu{gap:10px}
-      .menu a{padding:10px 8px}
-    }
-    @media (prefers-reduced-motion: reduce){
-      .reveal{transition:none!important}
-      .spark{animation:none!important}
-    }
+    footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap}
+    footer a{color:var(--muted); text-decoration:none}
+    footer a:hover{color:var(--text)}
   </style>
 </head>
 <body>
-  <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
-  <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
-  <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
-
   <header>
-    <div class="container nav">
-      <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
-      <nav class="menu" aria-label="Primary">
-        <a href="/services.html" aria-current="page">Services</a>
-        <a href="/work.html">Work</a>
-        <a href="/contact.html" class="pill">Contact</a>
+    <div class="inner">
+      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
+      <nav>
+        <a href="services.html" aria-current="page" style="color:var(--text); background:rgba(255,255,255,.06)">Services</a>
+        <a href="work.html">Work</a>
+        <a class="btn" href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main>
+  <main class="wrap">
     <section class="hero">
-      <div class="container reveal">
-        <div class="kicker"><span class="spark" aria-hidden="true"></span> Two ways to work together</div>
-        <h1>Choose <span class="grad">Training</span> or <span class="grad">Delivery</span>.</h1>
-        <p class="lead">Upskill your team or ship an end-to-end solution. Either way: clear metrics, clean handover, and patterns you can reuse.</p>
+      <div class="kicker">Services</div>
+      <h1>Pick a starting point.</h1>
+      <p class="lead">This page is a map — not a repeat of the homepage. Choose the pathway that matches where you are today.</p>
+      <div class="jump">
+        <a class="pill" href="#menu">Jump to pathways</a>
+        <a class="pill" href="#deliverables">Typical outputs</a>
+        <a class="pill" href="#engagement">How engagements run</a>
       </div>
     </section>
 
-    <section class="section alt" id="offerings">
-      <div class="container">
-        <div class="section-head reveal">
-          <h2>Offerings</h2>
-          <p class="muted">Simple, production-minded engagements.</p>
-        </div>
-
-        <div class="grid-2">
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">Training</h3>
-                <div class="muted">Traditional DS, MLOps, and LLMs.</div>
-              </div>
-              <div class="tag">Capability</div>
+    <!-- Pathway chooser -->
+    <section class="section" id="menu">
+      <div class="grid split">
+        <div class="menu">
+          <a href="training.html">
+            <div class="left">
+              <div class="title">Training & data literacy</div>
+              <div class="desc">Build judgement, intuition, and practical skill — across leaders, analysts, developers.</div>
             </div>
-            <ul class="bullets">
-              <li><span class="ico a"></span><div><strong>Traditional DS & ML</strong><div class="muted">EDA, features, modelling, evaluation, storytelling.</div></div></li>
-              <li><span class="ico b"></span><div><strong>MLOps</strong><div class="muted">Pipelines, deployment patterns, monitoring, governance.</div></div></li>
-              <li><span class="ico y"></span><div><strong>LLMs</strong><div class="muted">RAG, evals, prompt systems, fine-tuning strategy.</div></div></li>
-            </ul>
-          </div>
+            <div class="arrow">→</div>
+          </a>
 
-          <div class="panel reveal">
-            <div class="top">
-              <div>
-                <h3 style="margin:0 0 6px;">Delivery</h3>
-                <div class="muted">Build and ship analytics / ML / LLM systems.</div>
-              </div>
-              <div class="tag">Delivery</div>
+          <a href="consultancy.html">
+            <div class="left">
+              <div class="title">Consultancy & delivery</div>
+              <div class="desc">Ship reliable analytics/ML outcomes that survive governance, access and handover.</div>
             </div>
-            <ul class="bullets">
-              <li><span class="ico b"></span><div><strong>End-to-end projects</strong><div class="muted">From ingestion to deployment & monitoring.</div></div></li>
-              <li><span class="ico a"></span><div><strong>Embedded contracts</strong><div class="muted">Short-term delivery in your stack, with docs.</div></div></li>
-              <li><span class="ico y"></span><div><strong>Prototypes → production</strong><div class="muted">Turn PoCs into stable services with ownership.</div></div></li>
-            </ul>
+            <div class="arrow">→</div>
+          </a>
+
+          <a href="work.html">
+            <div class="left">
+              <div class="title">Work / demo</div>
+              <div class="desc">See a showpiece dashboard and how it maps to outcomes and delivery habits.</div>
+            </div>
+            <div class="arrow">→</div>
+          </a>
+
+          <a href="contact.html">
+            <div class="left">
+              <div class="title">Not sure?</div>
+              <div class="desc">Tell us your goal and constraints — we’ll suggest a low-risk first step.</div>
+            </div>
+            <div class="arrow">→</div>
+          </a>
+        </div>
+
+        <div class="panel">
+          <div class="kicker">Engagement loop</div>
+          <h3>Clarify → Deliver → Handover</h3>
+          <p class="muted">We work in checkpoints so you get value early, reduce risk, and end with something your team can maintain.</p>
+          <ul>
+            <li>Short discovery to align goals and constraints</li>
+            <li>Iterative delivery with regular validation</li>
+            <li>Clear documentation, walkthroughs, and handover</li>
+          </ul>
+          <div style="margin-top:14px">
+            <a class="btn primary" href="#engagement">How it runs →</a>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
-      <div class="container">
-        <div class="section-head reveal">
-          <h2>How engagements run</h2>
-          <p class="muted">Four steps designed to reduce risk.</p>
-        </div>
-
-        <div class="timeline">
-          <div class="step reveal"><h4>1) Scope</h4><p>Define the problem, constraints, and success metrics.</p></div>
-          <div class="step reveal"><h4>2) Build</h4><p>Implement the workflow with fast, testable milestones.</p></div>
-          <div class="step reveal"><h4>3) Validate</h4><p>Measure quality with robust evals and guardrails.</p></div>
-          <div class="step reveal"><h4>4) Handover</h4><p>Docs, runbooks, and a maintainable delivery.</p></div>
-        </div>
-
-        <div class="panel reveal" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-          <div>
-            <h3 style="margin:0 0 6px;">Ready to discuss?</h3>
-            <div class="muted">A short call is usually enough to outline next steps.</div>
+    <section class="section" id="training">
+      <div class="grid two">
+        <div class="card">
+          <div class="kicker">Pathway 1</div>
+          <h2>Training & data literacy</h2>
+          <p class="muted">Build understanding that sticks: judgement, intuition, and practical ability to work with data.</p>
+          <ul>
+            <li>Data literacy for non-technical audiences</li>
+            <li>SQL + practical analytics foundations</li>
+            <li>Applied DS concepts taught through real scenarios</li>
+          </ul>
+          <div style="margin-top:14px">
+            <a class="btn primary" href="training.html">Go to training page →</a>
           </div>
-          <a class="btn primary" href="/contact.html">Contact</a>
+        </div>
+        <div class="card">
+          <div class="kicker">Typical formats</div>
+          <h3>Workshops • cohorts • tailored programmes</h3>
+          <p class="muted">Hands-on sessions with exercises, feedback, and takeaways that teams can reuse.</p>
+          <ul>
+            <li>1–2 day workshops</li>
+            <li>Multi-week cohorts</li>
+            <li>Role-specific sessions (leaders, analysts, cross-functional)</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <footer class="section alt">
-      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
-        <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
-        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
-          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
-          <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
-          <span class="tiny">© <span id="year"></span></span>
+    <section class="section" id="consultancy">
+      <div class="grid two">
+        <div class="card">
+          <div class="kicker">Pathway 2</div>
+          <h2>Consultancy & delivery</h2>
+          <p class="muted">Solve a real problem with a reliable, maintainable result — and leave your team stronger.</p>
+          <ul>
+            <li>Forecasting and decision support</li>
+            <li>Risk/scoring and classification work</li>
+            <li>Operational modelling and optimisation</li>
+            <li>Applied ML (incl. computer vision) where useful</li>
+          </ul>
+          <div style="margin-top:14px">
+            <a class="btn primary" href="consultancy.html">Go to consultancy page →</a>
+          </div>
         </div>
+        <div class="card">
+          <div class="kicker">Designed for enterprise constraints</div>
+          <h3>Governance, security, and handover</h3>
+          <p class="muted">We work within access limits and governance realities. Deliverables prioritise clarity, documentation, and maintainability.</p>
+          <ul>
+            <li>Clear decision logs and assumptions</li>
+            <li>Reproducible code and artefacts</li>
+            <li>Handover sessions + operational guidance</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deliverables">
+      <h2>Typical outputs</h2>
+      <div class="grid three" style="margin-top:12px">
+        <div class="card">
+          <div class="kicker">Training</div>
+          <h3>Materials teams reuse</h3>
+          <p class="muted">Exercises, templates, and references that make the learning stick.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Delivery</div>
+          <h3>Maintainable artefacts</h3>
+          <p class="muted">Clear repos, model cards, and documentation aligned with constraints.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Both</div>
+          <h3>Clarity + handover</h3>
+          <p class="muted">Decision logs, assumptions, and a repeatable plan for what’s next.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="engagement">
+      <h2>How engagements run</h2>
+      <div class="grid two" style="align-items:start; margin-top:12px">
+        <div class="card">
+          <div class="kicker">A simple loop</div>
+          <h3>Clarify → Deliver → Handover</h3>
+          <p class="muted">We work in checkpoints so you get value early, reduce risk, and end with something your team can maintain.</p>
+          <ul>
+            <li><strong>Clarify</strong>: goals, constraints, and success measures</li>
+            <li><strong>Deliver</strong>: build iteratively with validation points</li>
+            <li><strong>Handover</strong>: documentation, walkthroughs, and a next-step plan</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="kicker">Where to start</div>
+          <h3>Low-risk first step</h3>
+          <p class="muted">If you’re unsure what you need, start with a short review: we’ll stress-test data, evaluation, and feasibility — then propose the smallest useful next step.</p>
+          <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap">
+            <a class="btn primary" href="contact.html">Start with a message →</a>
+            <a class="btn" href="work.html">See the demo →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="card" style="padding:22px">
+        <div class="kicker">Next step</div>
+        <h2 style="margin-top:6px">Tell us where you are.</h2>
+        <p class="lead" style="margin:0 0 16px">We’ll recommend a sensible starting point and what “good” looks like for your situation.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap">
+          <a class="btn primary" href="contact.html">Email us →</a>
+          <a class="btn" href="work.html">See the demo →</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> Clarifyd</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap">
+        <a href="privacy.html">Privacy</a>
+        <span>•</span>
+        <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
       </div>
     </footer>
   </main>
 
   <script>
-    // Year
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Reveal
-    const items = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries)=>{
-      for (const e of entries){
-        if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-      }
-    },{threshold:.12});
-    items.forEach(el=>io.observe(el));
-
-    // Parallax
-    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
-    let latestY=0, ticking=false;
-    function apply(){
-      const y = latestY;
-      for (const el of layers){
-        const s = parseFloat(el.getAttribute('data-parallax')||'0.1');
-        el.style.transform = `translate3d(0, ${-y*s}px, 0)`;
-      }
-      ticking=false;
-    }
-    function onScroll(){
-      latestY = window.scrollY || 0;
-      if (!ticking){ requestAnimationFrame(apply); ticking=true; }
-    }
-    window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', onScroll);
-    onScroll();
   </script>
 </body>
 </html>
