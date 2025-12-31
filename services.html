@@ -1,9 +1,14 @@
+<!-- FILE: services.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clarifyd — Services</title>
+
+  <meta name="description" content="Clarifyd services map: choose a starting point for training & data literacy, consultancy & delivery, or view the Work demo." />
+  <meta name="theme-color" content="#0b0f14" />
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -93,9 +98,9 @@
 <body>
   <header>
     <div class="inner">
-      <a class="brand" href="index.html"><span class="dot"></span> Clarifyd</a>
+      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
       <nav>
-        <a href="services.html" style="color:var(--text); background:rgba(255,255,255,.06)">Services</a>
+        <a href="services.html" aria-current="page" style="color:var(--text); background:rgba(255,255,255,.06)">Services</a>
         <a href="work.html">Work</a>
         <a class="btn" href="contact.html">Contact</a>
       </nav>
@@ -263,7 +268,7 @@
           <div class="kicker">Where to start</div>
           <h3>Low-risk first step</h3>
           <p class="muted">If you’re unsure what you need, start with a short review: we’ll stress-test data, evaluation, and feasibility — then propose the smallest useful next step.</p>
-          <div style="margin-top:14px">
+          <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap">
             <a class="btn primary" href="contact.html">Start with a message →</a>
             <a class="btn" href="work.html">See the demo →</a>
           </div>
@@ -278,17 +283,23 @@
         <p class="lead" style="margin:0 0 16px">We’ll recommend a sensible starting point and what “good” looks like for your situation.</p>
         <div style="display:flex; gap:12px; flex-wrap:wrap">
           <a class="btn primary" href="contact.html">Email us →</a>
-          <a class="btn" href="contact.html">Add a booking link</a>
+          <a class="btn" href="work.html">See the demo →</a>
         </div>
       </div>
     </section>
 
     <footer>
-      <div>© Clarifyd</div>
+      <div>© <span id="year"></span> Clarifyd</div>
       <div style="display:flex; gap:12px; flex-wrap:wrap">
-        <a href="privacy.html">Privacy</a><span>•</span><span>Email: hello@clarifyd.co.uk</span>
+        <a href="privacy.html">Privacy</a>
+        <span>•</span>
+        <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
       </div>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
