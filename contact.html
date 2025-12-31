@@ -1,9 +1,14 @@
+<!-- FILE: contact.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clarifyd — Contact</title>
+
+  <meta name="description" content="Contact Clarifyd by email. No forms — share your goal and constraints and we’ll propose a sensible first step." />
+  <meta name="theme-color" content="#0b0f14" />
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -49,11 +54,11 @@
 <body>
   <header>
     <div class="inner">
-      <a class="brand" href="index.html"><span class="dot"></span> Clarifyd</a>
+      <a class="brand" href="index.html" aria-label="Clarifyd home"><span class="dot"></span> Clarifyd</a>
       <nav>
         <a href="services.html">Services</a>
         <a href="work.html">Work</a>
-        <a class="btn" href="contact.html" style="color:var(--text); background:rgba(255,255,255,.06)">Contact</a>
+        <a class="btn" href="contact.html" aria-current="page" style="color:var(--text); background:rgba(255,255,255,.06)">Contact</a>
       </nav>
     </div>
   </header>
@@ -68,6 +73,7 @@
       <p style="margin:10px 0 0; color:var(--muted)">
         Click below to open an email with a helpful template:
       </p>
+
       <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap">
         <a class="btn primary"
            href="mailto:hello@clarifyd.co.uk?subject=Clarifyd%20enquiry&body=Hi%20Clarifyd%2C%0A%0AI%27d%20like%20help%20with%3A%20%5Bbrief%20goal%5D%0A%0AContext%20%2F%20constraints%3A%20%5Btime%2C%20tools%2C%20access%2C%20governance%5D%0AAvailable%20data%3A%20%5Bwhat%20exists%5D%0AIdeal%20timeline%3A%20%5Bdates%5D%0A%0AThanks%2C%0A%5BYour%20name%5D">
@@ -75,8 +81,10 @@
         </a>
         <a class="btn" href="services.html">View services map →</a>
       </div>
+
       <div style="margin-top:12px; color:var(--muted); font-size:13px">
-        Or email directly: <strong>hello@clarifyd.co.uk</strong>
+        Or email directly:
+        <a href="mailto:hello@clarifyd.co.uk" style="font-weight:850; text-decoration:none">hello@clarifyd.co.uk</a>
       </div>
     </div>
 
@@ -91,11 +99,17 @@
     </div>
 
     <footer>
-      <div>© Clarifyd</div>
+      <div>© <span id="year"></span> Clarifyd</div>
       <div style="display:flex; gap:12px; flex-wrap:wrap">
-        <a href="privacy.html">Privacy</a><span>•</span><span>Email: hello@clarifyd.co.uk</span>
+        <a href="privacy.html">Privacy</a>
+        <span>•</span>
+        <a href="mailto:hello@clarifyd.co.uk">hello@clarifyd.co.uk</a>
       </div>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
