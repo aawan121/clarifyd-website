@@ -580,9 +580,9 @@
             <div class="panelHead">
               <div>
                 <h3>Demo dataset + scenario controls</h3>
-                <div class="tiny muted">Headcount, historical absences, shift pattern, cover requirement. (No uploads.)</div>
+                <div class="tiny muted">Headcount, historical absences, shift pattern, cover requirement.</div>
               </div>
-              <span class="badge" id="demoBadge">Schema: AbsenceAI_demo.csv</span>
+              <span class="badge" id="demoBadge">Schema: Absence Data</span>
             </div>
 
             <div class="controls">
@@ -984,7 +984,7 @@
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 800);
     }
-    btnDemo.addEventListener('click', () => downloadText('AbsenceAI_demo.csv', demoCSV()));
+    btnDemo.addEventListener('click', () => downloadText('Absence Data', demoCSV()));
 
     // ---- Live story ----
     let drift = 0.12;
