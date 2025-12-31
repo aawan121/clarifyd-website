@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clarifyd — Consultancy & Delivery</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --text:#e7eef7;
+      --muted:#a8b3c3;
+      --line:rgba(255,255,255,.10);
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(900px 620px at 80% -10%, rgba(167,139,250,.16), transparent 60%),
+        radial-gradient(900px 620px at 10% 10%, rgba(125,211,252,.12), transparent 60%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0e13 100%);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1180px; margin:0 auto; padding:22px 20px 84px}
+    header{position:sticky; top:0; z-index:10; background:rgba(11,15,20,.75); backdrop-filter: blur(12px); border-bottom:1px solid var(--line)}
+    header .inner{max-width:1180px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .brand{display:flex; gap:10px; align-items:center; font-weight:850; letter-spacing:.4px; white-space:nowrap; text-decoration:none}
+    .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow:0 0 0 8px rgba(167,139,250,.10)}
+    nav{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-weight:650}
+    nav a{padding:8px 12px; border-radius:12px; text-decoration:none}
+    nav a:hover{background:rgba(255,255,255,.08); color:var(--text)}
+
+    .btn{display:inline-flex; align-items:center; justify-content:center; padding:11px 16px; border-radius:14px; border:1px solid var(--line); text-decoration:none; font-weight:850; background:rgba(255,255,255,.04); transition:transform .25s ease, box-shadow .25s ease}
+    .btn.primary{border-color:rgba(167,139,250,.55); background:linear-gradient(180deg, rgba(167,139,250,.22), rgba(167,139,250,.10))}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.28)}
+
+    .hero{padding:34px 0 10px}
+    .kicker{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.4px; text-transform:uppercase}
+    h1{margin:10px 0 10px; font-size:44px; letter-spacing:-.8px; line-height:1.05}
+    h2{margin:0 0 12px; font-size:24px; letter-spacing:-.4px}
+    h3{margin:0 0 8px; font-size:18px}
+    .lead{font-size:18px; color:var(--muted); max-width:78ch; margin:0}
+
+    .section{margin-top:34px}
+    .grid{display:grid; gap:18px}
+    @media (min-width: 960px){
+      .grid.two{grid-template-columns: 1.05fr .95fr}
+      .grid.three{grid-template-columns: repeat(3, 1fr)}
+      .grid.cards{grid-template-columns: repeat(2, 1fr)}
+    }
+
+    .card{border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:20px; padding:18px; transition:transform .25s ease, box-shadow .25s ease}
+    .card:hover{transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    li{margin:6px 0}
+
+    .pill{border:1px solid var(--line); background:rgba(255,255,255,.03); padding:8px 10px; border-radius:999px; color:var(--muted); font-weight:850; font-size:12px; display:inline-flex; gap:8px; align-items:center}
+    .pillRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+
+    .note{border:1px solid rgba(167,139,250,.18); background:linear-gradient(180deg, rgba(167,139,250,.10), rgba(255,255,255,.02)); border-radius:20px; padding:18px}
+
+    details{border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:14px; background:rgba(255,255,255,.03)}
+    details + details{margin-top:10px}
+    summary{cursor:pointer; font-weight:900}
+
+    .deliverable{display:flex; gap:12px; align-items:flex-start}
+    .icon{width:34px; height:34px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03); display:flex; align-items:center; justify-content:center; font-weight:950; color:rgba(167,139,250,.95)}
+
+    footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap}
+    footer a{color:var(--muted); text-decoration:none}
+    footer a:hover{color:var(--text)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <a class="brand" href="index.html"><span class="dot"></span> Clarifyd</a>
+      <nav>
+        <a href="services.html">Services</a>
+        <a href="work.html">Work</a>
+        <a class="btn" href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="kicker">Services / Consultancy</div>
+      <h1>Delivery that survives reality.</h1>
+      <p class="lead">We help teams ship analytics and machine learning work that’s maintainable, explainable, and usable — not a demo that dies after handover.</p>
+      <div class="pillRow">
+        <div class="pill">Clear scoping</div>
+        <div class="pill">Iterative delivery</div>
+        <div class="pill">Governance-aware</div>
+        <div class="pill">Handover-first</div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap">
+        <a class="btn primary" href="contact.html">Discuss a project →</a>
+        <a class="btn" href="#deliverables">See deliverables</a>
+        <a class="btn" href="services.html">Back to services map</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid two">
+        <div class="card">
+          <div class="kicker">Where we help</div>
+          <h2>Problem types</h2>
+          <div class="grid cards" style="margin-top:12px">
+            <div class="card">
+              <h3>Forecasting & planning</h3>
+              <p class="muted">Demand, capacity, absence, operational forecasts, and decision support.</p>
+            </div>
+            <div class="card">
+              <h3>Risk & scoring</h3>
+              <p class="muted">Classification and scoring models in regulated contexts with strong validation.</p>
+            </div>
+            <div class="card">
+              <h3>Behaviour & churn</h3>
+              <p class="muted">Customer behaviour modelling, retention, and driver analysis.</p>
+            </div>
+            <div class="card">
+              <h3>Vision & signals</h3>
+              <p class="muted">Computer vision and pattern recognition where labelled data and value exist.</p>
+            </div>
+          </div>
+          <p class="muted" style="margin-top:12px">We’ll recommend baselines and simpler alternatives when they’re better. The goal is usefulness, not complexity.</p>
+        </div>
+
+        <div class="note">
+          <div class="kicker">Enterprise-ready by design</div>
+          <h2>Built for constraints</h2>
+          <p class="muted">We work within governance, security, and access realities. Outputs prioritise clarity, maintainability, and clean handover to internal teams.</p>
+          <ul>
+            <li>Decision logs and explicit assumptions</li>
+            <li>Reproducible artefacts and documentation</li>
+            <li>Walkthroughs, enablement, and next-step plans</li>
+          </ul>
+          <div style="margin-top:14px">
+            <a class="btn" href="work.html">See the demo →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deliverables">
+      <h2>What you get</h2>
+      <div class="grid three" style="margin-top:12px">
+        <div class="card">
+          <div class="deliverable">
+            <div class="icon">1</div>
+            <div>
+              <h3>Clear scope & success measures</h3>
+              <p class="muted">A short written scope, constraints, and how we’ll measure progress.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="deliverable">
+            <div class="icon">2</div>
+            <div>
+              <h3>Working artefacts</h3>
+              <p class="muted">Code, notebooks or services, and supporting documentation — structured to be maintained.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="deliverable">
+            <div class="icon">3</div>
+            <div>
+              <h3>Handover & enablement</h3>
+              <p class="muted">Walkthroughs, operating guidance, and a plan for iteration after we leave.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid two">
+        <div class="card">
+          <div class="kicker">Ways to engage</div>
+          <h2>Sensible first steps</h2>
+          <ul>
+            <li><strong>Rapid review</strong>: stress-test an approach, data, or evaluation plan</li>
+            <li><strong>Pilot</strong>: build a baseline + validate value quickly</li>
+            <li><strong>Delivery</strong>: iterate to a maintainable outcome with clean handover</li>
+          </ul>
+          <p class="muted" style="margin-top:10px">If your team needs it, we can weave in capability uplift alongside delivery.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Working style</div>
+          <h2>How we collaborate</h2>
+          <ul>
+            <li>Weekly checkpoints and written updates</li>
+            <li>Transparent trade-offs (speed vs rigour vs cost)</li>
+            <li>Early validation to avoid “big reveal” failures</li>
+            <li>Documentation as we go, not at the end</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <details>
+        <summary>Can you work without access to production systems?</summary>
+        <div class="muted" style="margin-top:10px">Often, yes. We can start with reviews, baselines, synthetic or sampled data, and an approach that fits your access constraints.</div>
+      </details>
+      <details>
+        <summary>Do you build end-to-end MLOps pipelines?</summary>
+        <div class="muted" style="margin-top:10px">We can advise on lifecycle design and implementation patterns, and help teams move toward reliable deployment and monitoring where appropriate.</div>
+      </details>
+      <details>
+        <summary>How do you handle confidentiality?</summary>
+        <div class="muted" style="margin-top:10px">We avoid publishing client details. Experience is shared as anonymised capability summaries and representative examples.</div>
+      </details>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="card" style="padding:22px">
+        <div class="kicker">Next step</div>
+        <h2 style="margin-top:6px">Tell us what you’re trying to achieve.</h2>
+        <p class="lead" style="margin:0 0 16px">Share the goal, constraints, available data, and timeline — we’ll suggest a low-risk starting step.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap">
+          <a class="btn primary" href="contact.html">Email us →</a>
+          <a class="btn" href="work.html">See the demo →</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© Clarifyd</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap">
+        <a href="privacy.html">Privacy</a><span>•</span><span>Email: hello@clarifyd.co.uk</span>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
