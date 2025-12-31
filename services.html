@@ -1,108 +1,216 @@
-<!doctype html>
+<!-- services.html -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clarifyd | Services</title>
-  <meta name="description" content="Services: Training & data literacy, and data science consultancy & delivery." />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="description" content="Clarifyd services: training and delivery across data science, MLOps, and LLMs." />
+  <style>
+    :root{
+      --bg0:#070A12; --bg1:#0B1022; --text:#F2F4FF; --muted:rgba(242,244,255,.72);
+      --radius:22px; --max:1160px; --shadow:0 24px 80px rgba(0,0,0,.55);
+      --a:#7C3AED; --b:#22D3EE; --y:#FDE047; --c:#A3FFB0;
+    }
+    *{box-sizing:border-box} html,body{margin:0;padding:0}
+    body{
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 12%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 600px at 82% 18%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(700px 500px at 70% 78%, rgba(253,224,71,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    .container{max-width:var(--max);margin:0 auto;padding:0 22px}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px;color:rgba(242,244,255,.62)}
+    .parallax-layer{position:fixed;inset:-18vh -18vw;pointer-events:none;z-index:0;will-change:transform}
+    .layer-a{background:radial-gradient(900px 520px at 22% 20%, rgba(124,58,237,.26), transparent 60%),radial-gradient(640px 420px at 76% 26%, rgba(34,211,238,.20), transparent 62%);filter:blur(14px);opacity:.9}
+    .layer-b{background:radial-gradient(720px 500px at 72% 78%, rgba(253,224,71,.14), transparent 62%),radial-gradient(520px 420px at 18% 78%, rgba(163,255,176,.10), transparent 62%);filter:blur(18px);opacity:.65}
+    .layer-c{background:radial-gradient(980px 720px at 50% 50%, rgba(255,255,255,.06), transparent 62%);filter:blur(26px);opacity:.45}
+    .bg-grid{position:fixed;inset:0;pointer-events:none;opacity:.20;z-index:1;
+      background-image:linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:64px 64px;
+      mask-image:radial-gradient(closest-side at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+    }
+    main{position:relative;z-index:2}
+
+    header{position:sticky;top:0;z-index:30;background:rgba(7,10,18,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:720;letter-spacing:.2px;text-decoration:none}
+    .mark{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--a),var(--b),var(--y));box-shadow:0 0 28px rgba(124,58,237,.45)}
+    .menu{display:flex;gap:18px;align-items:center}
+    .menu a{text-decoration:none;font-size:14px;color:rgba(242,244,255,.72);padding:10px 10px;border-radius:999px;transition:background .2s,color .2s}
+    .menu a:hover{color:var(--text);background:rgba(255,255,255,.06)}
+    .pill{padding:10px 14px!important;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+
+    .hero{padding:72px 0 26px}
+    .kicker{display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:999px;font-size:13px;color:rgba(242,244,255,.78)}
+    .spark{width:8px;height:8px;border-radius:999px;background:var(--y);box-shadow:0 0 0 0 rgba(253,224,71,.35);animation:spark 2s ease-in-out infinite}
+    @keyframes spark{0%{box-shadow:0 0 0 0 rgba(253,224,71,.35)}70%{box-shadow:0 0 0 12px rgba(253,224,71,0)}100%{box-shadow:0 0 0 0 rgba(253,224,71,0)}}
+    h1{font-size:44px;letter-spacing:-1px;line-height:1.06;margin:14px 0 10px}
+    .grad{background:linear-gradient(90deg,var(--a),var(--b),var(--y),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{max-width:72ch;color:rgba(242,244,255,.74);margin:0}
+
+    .section{padding:44px 0}
+    .section.alt{
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(800px 500px at 85% 30%, rgba(34,211,238,.14), transparent 58%),
+        radial-gradient(700px 500px at 55% 80%, rgba(253,224,71,.08), transparent 60%),
+        rgba(255,255,255,.02);
+      border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
+    .section-head h2{margin:0;font-size:28px;letter-spacing:-.4px}
+
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .panel{
+      border-radius:var(--radius);border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);box-shadow:0 18px 60px rgba(0,0,0,.35);
+      padding:18px;
+    }
+    .panel:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
+    .tag{font-size:12px;padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:rgba(242,244,255,.74);white-space:nowrap}
+    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .bullets{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+    .bullets li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18)}
+    .ico{width:10px;height:10px;border-radius:999px;margin-top:6px;flex:0 0 auto}
+    .ico.a{background:rgba(124,58,237,.9);box-shadow:0 0 18px rgba(124,58,237,.25)}
+    .ico.b{background:rgba(34,211,238,.95);box-shadow:0 0 18px rgba(34,211,238,.22)}
+    .ico.y{background:rgba(253,224,71,.95);box-shadow:0 0 18px rgba(253,224,71,.20)}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:12px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);text-decoration:none;color:var(--text);
+      box-shadow:0 16px 50px rgba(0,0,0,.38);
+      transition:transform .16s,background .2s,border-color .2s;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .btn.primary{background:linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.70), rgba(253,224,71,.38));border-color:transparent}
+
+    .timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .step{border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);padding:14px;position:relative;overflow:hidden}
+    .step::before{content:"";position:absolute;inset:-50px -80px;background:radial-gradient(closest-side at 20% 20%, rgba(34,211,238,.18), transparent 65%);opacity:.9}
+    .step h4{margin:0 0 6px;font-size:14px;letter-spacing:.2px}
+    .step p{margin:0;color:rgba(242,244,255,.68);font-size:13px;line-height:1.4}
+
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.is-visible{opacity:1;transform:translateY(0)}
+
+    footer{padding:26px 0 38px}
+    @media (max-width: 980px){
+      h1{font-size:38px}
+      .grid-2,.timeline{grid-template-columns:1fr}
+      .menu{gap:10px}
+      .menu a{padding:10px 8px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .reveal{transition:none!important}
+      .spark{animation:none!important}
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header">
+  <div class="parallax-layer layer-a" data-parallax="0.10" aria-hidden="true"></div>
+  <div class="parallax-layer layer-b" data-parallax="0.18" aria-hidden="true"></div>
+  <div class="parallax-layer layer-c" data-parallax="0.26" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header>
     <div class="container nav">
-      <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+      <a class="brand" href="/"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
       <nav class="menu" aria-label="Primary">
-        <a data-page="services.html" href="services.html">Services</a>
-        <a data-page="demos.html" href="demos.html">Demos</a>
-        <a data-page="work.html" href="work.html">Work</a>
-        <a data-page="contact.html" href="contact.html" class="pill">Contact</a>
+        <a href="/services.html" aria-current="page">Services</a>
+        <a href="/work.html">Work</a>
+        <a href="/contact.html" class="pill">Contact</a>
       </nav>
     </div>
   </header>
 
   <main>
     <section class="hero">
+      <div class="container reveal">
+        <div class="kicker"><span class="spark" aria-hidden="true"></span> Two ways to work together</div>
+        <h1>Choose <span class="grad">Training</span> or <span class="grad">Delivery</span>.</h1>
+        <p class="lead">Upskill your team or ship an end-to-end solution. Either way: clear metrics, clean handover, and patterns you can reuse.</p>
+      </div>
+    </section>
+
+    <section class="section alt" id="offerings">
       <div class="container">
-        <div class="kicker"><span class="spark" aria-hidden="true"></span> Services</div>
-        <h1>Pick a starting point.</h1>
-        <p class="lead">This page is a map — choose the pathway that fits where you are today, then dive deeper.</p>
+        <div class="section-head reveal">
+          <h2>Offerings</h2>
+          <p class="muted">Simple, production-minded engagements.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel reveal">
+            <div class="top">
+              <div>
+                <h3 style="margin:0 0 6px;">Training</h3>
+                <div class="muted">Traditional DS, MLOps, and LLMs.</div>
+              </div>
+              <div class="tag">Capability</div>
+            </div>
+            <ul class="bullets">
+              <li><span class="ico a"></span><div><strong>Traditional DS & ML</strong><div class="muted">EDA, features, modelling, evaluation, storytelling.</div></div></li>
+              <li><span class="ico b"></span><div><strong>MLOps</strong><div class="muted">Pipelines, deployment patterns, monitoring, governance.</div></div></li>
+              <li><span class="ico y"></span><div><strong>LLMs</strong><div class="muted">RAG, evals, prompt systems, fine-tuning strategy.</div></div></li>
+            </ul>
+          </div>
+
+          <div class="panel reveal">
+            <div class="top">
+              <div>
+                <h3 style="margin:0 0 6px;">Delivery</h3>
+                <div class="muted">Build and ship analytics / ML / LLM systems.</div>
+              </div>
+              <div class="tag">Delivery</div>
+            </div>
+            <ul class="bullets">
+              <li><span class="ico b"></span><div><strong>End-to-end projects</strong><div class="muted">From ingestion to deployment & monitoring.</div></div></li>
+              <li><span class="ico a"></span><div><strong>Embedded contracts</strong><div class="muted">Short-term delivery in your stack, with docs.</div></div></li>
+              <li><span class="ico y"></span><div><strong>Prototypes → production</strong><div class="muted">Turn PoCs into stable services with ownership.</div></div></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <div class="container grid split">
-        <div class="panel">
-          <div class="panelHead">
-            <div>
-              <h3>Pathways</h3>
-              <div class="tiny muted">Training, consultancy, or both.</div>
-            </div>
-            <span class="badge">Chooser</span>
-          </div>
-
-          <div class="menuList">
-            <a href="training.html">
-              <div>
-                <div class="t">Training & data literacy</div>
-                <div class="d">Leadership + developer tracks. Build judgement, intuition, and reusable capability.</div>
-              </div>
-              <div class="arrow">→</div>
-            </a>
-
-            <a href="consultancy.html">
-              <div>
-                <div class="t">Consultancy & delivery</div>
-                <div class="d">Decision support, forecasting, scoring, optimisation, applied ML — maintainable by design.</div>
-              </div>
-              <div class="arrow">→</div>
-            </a>
-
-            <a href="contact.html">
-              <div>
-                <div class="t">Combined engagement</div>
-                <div class="d">Ship something useful while your team learns the approach and can maintain it.</div>
-              </div>
-              <div class="arrow">→</div>
-            </a>
-          </div>
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>How engagements run</h2>
+          <p class="muted">Four steps designed to reduce risk.</p>
         </div>
 
-        <div class="card soft">
-          <div class="panelHead">
-            <div>
-              <h3>Typical outputs</h3>
-              <div class="tiny muted">What you walk away with.</div>
-            </div>
-            <span class="badge">Deliverables</span>
-          </div>
-          <div class="grid three" style="margin-top:12px">
-            <div class="card">
-              <h3>Training</h3>
-              <p class="tiny muted">Exercises, templates, and references teams reuse.</p>
-            </div>
-            <div class="card">
-              <h3>Delivery</h3>
-              <p class="tiny muted">Maintainable artefacts, documentation, and handover guidance.</p>
-            </div>
-            <div class="card">
-              <h3>Both</h3>
-              <p class="tiny muted">Clear assumptions, decision logs, and a next-step plan.</p>
-            </div>
-          </div>
+        <div class="timeline">
+          <div class="step reveal"><h4>1) Scope</h4><p>Define the problem, constraints, and success metrics.</p></div>
+          <div class="step reveal"><h4>2) Build</h4><p>Implement the workflow with fast, testable milestones.</p></div>
+          <div class="step reveal"><h4>3) Validate</h4><p>Measure quality with robust evals and guardrails.</p></div>
+          <div class="step reveal"><h4>4) Handover</h4><p>Docs, runbooks, and a maintainable delivery.</p></div>
+        </div>
 
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px">
-            <a class="btn primary" href="work.html">See the dashboard demo</a>
-            <a class="btn" href="demos.html">Browse demos</a>
+        <div class="panel reveal" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+          <div>
+            <h3 style="margin:0 0 6px;">Ready to discuss?</h3>
+            <div class="muted">A short call is usually enough to outline next steps.</div>
           </div>
+          <a class="btn primary" href="/contact.html">Contact</a>
         </div>
       </div>
     </section>
 
-    <footer class="footer">
-      <div class="container footerInner">
-        <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span><span>Clarifyd</span></a>
+    <footer class="section alt">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.10);padding-top:18px;">
+        <a class="brand" href="/"><span class="mark"></span><span>Clarifyd</span></a>
         <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
-          <a class="tiny" href="privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
+          <a class="tiny" href="/privacy.html" style="text-decoration:none;color:rgba(242,244,255,.70)">Privacy</a>
           <a class="tiny" href="mailto:hello@clarifyd.co.uk" style="text-decoration:none;color:rgba(242,244,255,.70)">Email</a>
           <span class="tiny">© <span id="year"></span></span>
         </div>
@@ -110,6 +218,37 @@
     </footer>
   </main>
 
-  <script src="assets/app.js"></script>
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Reveal
+    const items = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+      for (const e of entries){
+        if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      }
+    },{threshold:.12});
+    items.forEach(el=>io.observe(el));
+
+    // Parallax
+    const layers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let latestY=0, ticking=false;
+    function apply(){
+      const y = latestY;
+      for (const el of layers){
+        const s = parseFloat(el.getAttribute('data-parallax')||'0.1');
+        el.style.transform = `translate3d(0, ${-y*s}px, 0)`;
+      }
+      ticking=false;
+    }
+    function onScroll(){
+      latestY = window.scrollY || 0;
+      if (!ticking){ requestAnimationFrame(apply); ticking=true; }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  </script>
 </body>
 </html>
