@@ -1301,7 +1301,7 @@
 
       // Layout: left label gutter + grid region
       const pad = 14;
-      const top = 40;
+      const top = 58;
       const bottomPad = 16;
 
       const cols = 7;
@@ -1358,9 +1358,11 @@
       }
 
       // Drift mini bar (top-right)
-      const bx = gridX + gridW - Math.min(180, Math.floor(gridW*0.32));
-      const by = 10;
-      const bw = Math.min(180, Math.floor(gridW*0.32));
+      const gutterX0 = pad;
+      const gutterX1 = gridX - 10;                 // just before grid
+      const bw = Math.max(92, Math.floor((gutterX1 - gutterX0) * 0.92));
+      const bx = gutterX0;
+      const by = 26;                               // safely under title line
       const bh = 10;
 
       ctx2.fillStyle = 'rgba(0,0,0,0.22)';
